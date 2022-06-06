@@ -33,8 +33,6 @@ const TryLocalLogin = dispatch =>
 const register = dispatch => async params => {
   try {
     await axios.post('http://10.0.2.2:8080/api/v1/register/customer', params);
-    // await AsyncStorage.setItem('token', response.data.token);
-    // dispatch({type: 'login', payload: response.data.token});
     RootNavigation.push('ConfirmOTPScreen', {
       phone: params.phone,
       avatar: params.avatar,
