@@ -38,8 +38,7 @@ const MAJORS = [
   },
 ];
 
-
-function HomeScreen() {
+const HomeScreen = () => {
 
   const [search, setSearch] = useState('');
   const [entries, setEntries] = useState([]);
