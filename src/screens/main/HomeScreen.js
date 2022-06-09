@@ -1,8 +1,18 @@
-/* eslint-disable prettier/prettier */
-import { View, Text, StyleSheet, Dimensions, Image, SafeAreaView, TextInput, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
-import React, { useState, useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Image,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 import Carousel from 'react-native-snap-carousel';
 import BannerSlider from '../../components/BannerSlider';
 import ForwardButton from '../../components/ForwardButton';
@@ -11,7 +21,8 @@ import MajorComponent from '../../components/MajorComponent';
 const ENTRIES = [
   {
     title: 'Ưu đãi hôm nay',
-    image: 'https://i.postimg.cc/QN2jQkDW/emmanuel-ikwuegbu-0-kl1-Bjv-Fc-unsplash.jpg',
+    image:
+      'https://i.postimg.cc/QN2jQkDW/emmanuel-ikwuegbu-0-kl1-Bjv-Fc-unsplash.jpg',
   },
   {
     title: 'Ưu đãi cho khách hàng mới',
@@ -22,24 +33,27 @@ const ENTRIES = [
 const MAJORS = [
   {
     title: 'Thiết bị giặt ủi',
-    image: 'https://i.postimg.cc/L85TSmzM/engin-akyurt-y-CYVV8-k-QNM-unsplash.jpg',
+    image:
+      'https://i.postimg.cc/L85TSmzM/engin-akyurt-y-CYVV8-k-QNM-unsplash.jpg',
   },
   {
     title: 'Thiết bị nhà bếp',
-    image: 'https://i.postimg.cc/dQRnmHqg/erik-mclean-a-Po-F91-L-n6k-unsplash.jpg',
+    image:
+      'https://i.postimg.cc/dQRnmHqg/erik-mclean-a-Po-F91-L-n6k-unsplash.jpg',
   },
   {
     title: 'Thiết bị giải trí',
-    image: 'https://i.postimg.cc/NjjN06vS/fabio-silva-nm-Tm7kn-Unqs-unsplash.jpg',
+    image:
+      'https://i.postimg.cc/NjjN06vS/fabio-silva-nm-Tm7kn-Unqs-unsplash.jpg',
   },
   {
     title: 'Thiết bị văn phòng',
-    image: 'https://i.postimg.cc/ZKVcXWvc/linus-mimietz-gvpt-Kmonylk-unsplash.jpg',
+    image:
+      'https://i.postimg.cc/ZKVcXWvc/linus-mimietz-gvpt-Kmonylk-unsplash.jpg',
   },
 ];
 
 const HomeScreen = () => {
-
   const [search, setSearch] = useState('');
   const [entries, setEntries] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -57,8 +71,7 @@ const HomeScreen = () => {
     setMajors(MAJORS);
   }, []);
 
-
-  const renderBanner = ({ item, index }) => {
+  const renderBanner = ({item, index}) => {
     return <BannerSlider data={item} />;
   };
 
@@ -68,8 +81,7 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.container}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
+          showsHorizontalScrollIndicator={false}>
           <View style={styles.searchForm}>
             <TextInput
               style={styles.searchInput}
@@ -77,7 +89,11 @@ const HomeScreen = () => {
               onChangeText={text => setSearch(text)}
               defaultValue={search}
             />
-            <Icon name="search" size={24} style={{ paddingTop: 12, alignItems: 'center' }} />
+            <Icon
+              name="search"
+              size={24}
+              style={{paddingTop: 12, alignItems: 'center'}}
+            />
           </View>
           <View>
             <Carousel
@@ -94,14 +110,31 @@ const HomeScreen = () => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <Text style={{ fontSize: 20, color: 'black', fontFamily: 'Poppins', fontWeight: '700' }}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: 'black',
+                fontFamily: 'Poppins',
+                fontWeight: '700',
+              }}>
               Dịch vụ sửa chữa nổi bật
             </Text>
-            <ForwardButton color='black' onPressHandler={console.log("a")} />
+            <ForwardButton color="black" onPressHandler={console.log('a')} />
           </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}>
             {majors.map((data, index) => {
-              return <MajorComponent key={index} data={data} onPressHandler={console.log('a')} />;
+              return (
+                <MajorComponent
+                  key={index}
+                  data={data}
+                  onPressHandler={console.log('a')}
+                />
+              );
             })}
           </View>
           <View
@@ -109,42 +142,92 @@ const HomeScreen = () => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <Text style={{ fontSize: 20, color: 'black', fontFamily: 'Poppins', fontWeight: '700' }}>
+            <Text
+              style={{
+                fontSize: 20,
+                color: 'black',
+                fontFamily: 'Poppins',
+                fontWeight: '700',
+              }}>
               Danh mục
             </Text>
-            <ForwardButton color='black' onPressHandler={console.log("a")} />
+            <ForwardButton color="black" onPressHandler={console.log('a')} />
           </View>
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            style={{ marginBottom: 50, marginTop: 10 }}>
+            style={{marginBottom: 50, marginTop: 10}}>
             <TouchableOpacity
-              style={{ backgroundColor: '#FEC54B', height: width * 0.22, width: width * 0.25, borderRadius: 18, alignItems: 'center', marginRight: 10 }}
-              onPress={console.log('a')}
-            >
-              <Image source={require('../../../assets/images/type/wrench.png')} style={{ width: 30, height: 30, marginTop: 20 }} />
-              <Text style={{ fontSize: 16, fontWeight: '700', color: 'black' }}>Dịch vụ</Text>
+              style={{
+                backgroundColor: '#FEC54B',
+                height: width * 0.22,
+                width: width * 0.25,
+                borderRadius: 18,
+                alignItems: 'center',
+                marginRight: 10,
+              }}
+              onPress={console.log('a')}>
+              <Image
+                source={require('../../../assets/images/type/wrench.png')}
+                style={{width: 30, height: 30, marginTop: 20}}
+              />
+              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
+                Dịch vụ
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ backgroundColor: '#FEC54B', height: width * 0.22, width: width * 0.25, borderRadius: 18, alignItems: 'center', marginHorizontal: 10 }}
-              onPress={console.log('a')}
-            >
-              <Image source={require('../../../assets/images/type/cpu.png')} style={{ width: 30, height: 30, marginTop: 20 }} />
-              <Text style={{ fontSize: 16, fontWeight: '700', color: 'black' }}>Linh kiện</Text>
+              style={{
+                backgroundColor: '#FEC54B',
+                height: width * 0.22,
+                width: width * 0.25,
+                borderRadius: 18,
+                alignItems: 'center',
+                marginHorizontal: 10,
+              }}
+              onPress={console.log('a')}>
+              <Image
+                source={require('../../../assets/images/type/cpu.png')}
+                style={{width: 30, height: 30, marginTop: 20}}
+              />
+              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
+                Linh kiện
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ backgroundColor: '#FEC54B', height: width * 0.22, width: width * 0.25, borderRadius: 18, alignItems: 'center', marginHorizontal: 10 }}
-              onPress={console.log('a')}
-            >
-              <Image source={require('../../../assets/images/type/discount.png')} style={{ width: 30, height: 30, marginTop: 20 }} />
-              <Text style={{ fontSize: 16, fontWeight: '700', color: 'black' }}>Ưu đãi</Text>
+              style={{
+                backgroundColor: '#FEC54B',
+                height: width * 0.22,
+                width: width * 0.25,
+                borderRadius: 18,
+                alignItems: 'center',
+                marginHorizontal: 10,
+              }}
+              onPress={console.log('a')}>
+              <Image
+                source={require('../../../assets/images/type/discount.png')}
+                style={{width: 30, height: 30, marginTop: 20}}
+              />
+              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
+                Ưu đãi
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ backgroundColor: '#FEC54B', height: width * 0.22, width: width * 0.25, borderRadius: 18, alignItems: 'center', marginLeft: 10 }}
-              onPress={console.log('a')}
-            >
-              <Image source={require('../../../assets/images/type/discount.png')} style={{ width: 30, height: 30, marginTop: 20 }} />
-              <Text style={{ fontSize: 16, fontWeight: '700', color: 'black' }}>Sự kiện</Text>
+              style={{
+                backgroundColor: '#FEC54B',
+                height: width * 0.22,
+                width: width * 0.25,
+                borderRadius: 18,
+                alignItems: 'center',
+                marginLeft: 10,
+              }}
+              onPress={console.log('a')}>
+              <Image
+                source={require('../../../assets/images/type/discount.png')}
+                style={{width: 30, height: 30, marginTop: 20}}
+              />
+              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
+                Sự kiện
+              </Text>
             </TouchableOpacity>
           </ScrollView>
         </ScrollView>
@@ -169,7 +252,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     backgroundColor: 'white',
     height: '100%',
-  }
+  },
 });
 
 export default HomeScreen;
