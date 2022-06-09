@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   Text,
   View,
@@ -19,6 +19,9 @@ import BackButton from '../../components/BackButton';
 import HeaderComponent from '../../components/HeaderComponent';
 import RNPickerSelect from 'react-native-picker-select';
 import {Context as AuthContext} from '../../context/AuthContext';
+import constants from '../../constants/Api';
+import Button from '../../components/Button';
+import axios from 'axios';
 
 function removeAscent(str) {
   if (str === null || str === undefined) {
@@ -36,14 +39,14 @@ function removeAscent(str) {
 }
 
 export default function RegisterScreen({navigation}) {
-  const {register, state} = useContext(AuthContext);
+  const {register, state, clearErrorMessage} = useContext(AuthContext);
   const [avatar, setAvatar] = useState(null);
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [homeAddress, setHomeAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [district, setDistrict] = useState('');
-  const [commune, setCommune] = useState('');
+  const [cityId, setCityId] = useState(null);
+  const [districtId, setDistrictId] = useState(null);
+  const [communeId, setCommuneId] = useState(null);
   const [password, setPassword] = useState('');
   const [coverPassword, setCoverPassword] = useState(true);
   const [repassword, setRepassword] = useState('');
@@ -53,6 +56,20 @@ export default function RegisterScreen({navigation}) {
   const [passwordInputError, setPasswordInputError] = useState(null);
   const [repasswordInputError, setRePasswordInputError] = useState(null);
   const [addressError, setAddressError] = useState(null);
+  const [listCity, setListCity] = useState([]);
+  const [listDistrict, setListDistrict] = useState([]);
+  const [listCommune, setListCommune] = useState([]);
+  useEffect(() => {
+    console.log(constants.GET_ALL_CITY_API);
+    (async () => {
+      try {
+        let response = await axios.get(constants.GET_ALL_CITY_API);
+        setListCity(response.data.cities);
+      } catch (err) {
+        setAddressError(err.message);
+      }
+    })();
+  }, []);
 
   const selectAvatar = () => {
     ImagePicker.openPicker({
@@ -94,7 +111,7 @@ export default function RegisterScreen({navigation}) {
     return true;
   };
   const checkAddressValid = () => {
-    if (city && district && commune) {
+    if (cityId && districtId && communeId) {
       setAddressError(null);
       return true;
     }
@@ -122,7 +139,45 @@ export default function RegisterScreen({navigation}) {
     setUsernameInputError(null);
     return true;
   };
+
+  const onchangeCity = async value => {
+    setCityId(value);
+    setDistrictId(null);
+    setCommuneId(null);
+    if (!value) {
+      setListDistrict([]);
+      setListCommune([]);
+      return;
+    }
+    try {
+      let response = await axios.get(constants.GET_DISTRICT_BY_CITY_API, {
+        params: {cityId: value},
+      });
+      setListDistrict(response.data.districts);
+    } catch (err) {
+      setAddressError(err.message);
+    }
+  };
+  const onchangeDistrict = async value => {
+    setDistrictId(value);
+    setCommuneId(null);
+    if (!value) {
+      setListCommune([]);
+      return;
+    }
+    try {
+      let response = await axios.get(constants.GET_COMMUNE_BY_DISTRICT_API, {
+        params: {districtId: value},
+      });
+      setListCommune(response.data.communes);
+    } catch (err) {
+      setAddressError(err.message);
+    }
+  };
   const registerHandler = () => {
+    if (state.errorMessage !== '') {
+      clearErrorMessage();
+    }
     let isUsernameValid = checkUsernameValid();
     let isAddressValid = checkAddressValid();
     let isPhoneValid = checkPhoneNumberValid();
@@ -137,9 +192,9 @@ export default function RegisterScreen({navigation}) {
         fullName: username,
         phone: phoneNumber,
         password,
-        cityId: '01',
-        districtId: '001',
-        communeId: '00001',
+        cityId,
+        districtId,
+        communeId,
         streetAddress: homeAddress,
       });
     }
@@ -170,7 +225,11 @@ export default function RegisterScreen({navigation}) {
             </ImageBackground>
             <Text style={styles.headerText}>Đăng Ký Tài Khoản</Text>
             <Text style={styles.inputTittle}>Họ và tên*</Text>
-            <View style={styles.inputView}>
+            <View
+              style={[
+                styles.inputView,
+                {borderColor: usernameInputError ? '#FF6442' : '#CACACA'},
+              ]}>
               <TextInput
                 style={styles.input}
                 onChangeText={text => setUsername(text)}
@@ -181,7 +240,11 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{usernameInputError}</Text>
             )}
             <Text style={styles.inputTittle}>Số điện thoại*</Text>
-            <View style={styles.inputView}>
+            <View
+              style={[
+                styles.inputView,
+                {borderColor: phoneInputError ? '#FF6442' : '#CACACA'},
+              ]}>
               <TextInput
                 style={styles.input}
                 onChangeText={text => setPhoneNumber(text)}
@@ -196,18 +259,16 @@ export default function RegisterScreen({navigation}) {
             <View style={styles.addressPicker}>
               <View style={styles.addressSelectItem}>
                 <RNPickerSelect
-                  onValueChange={value => setCity(value)}
+                  value={cityId}
+                  fixAndroidTouchableBug={true}
+                  onValueChange={onchangeCity}
                   placeholder={{
                     label: 'Tỉnh/Thành Phố',
                     value: null,
                   }}
                   useNativeAndroidPickerStyle={false}
                   style={styles.pickerStyle}
-                  items={[
-                    {label: 'Phú Thọ', value: 'football'},
-                    {label: 'Thái Nguyên', value: 'baseball'},
-                    {label: 'Hà Nội', value: 'hockey'},
-                  ]}
+                  items={listCity}
                   Icon={() => (
                     <Icon
                       name="caret-down"
@@ -220,12 +281,10 @@ export default function RegisterScreen({navigation}) {
               </View>
               <View style={styles.addressSelectItem}>
                 <RNPickerSelect
-                  onValueChange={value => setDistrict(value)}
-                  items={[
-                    {label: 'Phú Thọ', value: 'football'},
-                    {label: 'Thái Nguyên', value: 'baseball'},
-                    {label: 'Hà Nội', value: 'hockey'},
-                  ]}
+                  value={districtId}
+                  fixAndroidTouchableBug={true}
+                  onValueChange={onchangeDistrict}
+                  items={listDistrict}
                   placeholder={{
                     label: 'Quận/Huyện',
                     value: null,
@@ -244,12 +303,12 @@ export default function RegisterScreen({navigation}) {
               </View>
               <View style={styles.addressSelectItem}>
                 <RNPickerSelect
-                  onValueChange={value => setCommune(value)}
-                  items={[
-                    {label: 'Phú Thọ', value: 'football'},
-                    {label: 'Thái Nguyên', value: 'baseball'},
-                    {label: 'Hà Nội', value: 'hockey'},
-                  ]}
+                  value={communeId}
+                  fixAndroidTouchableBug={true}
+                  onValueChange={value => {
+                    setCommuneId(value);
+                  }}
+                  items={listCommune}
                   placeholder={{
                     label: 'Phường/Xã',
                     value: null,
@@ -280,7 +339,11 @@ export default function RegisterScreen({navigation}) {
               />
             </View>
             <Text style={styles.inputTittle}>Mật khẩu*</Text>
-            <View style={styles.inputView}>
+            <View
+              style={[
+                styles.inputView,
+                {borderColor: passwordInputError ? '#FF6442' : '#CACACA'},
+              ]}>
               <TextInput
                 style={[
                   styles.input,
@@ -305,7 +368,11 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{passwordInputError}</Text>
             )}
             <Text style={styles.inputTittle}>Nhập lại mật khẩu*</Text>
-            <View style={styles.inputView}>
+            <View
+              style={[
+                styles.inputView,
+                {borderColor: repasswordInputError ? '#FF6442' : '#CACACA'},
+              ]}>
               <TextInput
                 style={[
                   styles.input,
@@ -335,16 +402,19 @@ export default function RegisterScreen({navigation}) {
 
             <View style={styles.termContainer}>
               <Text>Bằng việc nhấn đăng ký là bạn đã chấp nhận</Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.push('TermsOfUseScreen');
+                }}>
                 <Text style={styles.termLink}>điều khoản</Text>
               </TouchableOpacity>
               <Text> sử dụng</Text>
             </View>
-            <TouchableOpacity
-              style={styles.registerButton}
-              onPress={registerHandler}>
-              <Text style={styles.buttonText}>ĐĂNG KÝ</Text>
-            </TouchableOpacity>
+            <Button
+              style={{marginTop: 20}}
+              onPress={registerHandler}
+              buttonText="ĐĂNG KÝ"
+            />
             <TouchableOpacity style={styles.loginView}>
               <Text style={styles.loginText}>Bạn đã có tài khoản? </Text>
               <Text
@@ -466,20 +536,6 @@ const styles = StyleSheet.create({
   termLink: {
     fontWeight: 'bold',
     color: '#FEC54B',
-  },
-
-  registerButton: {
-    marginTop: 20,
-    height: 0.075 * height,
-    borderRadius: 30,
-    backgroundColor: '#FEC54B',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'black',
   },
   loginView: {
     width: '100%',

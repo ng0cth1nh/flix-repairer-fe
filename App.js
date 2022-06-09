@@ -12,6 +12,9 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ConfirmOTPScreen from './src/screens/auth/ConfirmOTPScreen';
+import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
+import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
+import OrderScreen from './src/screens/order/OrderScreen';
 import {HomeScreen} from './src/screens/main/HomeScreen';
 
 import {
@@ -34,8 +37,6 @@ function App() {
   if (isLoading) {
     return <SplashScreen />;
   }
-  /* goBack() => remove from stack so use before remove listener,
-   and it not have blur because it is removed directly*/
   return (
     <NavigationContainer ref={navigationRef}>
       {state.token ? (
@@ -55,6 +56,7 @@ function App() {
               },
             }}
           />
+          <Stack.Screen name="OrderScreen" component={OrderScreen} />
           <Stack.Screen
             name="RegisterScreen"
             component={RegisterScreen}
@@ -66,6 +68,18 @@ function App() {
               },
             }}
           />
+          <Stack.Screen
+            name="ForgotPassScreen"
+            component={ForgotPassScreen}
+            listeners={{
+              focus: e => {
+                if (state.errorMessage !== '') {
+                  clearErrorMessage();
+                }
+              },
+            }}
+          />
+          <Stack.Screen name="TermsOfUseScreen" component={TermsOfUseScreen} />
           <Stack.Screen name="ConfirmOTPScreen" component={ConfirmOTPScreen} />
         </Stack.Navigator>
       )}

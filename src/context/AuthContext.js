@@ -2,6 +2,7 @@ import createDataContext from './createDataContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RootNavigation from '../RootNavigation';
 import {useCallback} from 'react';
+import constants from '../constants/Api';
 import axios from 'axios';
 import qs from 'qs';
 const authReducer = (state, action) => {
@@ -32,13 +33,12 @@ const TryLocalLogin = dispatch =>
 
 const register = dispatch => async params => {
   try {
-    await axios.post('http://10.0.2.2:8080/api/v1/register/customer', params);
+    await axios.post(constants.REGISTER_API, params);
     RootNavigation.push('ConfirmOTPScreen', {
       phone: params.phone,
       avatar: params.avatar,
     });
   } catch (err) {
-    console.log(err.message);
     dispatch({
       type: 'add_error',
       payload: 'something wrong with sign up : ' + err.message,
@@ -47,15 +47,35 @@ const register = dispatch => async params => {
 };
 const confirmOTP =
   dispatch =>
-  ({phone, otp, avatar}) => {
+  async ({phone, otp, avatar}) => {
     const formData = new FormData();
-    formData.append('phone', phone);
+    formData.append('username', phone);
     formData.append('otp', otp);
-    formData.append('avatar', {
-      uri: avatar.path,
-      type: avatar.mime,
-      name: avatar.path.split('\\').pop().split('/').pop(),
-    });
+    formData.append(
+      'avatar',
+      avatar
+        ? {
+            uri: avatar.path,
+            type: avatar.mime,
+            name: avatar.path.split('\\').pop().split('/').pop(),
+          }
+        : avatar,
+    );
+    try {
+      const response = await axios.post(constants.CONFIRM_OTP_API, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      await AsyncStorage.setItem('token', response.data.accessToken);
+      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+      dispatch({type: 'login', payload: response.data.accessToken});
+    } catch (err) {
+      dispatch({
+        type: 'add_error',
+        payload: 'something wrong OTP : ' + err.message,
+      });
+    }
   };
 
 const refreshToken = dispatch => async () => {
@@ -64,14 +84,11 @@ const refreshToken = dispatch => async () => {
     if (!refresh_token) {
       throw new Error();
     }
-    const response = await axios.get(
-      'http://10.0.2.2:8080/api/v1/token/refresh',
-      {
-        headers: {
-          Authorization: `Bearer ${refresh_token}`,
-        },
+    const response = await axios.get(constants.REFRESH_TOKEN_API, {
+      headers: {
+        Authorization: `Bearer ${refresh_token}`,
       },
-    );
+    });
     await AsyncStorage.setItem('token', response.data.accessToken);
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
     dispatch({type: 'login', payload: response.data.accessToken});
@@ -84,7 +101,7 @@ const refreshToken = dispatch => async () => {
 const login = dispatch => async params => {
   try {
     const response = await axios.post(
-      'http://10.0.2.2:8080/api/v1/login',
+      constants.LOGIN_API,
       qs.stringify(params),
       {
         headers: {
@@ -95,8 +112,6 @@ const login = dispatch => async params => {
     );
     await AsyncStorage.setItem('token', response.data.accessToken);
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-    console.log('token', response.data.accessToken);
-    console.log('refreshToken', response.data.refreshToken);
     dispatch({type: 'login', payload: response.data.accessToken});
   } catch (err) {
     let errMess;

@@ -12,10 +12,11 @@ import {Card} from 'react-native-shadow-cards';
 const {height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderComponent from '../../components/HeaderComponent';
+import Button from '../../components/Button';
 import {Context as AuthContext} from '../../context/AuthContext';
 
 export default function LoginScreen({navigation}) {
-  const {login, state} = useContext(AuthContext);
+  const {login, state, clearErrorMessage} = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [phoneInputError, setPhoneInputError] = useState(null);
@@ -47,6 +48,9 @@ export default function LoginScreen({navigation}) {
     return true;
   };
   const loginHandler = () => {
+    if (state.errorMessage !== '') {
+      clearErrorMessage();
+    }
     let phoneValid = checkPhoneNumberValid();
     let passwordValid = checkPasswordValid();
     const isValidForm = phoneValid && passwordValid;
@@ -61,7 +65,11 @@ export default function LoginScreen({navigation}) {
       <SafeAreaView>
         <Card cornerRadius={20} elevation={10} style={styles.loginForm}>
           <Text style={styles.headerText}>Đăng nhập</Text>
-          <View style={styles.inputView}>
+          <View
+            style={[
+              styles.inputView,
+              {borderColor: phoneInputError ? '#FF6442' : '#CACACA'},
+            ]}>
             <TextInput
               style={styles.input}
               placeholder="Số điện thoại"
@@ -74,7 +82,12 @@ export default function LoginScreen({navigation}) {
           {phoneInputError && (
             <Text style={styles.errorMessage}>{phoneInputError}</Text>
           )}
-          <View style={styles.inputView}>
+          {/* <ActivityIndicator size="large" animating={true} /> */}
+          <View
+            style={[
+              styles.inputView,
+              {borderColor: passwordInputError ? '#FF6442' : '#CACACA'},
+            ]}>
             <TextInput
               style={[
                 styles.input,
@@ -100,12 +113,18 @@ export default function LoginScreen({navigation}) {
           {state.errorMessage !== '' && (
             <Text style={styles.errorMessage}>{state.errorMessage}</Text>
           )}
-          <TouchableOpacity style={styles.forgotPassView}>
+          <TouchableOpacity
+            style={styles.forgotPassView}
+            onPress={() => {
+              navigation.push('ForgotPassScreen');
+            }}>
             <Text style={styles.forgotPassText}>Quên mật khẩu?</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.loginButton} onPress={loginHandler}>
-            <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
-          </TouchableOpacity>
+          <Button
+            style={{marginTop: 10}}
+            onPress={loginHandler}
+            buttonText="ĐĂNG NHẬP"
+          />
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Bạn chưa có tài khoản? </Text>
             <TouchableOpacity onPress={() => navigation.push('RegisterScreen')}>
@@ -146,7 +165,6 @@ const styles = StyleSheet.create({
     height: 0.075 * height,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: '#CACACA',
     paddingLeft: 18,
     paddingRight: 18,
     fontSize: 15,
@@ -185,18 +203,5 @@ const styles = StyleSheet.create({
     color: '#E67F1E',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  loginButton: {
-    marginTop: 10,
-    height: 0.075 * height,
-    borderRadius: 30,
-    backgroundColor: '#FEC54B',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'black',
   },
 });

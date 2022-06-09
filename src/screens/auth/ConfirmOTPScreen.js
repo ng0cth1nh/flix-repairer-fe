@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -7,17 +7,24 @@ import {
   Image,
   StatusBar,
   Dimensions,
-  TouchableOpacity,
 } from 'react-native';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
+import {Context as AuthContext} from '../../context/AuthContext';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackButton from '../../components/BackButton';
-const {width, height} = Dimensions.get('window');
+import Button from '../../components/Button';
+const {width} = Dimensions.get('window');
 export default function ConfirmOTPScreen({route, navigation}) {
+  const {confirmOTP, state, clearErrorMessage} = useContext(AuthContext);
   const {phone, avatar} = route.params;
   const [code, setCode] = useState('');
-
+  const handlerConfirmOTP = () => {
+    if (state.errorMessage !== '') {
+      clearErrorMessage();
+    }
+    confirmOTP({avatar, phone, otp: code});
+  };
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" />
@@ -44,17 +51,21 @@ export default function ConfirmOTPScreen({route, navigation}) {
           pinCount={6}
           onCodeChanged={pin => {
             setCode(pin);
-            console.log(code);
           }}
           autoFocusOnLoad
           codeInputFieldStyle={styles.otpTextStyle}
           codeInputHighlightStyle={styles.underlineStyleHighLighted}
         />
         <Text style={styles.resendOTP}>Gửi lại mã(16 giây)</Text>
+        {state.errorMessage !== '' && (
+          <Text style={styles.errorMessage}>{state.errorMessage}</Text>
+        )}
         <View style={styles.continueContainer}>
-          <TouchableOpacity style={styles.continueButton}>
-            <Text style={styles.buttonText}>TIẾP TỤC</Text>
-          </TouchableOpacity>
+          <Button
+            style={{marginBottom: 30, width: '80%', alignSelf: 'center'}}
+            onPress={handlerConfirmOTP}
+            buttonText="TIẾP TỤC"
+          />
         </View>
       </SafeAreaView>
     </>
@@ -135,19 +146,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  continueButton: {
-    marginBottom: 30,
-    width: '80%',
-    height: 0.075 * height,
-    borderRadius: 30,
-    backgroundColor: '#FEC54B',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'black',
+  errorMessage: {
+    marginTop: 30,
+    fontSize: 12,
+    color: '#FF6442',
+    paddingLeft: 20,
   },
 });
