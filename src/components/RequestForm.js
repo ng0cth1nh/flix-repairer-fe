@@ -27,6 +27,7 @@ const RequestForm = function ({
   description,
   setDiscription,
   editable,
+  isOrderIdVisible = false,
 }) {
   const [dateVisible, setDateVisible] = useState(false);
   const handlerDateConfirm = selectedDate => {
@@ -239,6 +240,37 @@ const RequestForm = function ({
           <Text style={{color: 'black', fontSize: 16}}>Tiền mặt</Text>
         </View>
       </View>
+      {isOrderIdVisible && (
+        <View
+          style={[
+            styles.box,
+            {height: 0.1 * height, flexDirection: 'column', marginTop: 10},
+          ]}>
+          <View style={styles.boxHeader}>
+            <Ionicons
+              name="information-circle-outline"
+              size={20}
+              style={{marginBottom: 3}}
+            />
+            <Text style={styles.tittleText}>Mã yêu cầu</Text>
+            <Text
+              style={{color: '#FEC54B', marginLeft: 'auto', marginBottom: 3}}>
+              FASG1212342
+            </Text>
+          </View>
+          <View
+            style={{
+              flex: 3,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
+              Thời gian
+            </Text>
+            <Text style={{marginLeft: 'auto'}}>13:05 - 20/05/2022</Text>
+          </View>
+        </View>
+      )}
       <View
         style={{
           paddingHorizontal: 10,

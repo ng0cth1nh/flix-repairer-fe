@@ -16,6 +16,7 @@ import ConfirmOTPScreen from './src/screens/auth/ConfirmOTPScreen';
 import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
 import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
 import OrderScreen from './src/screens/order/OrderScreen';
+import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
