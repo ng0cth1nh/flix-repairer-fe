@@ -45,6 +45,7 @@ function App() {
         </Stack.Navigator>
       ) : (
         <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="OrderScreen" component={OrderScreen} />
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}
@@ -56,7 +57,6 @@ function App() {
               },
             }}
           />
-          <Stack.Screen name="OrderScreen" component={OrderScreen} />
           <Stack.Screen
             name="RegisterScreen"
             component={RegisterScreen}
