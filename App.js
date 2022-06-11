@@ -20,7 +20,7 @@ import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
-import RequestHistoryScreen from './src/screens/main/RequestHistoryScreen';
+import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 
 import {
   requestUserPermission,
@@ -84,7 +84,7 @@ function App() {
             },
           })}>
           <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="RequestHistory" component={RequestHistoryScreen} />
+          <Tab.Screen name="RequestHistory" component={OrderHistoryScreen} />
           <Tab.Screen name="Notification" component={NotificationScreen} />
           <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>
