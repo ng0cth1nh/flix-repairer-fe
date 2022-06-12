@@ -20,7 +20,7 @@ import HeaderComponent from '../../components/HeaderComponent';
 import RNPickerSelect from 'react-native-picker-select';
 import {Context as AuthContext} from '../../context/AuthContext';
 import constants from '../../constants/Api';
-import Button from '../../components/Button';
+import Button from '../../components/SubmitButton';
 import axios from 'axios';
 
 function removeAscent(str) {

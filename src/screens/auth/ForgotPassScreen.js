@@ -13,7 +13,7 @@ const {height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderComponent from '../../components/HeaderComponent';
 import BackButton from '../../components/BackButton';
-import Button from '../../components/Button';
+import Button from '../../components/SubmitButton';
 
 export default function ForgotPassScreen({navigation}) {
   const [password, setPassword] = useState('');

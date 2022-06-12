@@ -20,7 +20,6 @@ const OrderDetailScreen = ({navigation}) => {
   function handlerButtonClick() {
     console.log(date);
   }
-  const test = handlerButtonClick.bind(RequestForm);
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -45,7 +44,7 @@ const OrderDetailScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <RequestForm
-          buttonClicked={test}
+          buttonClicked={handlerButtonClick}
           buttonText="Hủy yêu cầu"
           date={date}
           setDate={setDate}

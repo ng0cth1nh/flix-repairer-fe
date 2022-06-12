@@ -13,7 +13,7 @@ import {Context as AuthContext} from '../../context/AuthContext';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackButton from '../../components/BackButton';
-import Button from '../../components/Button';
+import Button from '../../components/SubmitButton';
 const {width} = Dimensions.get('window');
 export default function ConfirmOTPScreen({route, navigation}) {
   const {confirmOTP, state, clearErrorMessage} = useContext(AuthContext);

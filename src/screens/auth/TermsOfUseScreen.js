@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import BackButton from '../../components/BackButton';
-import Button from '../../components/Button';
+import Button from '../../components/SubmitButton';
 export default function TermsOfUseScreen({navigation}) {
   return (
     <>

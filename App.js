@@ -17,6 +17,7 @@ import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
 import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
 import OrderScreen from './src/screens/order/OrderScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
+import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
@@ -90,7 +91,6 @@ function App() {
         </Tab.Navigator>
       ) : (
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          <Stack.Screen name="OrderScreen" component={OrderScreen} />
           <Stack.Screen
             name="LoginScreen"
             component={LoginScreen}

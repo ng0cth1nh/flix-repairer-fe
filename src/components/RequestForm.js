@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const {height} = Dimensions.get('window');
 import CustomDatePicker from './CustomDatePicker';
-import Button from './Button';
+import Button from './SubmitButton';
 import moment from 'moment';
 
 const RequestForm = function ({

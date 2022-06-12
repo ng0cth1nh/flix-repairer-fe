@@ -12,7 +12,7 @@ import {Card} from 'react-native-shadow-cards';
 const {height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderComponent from '../../components/HeaderComponent';
-import Button from '../../components/Button';
+import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
 
 export default function LoginScreen({navigation}) {
