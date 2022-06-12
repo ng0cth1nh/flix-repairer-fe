@@ -1,7 +1,7 @@
 import React from 'react';
-import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {TouchableOpacity} from 'react-native';
 
 export default function BackButton({color, onPressHandler}) {
   return (
