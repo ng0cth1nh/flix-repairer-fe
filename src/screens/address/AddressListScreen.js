@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   StyleSheet,
   StatusBar,
-  TextInput,
   ScrollView,
   Dimensions,
   TouchableOpacity,
