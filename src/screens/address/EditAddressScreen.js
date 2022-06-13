@@ -34,7 +34,7 @@ const EditAddressScreen = ({navigation}) => {
           showModal={showModal}
         />
       </View>
-      {/* <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -65,7 +65,7 @@ const EditAddressScreen = ({navigation}) => {
             </View>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
     </>
   );
 };
