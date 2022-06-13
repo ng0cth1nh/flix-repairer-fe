@@ -16,11 +16,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from './SubmitButton';
 import BackButton from './BackButton';
 
-const CreateAddressForm = ({navigation, cityId, setCityId, isAddAddress}) => {
+const CreateAddressForm = ({
+  navigation,
+  cityId,
+  setCityId,
+  isAddAddress,
+  saveButtonClicked,
+  showModal,
+}) => {
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
-      <BackButton onPressHandler={navigation.goBack} color="black" />
       <SafeAreaView>
         <ScrollView style={{marginLeft: 20, marginRight: 20}}>
           <Text style={styles.headerText}>
@@ -149,16 +155,22 @@ const CreateAddressForm = ({navigation, cityId, setCityId, isAddAddress}) => {
                 </View>
               </View>
             </View>
+            {!isAddAddress && (
+              <Button
+                style={{marginTop: 10, marginBottom: 10}}
+                onPress={showModal}
+                buttonText="Xóa địa chỉ"
+              />
+            )}
           </View>
           <Button
             style={{marginTop: 20, marginBottom: 40}}
-            onPress={() => {
-              console.log('handle clicked');
-            }}
+            onPress={saveButtonClicked}
             buttonText={isAddAddress ? 'THÊM ĐỊA CHỈ' : 'LƯU LẠI'}
           />
         </ScrollView>
       </SafeAreaView>
+      <BackButton onPressHandler={navigation.goBack} color="black" />
     </View>
   );
 };

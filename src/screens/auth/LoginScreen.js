@@ -37,8 +37,10 @@ export default function LoginScreen({navigation}) {
     if (password.trim() === '') {
       setPasswordInputError('Vui lòng nhập mật khẩu!');
       return false;
-    } else if (password.length < 6 || password.length > 10) {
-      setPasswordInputError('Mật khẩu phải từ 6 đến 10 kí tự!');
+    } else if (!/((?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,10})\b/.test(password)) {
+      setPasswordInputError(
+        'Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!',
+      );
       return false;
     } else if (password.indexOf(' ') >= 0) {
       setPasswordInputError('Mật khẩu không bao gồm khoảng trắng!');

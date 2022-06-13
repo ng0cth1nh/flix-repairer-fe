@@ -20,6 +20,7 @@ import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import AddressListScreen from './src/screens/address/AddressListScreen';
+import EditAddressScreen from './src/screens/address/EditAddressScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
@@ -94,6 +95,10 @@ function App() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen
+              name="AddAddressScreen"
+              component={AddAddressScreen}
+            />
             <Stack.Screen
               name="LoginScreen"
               component={LoginScreen}
