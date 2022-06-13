@@ -33,50 +33,84 @@ const TryLocalLogin = dispatch =>
 
 const register = dispatch => async params => {
   try {
-    await axios.post(constants.REGISTER_API, params);
-    RootNavigation.push('ConfirmOTPScreen', {
-      phone: params.phone,
-      avatar: params.avatar,
-    });
+    await axios.post(constants.SEND_OTP_API, {phone: params.phone});
+    RootNavigation.push('ConfirmOTPScreen', params);
   } catch (err) {
+    let errMess;
+    switch (err.response.data.message) {
+      case 'ACCOUNT_EXISTED':
+        errMess = 'Tài khoản đăng kí đã tồn tại!';
+        break;
+      default:
+        errMess = 'Đăng kí không hợp lệ. Vui lòng thử lại sau!';
+    }
     dispatch({
       type: 'add_error',
-      payload: 'something wrong with sign up : ' + err.message,
+      payload: errMess,
     });
   }
 };
-const confirmOTP =
-  dispatch =>
-  async ({phone, otp, avatar}) => {
-    const formData = new FormData();
-    formData.append('username', phone);
-    formData.append('otp', otp);
-    formData.append(
-      'avatar',
-      avatar
-        ? {
-            uri: avatar.path,
-            type: avatar.mime,
-            name: avatar.path.split('\\').pop().split('/').pop(),
-          }
-        : avatar,
-    );
-    try {
-      const response = await axios.post(constants.CONFIRM_OTP_API, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      await AsyncStorage.setItem('token', response.data.accessToken);
-      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-      dispatch({type: 'login', payload: response.data.accessToken});
-    } catch (err) {
-      dispatch({
-        type: 'add_error',
-        payload: 'something wrong OTP : ' + err.message,
-      });
+const confirmOTP = dispatch => async params => {
+  console.log(params);
+  const formData = new FormData();
+  formData.append('phone', params.phone);
+  formData.append('otp', params.otp);
+  formData.append(
+    'avatar',
+    params.avatar
+      ? {
+          uri: params.avatar.path,
+          type: params.avatar.mime,
+          name: params.avatar.path.split('\\').pop().split('/').pop(),
+        }
+      : params.avatar,
+  );
+  formData.append('fullName', params.fullName);
+  formData.append('password', params.password);
+  formData.append('cityId', params.cityId);
+  formData.append('districtId', params.districtId);
+  formData.append('communeId', params.communeId);
+  formData.append('streetAddress', params.streetAddress);
+  formData.append('roleType', 'ROLE_CUSTOMER');
+  try {
+    const res = await axios.post(constants.CONFIRM_OTP_API, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    await AsyncStorage.setItem('token', res.data.accessToken);
+    await AsyncStorage.setItem('refreshToken', res.data.refreshToken);
+    dispatch({type: 'login', payload: res.data.accessToken});
+  } catch (err) {
+    let errMess;
+    switch (err.response.data.message) {
+      case 'INVALID_OTP':
+        errMess = 'Mã OTP không hợp lệ!';
+        break;
+      case 'INVALID_PHONE_NUMBER':
+        errMess = 'Số điện thoại đăng kí không hợp lệ!';
+        break;
+      case 'INVALID_PASSWORD':
+        errMess = 'Mật khẩu đăng kí không hợp lệ!';
+        break;
+      case 'INVALID_CITY':
+        errMess = 'Địa chỉ thành phố không tồn tại!';
+        break;
+      case 'INVALID_DISTRICT':
+        errMess = 'Địa chỉ Quận/Huyện không tồn tại!';
+        break;
+      case 'INVALID_COMMUNE':
+        errMess = 'Địa chỉ Phường/Xã không tồn tại!';
+        break;
+      default:
+        errMess = 'Đăng kí không hợp lệ. Vui lòng thử lại sau!';
     }
-  };
+    dispatch({
+      type: 'add_error',
+      payload: errMess,
+    });
+  }
+};
 
 const refreshToken = dispatch => async () => {
   try {
@@ -115,14 +149,11 @@ const login = dispatch => async params => {
     dispatch({type: 'login', payload: response.data.accessToken});
   } catch (err) {
     let errMess;
-    if (err.response.status === 403) {
+    if (err.response.data.message === 'LOGIN_FAILED') {
       errMess = 'Đăng nhập thất bại.Tài khoản hoặc mật khẩu không đúng!';
-    } else if (err.response.status > 400 && err.response.status < 500) {
-      errMess = 'Yêu cầu không hợp lệ!';
     } else {
-      errMess = 'Hệ thống đang xảy ra sự cố. Vui lòng thử lại sau!';
+      errMess = 'Không thể đăng nhập. Vui lòng thử lại sau!';
     }
-    console.log(errMess);
     dispatch({
       type: 'add_error',
       payload: errMess,

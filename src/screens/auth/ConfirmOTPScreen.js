@@ -17,13 +17,13 @@ import Button from '../../components/SubmitButton';
 const {width} = Dimensions.get('window');
 export default function ConfirmOTPScreen({route, navigation}) {
   const {confirmOTP, state, clearErrorMessage} = useContext(AuthContext);
-  const {phone, avatar} = route.params;
+  const {phone} = route.params;
   const [code, setCode] = useState('');
   const handlerConfirmOTP = () => {
     if (state.errorMessage !== '') {
       clearErrorMessage();
     }
-    confirmOTP({avatar, phone, otp: code});
+    confirmOTP({...route.params, otp: code});
   };
   return (
     <>

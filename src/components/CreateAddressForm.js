@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Text,
   View,
@@ -25,150 +25,156 @@ const CreateAddressForm = ({
   showModal,
 }) => {
   return (
-    <View style={{backgroundColor: 'white', flex: 1}}>
+    <View style={{backgroundColor: 'white'}}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <SafeAreaView>
-        <ScrollView style={{marginLeft: 20, marginRight: 20}}>
-          <Text style={styles.headerText}>
-            {isAddAddress ? 'Thêm địa chỉ' : 'Sửa địa chỉ'}
-          </Text>
-          <View
+        <View>
+          <ScrollView
             style={{
-              borderBottomWidth: 1,
-              borderBottomColor: '#CACACA',
-              paddingBottom: 10,
+              paddingLeft: 20,
+              paddingRight: 20,
             }}>
+            <Text style={styles.headerText}>
+              {isAddAddress ? 'Thêm địa chỉ' : 'Sửa địa chỉ'}
+            </Text>
             <View
-              style={[
-                styles.box,
-                {height: 'auto', flexDirection: 'column', marginTop: 10},
-              ]}>
-              <View style={styles.boxHeader}>
-                <Icon name="user-o" size={25} />
-                <Text style={styles.tittleText}>Thông tin khách hàng</Text>
-              </View>
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Họ và tên</Text>
-                <View style={styles.valueSpace}>
-                  <TextInput
-                    style={styles.valueText}
-                    placeholder="Nhập họ và tên"
-                  />
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: '#CACACA',
+                paddingBottom: 10,
+              }}>
+              <View
+                style={[
+                  styles.box,
+                  {height: 'auto', flexDirection: 'column', marginTop: 10},
+                ]}>
+                <View style={styles.boxHeader}>
+                  <Icon name="user-o" size={25} />
+                  <Text style={styles.tittleText}>Thông tin khách hàng</Text>
+                </View>
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Họ và tên</Text>
+                  <View style={styles.valueSpace}>
+                    <TextInput
+                      style={styles.valueText}
+                      placeholder="Nhập họ và tên"
+                    />
+                  </View>
+                </View>
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Số điện thoại liên lạc</Text>
+                  <View style={styles.valueSpace}>
+                    <TextInput
+                      style={styles.valueText}
+                      placeholder="Nhập số điện thoại"
+                    />
+                  </View>
                 </View>
               </View>
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Số điện thoại liên lạc</Text>
-                <View style={styles.valueSpace}>
-                  <TextInput
-                    style={styles.valueText}
-                    placeholder="Nhập số điện thoại"
-                  />
+              <View
+                style={[
+                  styles.box,
+                  {height: 'auto', flexDirection: 'column', marginTop: 10},
+                ]}>
+                <View style={styles.boxHeader}>
+                  <Ionicons name="location-outline" size={25} />
+                  <Text style={styles.tittleText}>Địa chỉ</Text>
                 </View>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.box,
-                {height: 'auto', flexDirection: 'column', marginTop: 10},
-              ]}>
-              <View style={styles.boxHeader}>
-                <Ionicons name="location-outline" size={25} />
-                <Text style={styles.tittleText}>Địa chỉ</Text>
-              </View>
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Tỉnh/Thành Phố</Text>
-                <View style={styles.valueSpace}>
-                  <RNPickerSelect
-                    value={cityId}
-                    fixAndroidTouchableBug={true}
-                    onValueChange={value => setCityId(value)}
-                    placeholder={{
-                      label: 'Tỉnh/Thành Phố',
-                      value: null,
-                    }}
-                    useNativeAndroidPickerStyle={false}
-                    style={styles.pickerStyle}
-                    items={[{label: 'Phú Thọ', value: 'thang'}]}
-                    Icon={() => (
-                      <Icon
-                        name="caret-down"
-                        size={20}
-                        style={{marginTop: 10}}
-                      />
-                    )}
-                  />
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Tỉnh/Thành Phố</Text>
+                  <View style={styles.valueSpace}>
+                    <RNPickerSelect
+                      value={cityId}
+                      fixAndroidTouchableBug={true}
+                      onValueChange={value => setCityId(value)}
+                      placeholder={{
+                        label: 'Tỉnh/Thành Phố',
+                        value: null,
+                      }}
+                      useNativeAndroidPickerStyle={false}
+                      style={styles.pickerStyle}
+                      items={[{label: 'Phú Thọ', value: 'thang'}]}
+                      Icon={() => (
+                        <Icon
+                          name="caret-down"
+                          size={20}
+                          style={{marginTop: 10}}
+                        />
+                      )}
+                    />
+                  </View>
                 </View>
-              </View>
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Quận/Huyện</Text>
-                <View style={styles.valueSpace}>
-                  <RNPickerSelect
-                    value={cityId}
-                    fixAndroidTouchableBug={true}
-                    onValueChange={value => setCityId(value)}
-                    placeholder={{
-                      label: 'Quận/Huyện',
-                      value: null,
-                    }}
-                    useNativeAndroidPickerStyle={false}
-                    style={styles.pickerStyle}
-                    items={[{label: 'Phú Thọ', value: 'thang'}]}
-                    Icon={() => (
-                      <Icon
-                        name="caret-down"
-                        size={20}
-                        style={{marginTop: 10}}
-                      />
-                    )}
-                  />
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Quận/Huyện</Text>
+                  <View style={styles.valueSpace}>
+                    <RNPickerSelect
+                      value={cityId}
+                      fixAndroidTouchableBug={true}
+                      onValueChange={value => setCityId(value)}
+                      placeholder={{
+                        label: 'Quận/Huyện',
+                        value: null,
+                      }}
+                      useNativeAndroidPickerStyle={false}
+                      style={styles.pickerStyle}
+                      items={[{label: 'Phú Thọ', value: 'thang'}]}
+                      Icon={() => (
+                        <Icon
+                          name="caret-down"
+                          size={20}
+                          style={{marginTop: 10}}
+                        />
+                      )}
+                    />
+                  </View>
                 </View>
-              </View>
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Phường/Xã</Text>
-                <View style={styles.valueSpace}>
-                  <RNPickerSelect
-                    value={cityId}
-                    fixAndroidTouchableBug={true}
-                    onValueChange={value => setCityId(value)}
-                    placeholder={{
-                      label: 'Phường/Xã',
-                      value: null,
-                    }}
-                    useNativeAndroidPickerStyle={false}
-                    style={styles.pickerStyle}
-                    items={[{label: 'Phú Thọ', value: 'thang'}]}
-                    Icon={() => (
-                      <Icon
-                        name="caret-down"
-                        size={20}
-                        style={{marginTop: 10}}
-                      />
-                    )}
-                  />
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Phường/Xã</Text>
+                  <View style={styles.valueSpace}>
+                    <RNPickerSelect
+                      value={cityId}
+                      fixAndroidTouchableBug={true}
+                      onValueChange={value => setCityId(value)}
+                      placeholder={{
+                        label: 'Phường/Xã',
+                        value: null,
+                      }}
+                      useNativeAndroidPickerStyle={false}
+                      style={styles.pickerStyle}
+                      items={[{label: 'Phú Thọ', value: 'thang'}]}
+                      Icon={() => (
+                        <Icon
+                          name="caret-down"
+                          size={20}
+                          style={{marginTop: 10}}
+                        />
+                      )}
+                    />
+                  </View>
                 </View>
-              </View>
 
-              <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Địa chỉ chi tiết</Text>
-                <View style={styles.valueSpace}>
-                  <TextInput style={styles.valueText} />
+                <View style={styles.inputField}>
+                  <Text style={styles.inputLabel}>Địa chỉ chi tiết</Text>
+                  <View style={styles.valueSpace}>
+                    <TextInput style={styles.valueText} />
+                  </View>
                 </View>
               </View>
+              {!isAddAddress && (
+                <Button
+                  style={{marginTop: 10, marginBottom: 10}}
+                  onPress={showModal}
+                  buttonText="Xóa địa chỉ"
+                />
+              )}
             </View>
-            {!isAddAddress && (
-              <Button
-                style={{marginTop: 10, marginBottom: 10}}
-                onPress={showModal}
-                buttonText="Xóa địa chỉ"
-              />
-            )}
-          </View>
-          <Button
-            style={{marginTop: 20, marginBottom: 40}}
-            onPress={saveButtonClicked}
-            buttonText={isAddAddress ? 'THÊM ĐỊA CHỈ' : 'LƯU LẠI'}
-          />
-        </ScrollView>
+            <Button
+              style={{marginTop: 20, marginBottom: 40}}
+              onPress={saveButtonClicked}
+              buttonText={isAddAddress ? 'THÊM ĐỊA CHỈ' : 'LƯU LẠI'}
+            />
+          </ScrollView>
+        </View>
       </SafeAreaView>
       <BackButton onPressHandler={navigation.goBack} color="black" />
     </View>

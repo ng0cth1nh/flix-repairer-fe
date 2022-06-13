@@ -96,10 +96,6 @@ function App() {
         ) : (
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen
-              name="AddAddressScreen"
-              component={AddAddressScreen}
-            />
-            <Stack.Screen
               name="LoginScreen"
               component={LoginScreen}
               listeners={{
