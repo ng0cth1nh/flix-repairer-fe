@@ -17,6 +17,7 @@ import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
 import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
 import OrderScreen from './src/screens/order/OrderScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
+import ChoosePaymentMethodScreen from './src/screens/order/ChoosePaymentMethodScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import AddressListScreen from './src/screens/address/AddressListScreen';
@@ -95,6 +96,10 @@ function App() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen
+              name="ChoosePaymentMethodScreen"
+              component={ChoosePaymentMethodScreen}
+            />
             <Stack.Screen
               name="LoginScreen"
               component={LoginScreen}
