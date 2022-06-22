@@ -1,20 +1,12 @@
 import React, {useState} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  StyleSheet,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, View, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import BackButton from '../../components/BackButton';
 import RequestForm from '../../components/RequestForm';
 
-const OrderDetailScreen = ({navigation}) => {
+const RequestDetailScreen = ({navigation}) => {
   const [date, setDate] = useState(moment());
   const [description, setDiscription] = useState('');
   function handlerButtonClick() {
@@ -33,25 +25,21 @@ const OrderDetailScreen = ({navigation}) => {
             width: '100%',
             borderBottomWidth: 1,
             borderBottomColor: '#CACACA',
-            marginBottom: 10,
             paddingRight: 20,
           }}>
           <View style={{flex: 1, marginLeft: 20}}>
             <Text style={styles.headerText}>Yêu cầu sửa chữa</Text>
           </View>
-          <TouchableOpacity style={{marginLeft: 'auto'}}>
-            <Icon name="edit" size={30} style={{color: 'black'}} />
-          </TouchableOpacity>
         </View>
         <RequestForm
           buttonClicked={handlerButtonClick}
-          buttonText="Hủy yêu cầu"
+          buttonText="Cập nhật trạng thái"
           date={date}
           setDate={setDate}
           description={description}
           setDiscription={setDiscription}
           editable={false}
-          isOrderIdVisible={true}
+          isRequestIdVisible={true}
         />
       </SafeAreaView>
     </View>
@@ -68,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderDetailScreen;
+export default RequestDetailScreen;

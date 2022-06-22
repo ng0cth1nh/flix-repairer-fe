@@ -11,17 +11,22 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
+import axios from 'axios';
 import {Card} from 'react-native-shadow-cards';
 import ImagePicker from 'react-native-image-crop-picker';
-const {height, width} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {RadioButton} from 'react-native-paper';
+import RNPickerSelect from 'react-native-picker-select';
+import moment from 'moment';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+const {height, width} = Dimensions.get('window');
+
+import {Context as AuthContext} from '../../context/AuthContext';
 import BackButton from '../../components/BackButton';
 import HeaderComponent from '../../components/HeaderComponent';
-import RNPickerSelect from 'react-native-picker-select';
-import {Context as AuthContext} from '../../context/AuthContext';
 import constants from '../../constants/Api';
 import Button from '../../components/SubmitButton';
-import axios from 'axios';
 
 function removeAscent(str) {
   if (str === null || str === undefined) {
@@ -43,10 +48,14 @@ export default function RegisterScreen({navigation}) {
   const [avatar, setAvatar] = useState(null);
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [checked, setChecked] = useState('male');
+  const [date, setDate] = useState(moment());
+  const [dateVisible, setDateVisible] = useState(false);
   const [homeAddress, setHomeAddress] = useState('');
   const [cityId, setCityId] = useState(null);
   const [districtId, setDistrictId] = useState(null);
   const [communeId, setCommuneId] = useState(null);
+  const [IDCard, setIDCard] = useState(null);
   const [password, setPassword] = useState('');
   const [coverPassword, setCoverPassword] = useState(true);
   const [repassword, setRepassword] = useState('');
@@ -60,7 +69,6 @@ export default function RegisterScreen({navigation}) {
   const [listDistrict, setListDistrict] = useState([]);
   const [listCommune, setListCommune] = useState([]);
   useEffect(() => {
-    console.log(constants.GET_ALL_CITY_API);
     (async () => {
       try {
         let response = await axios.get(constants.GET_ALL_CITY_API);
@@ -95,6 +103,13 @@ export default function RegisterScreen({navigation}) {
     }
     setPhoneInputError(null);
     return true;
+  };
+  const handlerDateConfirm = selectedDate => {
+    setDate(moment(selectedDate));
+    setDateVisible(false);
+  };
+  const hideDatePicker = () => {
+    setDateVisible(false);
   };
   const checkPasswordValid = () => {
     if (password.trim() === '') {
@@ -257,6 +272,76 @@ export default function RegisterScreen({navigation}) {
             {phoneInputError && (
               <Text style={styles.errorMessage}>{phoneInputError}</Text>
             )}
+            <Text style={styles.inputTittle}>Giới tính*</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginTop: 10,
+              }}>
+              <View style={styles.checkBoxView}>
+                <RadioButton
+                  value="male"
+                  status={checked === 'male' ? 'checked' : 'unchecked'}
+                  color="#FFBC00"
+                  onPress={() => {
+                    setChecked('male');
+                  }}
+                />
+                <Text>Nam</Text>
+              </View>
+              <View style={styles.checkBoxView}>
+                <RadioButton
+                  value="female"
+                  status={checked === 'female' ? 'checked' : 'unchecked'}
+                  color="#FFBC00"
+                  onPress={() => {
+                    setChecked('female');
+                  }}
+                />
+                <Text>Nữ</Text>
+              </View>
+              <View style={styles.checkBoxView}>
+                <RadioButton
+                  value="other"
+                  status={checked === 'other' ? 'checked' : 'unchecked'}
+                  color="#FFBC00"
+                  onPress={() => {
+                    setChecked('other');
+                  }}
+                />
+                <Text>Khác</Text>
+              </View>
+            </View>
+            <Text style={styles.inputTittle}>Ngày sinh*</Text>
+            <View>
+              <View style={{marginTop: 10}}>
+                <TouchableOpacity
+                  style={styles.datePicker}
+                  onPress={() => setDateVisible(true)}>
+                  <Text style={styles.textBold}>
+                    {date.format('DD/MM/YYYY')}
+                  </Text>
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 3,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
+                  <DateTimePickerModal
+                    isVisible={dateVisible}
+                    mode="date"
+                    onConfirm={handlerDateConfirm}
+                    onCancel={hideDatePicker}
+                    minimumDate={new Date(moment())}
+                    maximumDate={new Date(moment().add(120, 'days'))}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
             <Text style={styles.inputTittle}>Địa chỉ*</Text>
             <View style={styles.addressPicker}>
               <View style={styles.addressSelectItem}>
@@ -331,7 +416,6 @@ export default function RegisterScreen({navigation}) {
             {addressError && (
               <Text style={styles.errorMessage}>{addressError}</Text>
             )}
-
             <View style={styles.inputView}>
               <TextInput
                 style={styles.input}
@@ -340,6 +424,22 @@ export default function RegisterScreen({navigation}) {
                 value={homeAddress}
               />
             </View>
+            <Text style={styles.inputTittle}>Số CMND/CCCD*</Text>
+            <View
+              style={[
+                styles.inputView,
+                {borderColor: phoneInputError ? '#FF6442' : '#CACACA'},
+              ]}>
+              <TextInput
+                style={styles.input}
+                onChangeText={text => setIDCard(text)}
+                value={IDCard}
+                keyboardType="number-pad"
+                placeholder="Nhập số cccd"
+              />
+            </View>
+            <Text style={styles.inputTittle}>Ảnh hai mặt CMND/CCCD*</Text>
+
             <Text style={styles.inputTittle}>Mật khẩu*</Text>
             <View
               style={[
@@ -401,7 +501,6 @@ export default function RegisterScreen({navigation}) {
             {state.errorMessage !== '' && (
               <Text style={styles.errorMessage}>{state.errorMessage}</Text>
             )}
-
             <View style={styles.termContainer}>
               <Text>Bằng việc nhấn đăng ký là bạn đã chấp nhận</Text>
               <TouchableOpacity
@@ -556,5 +655,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#FF6442',
     paddingLeft: 20,
+  },
+  checkBoxView: {
+    flexDirection: 'row',
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  datePicker: {
+    flexDirection: 'row',
+    height: 0.075 * height,
+    borderRadius: 30,
+    alignItems: 'center',
+    textAlign: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: '#CACACA',
   },
 });

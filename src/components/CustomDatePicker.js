@@ -5,7 +5,7 @@ const CustomDatePicker = props => {
   return (
     <DateTimePickerModal
       isVisible={props.isVisible}
-      mode="date"
+      mode="datetime"
       onConfirm={props.handleConfirm}
       onCancel={props.hideDatePicker}
       minimumDate={new Date(moment())}

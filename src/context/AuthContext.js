@@ -5,6 +5,7 @@ import {useCallback} from 'react';
 import constants from '../constants/Api';
 import axios from 'axios';
 import qs from 'qs';
+import getErrorMessage from '../utils/getErrorMessage';
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'add_error':
@@ -36,17 +37,9 @@ const register = dispatch => async params => {
     await axios.post(constants.SEND_OTP_API, {phone: params.phone});
     RootNavigation.push('ConfirmOTPScreen', params);
   } catch (err) {
-    let errMess;
-    switch (err.response.data.message) {
-      case 'ACCOUNT_EXISTED':
-        errMess = 'Tài khoản đăng kí đã tồn tại!';
-        break;
-      default:
-        errMess = 'Đăng kí không hợp lệ. Vui lòng thử lại sau!';
-    }
     dispatch({
       type: 'add_error',
-      payload: errMess,
+      payload: getErrorMessage(err),
     });
   }
 };
@@ -82,32 +75,9 @@ const confirmOTP = dispatch => async params => {
     await AsyncStorage.setItem('refreshToken', res.data.refreshToken);
     dispatch({type: 'login', payload: res.data.accessToken});
   } catch (err) {
-    let errMess;
-    switch (err.response.data.message) {
-      case 'INVALID_OTP':
-        errMess = 'Mã OTP không hợp lệ!';
-        break;
-      case 'INVALID_PHONE_NUMBER':
-        errMess = 'Số điện thoại đăng kí không hợp lệ!';
-        break;
-      case 'INVALID_PASSWORD':
-        errMess = 'Mật khẩu đăng kí không hợp lệ!';
-        break;
-      case 'INVALID_CITY':
-        errMess = 'Địa chỉ thành phố không tồn tại!';
-        break;
-      case 'INVALID_DISTRICT':
-        errMess = 'Địa chỉ Quận/Huyện không tồn tại!';
-        break;
-      case 'INVALID_COMMUNE':
-        errMess = 'Địa chỉ Phường/Xã không tồn tại!';
-        break;
-      default:
-        errMess = 'Đăng kí không hợp lệ. Vui lòng thử lại sau!';
-    }
     dispatch({
       type: 'add_error',
-      payload: errMess,
+      payload: getErrorMessage(err),
     });
   }
 };
@@ -148,15 +118,9 @@ const login = dispatch => async params => {
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
     dispatch({type: 'login', payload: response.data.accessToken});
   } catch (err) {
-    let errMess;
-    if (err.response.data.message === 'LOGIN_FAILED') {
-      errMess = 'Đăng nhập thất bại.Tài khoản hoặc mật khẩu không đúng!';
-    } else {
-      errMess = 'Không thể đăng nhập. Vui lòng thử lại sau!';
-    }
     dispatch({
       type: 'add_error',
-      payload: errMess,
+      payload: getErrorMessage(err),
     });
   }
 };

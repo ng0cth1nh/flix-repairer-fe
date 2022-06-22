@@ -15,10 +15,13 @@ import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ConfirmOTPScreen from './src/screens/auth/ConfirmOTPScreen';
 import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
 import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
-import OrderScreen from './src/screens/order/OrderScreen';
-import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
-import ChoosePaymentMethodScreen from './src/screens/order/ChoosePaymentMethodScreen';
-import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
+import AddRequestScreen from './src/screens/request/AddRequestScreen';
+import RequestDetailScreen from './src/screens/request/RequestDetailScreen';
+import ChoosePaymentMethodScreen from './src/screens/request/ChoosePaymentMethodScreen';
+import RequestHistoryScreen from './src/screens/request/RequestHistoryScreen';
+import AddFixedServiceScreen from './src/screens/request/AddFixedServiceScreen';
+import AddExtraServiceScreen from './src/screens/request/AddExtraServiceScreen';
+import AddFixedAccessoriesScreen from './src/screens/request/AddFixedAccessoriesScreen';
 import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import AddressListScreen from './src/screens/address/AddressListScreen';
 import EditAddressScreen from './src/screens/address/EditAddressScreen';
@@ -52,7 +55,8 @@ function App() {
   return (
     <>
       <NavigationContainer ref={navigationRef}>
-        {state.token ? (
+        {/* state.token */}
+        {true ? (
           <Tab.Navigator
             tabBarOptions={{
               showLabel: false,
@@ -90,12 +94,30 @@ function App() {
               },
             })}>
             <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="RequestHistory" component={OrderHistoryScreen} />
+            <Tab.Screen
+              name="RequestHistory"
+              component={RequestHistoryScreen}
+            />
             <Tab.Screen name="Notification" component={NotificationScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen
+              name="EditAddressScreen"
+              component={EditAddressScreen}
+            />
+            <Stack.Screen
+              name="RegisterScreen"
+              component={RegisterScreen}
+              listeners={{
+                focus: e => {
+                  if (state.errorMessage !== '') {
+                    clearErrorMessage();
+                  }
+                },
+              }}
+            />
             <Stack.Screen
               name="ChoosePaymentMethodScreen"
               component={ChoosePaymentMethodScreen}
@@ -111,17 +133,7 @@ function App() {
                 },
               }}
             />
-            <Stack.Screen
-              name="RegisterScreen"
-              component={RegisterScreen}
-              listeners={{
-                focus: e => {
-                  if (state.errorMessage !== '') {
-                    clearErrorMessage();
-                  }
-                },
-              }}
-            />
+
             <Stack.Screen
               name="ForgotPassScreen"
               component={ForgotPassScreen}

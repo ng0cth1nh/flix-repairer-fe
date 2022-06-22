@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -26,8 +27,7 @@ const RequestForm = function ({
   setDate,
   description,
   setDiscription,
-  editable,
-  isOrderIdVisible = false,
+  isRequestIdVisible = false,
 }) {
   const [dateVisible, setDateVisible] = useState(false);
   const handlerDateConfirm = selectedDate => {
@@ -38,24 +38,54 @@ const RequestForm = function ({
     setDateVisible(false);
   };
   return (
-    <ScrollView style={{marginLeft: 20, marginRight: 20}}>
-      <View
-        style={[styles.box, {height: 0.25 * height, flexDirection: 'column'}]}>
+    <ScrollView style={{marginHorizontal: 20}}>
+      <View style={[styles.box, {minHeight: 0.25 * height}]}>
         <View style={styles.boxHeader}>
-          <Icon name="tools" size={20} style={{marginBottom: 3}} />
-          <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
-          {editable && (
-            <TouchableOpacity style={styles.editTouch}>
-              <Text style={styles.editText}>Thay đổi</Text>
-            </TouchableOpacity>
-          )}
+          <FontAwesome name="user-o" size={20} style={{marginBottom: 3}} />
+          <Text style={styles.tittleText}>Khách hàng</Text>
         </View>
         <View style={styles.boxBody}>
           <Image
             source={require('../../assets/images/login_register_bg/bg.png')}
             style={{
-              height: '70%',
               width: '25%',
+              aspectRatio: 0.85,
+              alignSelf: 'center',
+              borderRadius: 10,
+              marginLeft: 15,
+            }}
+          />
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <View style={styles.boxBodyContent}>
+              <Text style={[styles.textBold, {fontSize: 16}]}>
+                Nguyễn Văn Anh
+              </Text>
+              <Text style={[styles.textBold, {fontSize: 16}]}>0812378899</Text>
+              <Text style={{color: 'black', marginBottom: 5}}>
+                123 Minh Khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội
+              </Text>
+              <TouchableOpacity
+                style={[styles.viewServiceButton, {width: '70%'}]}>
+                <Text style={[styles.textBold, {textAlign: 'center'}]}>
+                  Nhắn tin với khách
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={[styles.box, {height: 0.25 * height, flexDirection: 'column'}]}>
+        <View style={styles.boxHeader}>
+          <Icon name="tools" size={20} style={{marginBottom: 3}} />
+          <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
+        </View>
+        <View style={styles.boxBody}>
+          <Image
+            source={require('../../assets/images/login_register_bg/bg.png')}
+            style={{
+              width: '25%',
+              aspectRatio: 0.9,
               alignSelf: 'center',
               borderRadius: 10,
               marginLeft: 15,
@@ -74,7 +104,8 @@ const RequestForm = function ({
                   alignItems: 'center',
                 }}>
                 <Text style={styles.textBold}>200,000 vnđ</Text>
-                <TouchableOpacity style={styles.viewServiceButton}>
+                <TouchableOpacity
+                  style={[styles.viewServiceButton, {marginLeft: 'auto'}]}>
                   <Text style={styles.textBold}>Xem giá dịch vụ</Text>
                 </TouchableOpacity>
               </View>
@@ -83,41 +114,7 @@ const RequestForm = function ({
         </View>
       </View>
       <View
-        style={[
-          styles.box,
-          {height: 0.2 * height, flexDirection: 'column', marginTop: 10},
-        ]}>
-        <View style={styles.boxHeader}>
-          <Ionicons
-            name="location-outline"
-            size={20}
-            style={{marginBottom: 3}}
-          />
-          <Text style={styles.tittleText}>Địa chỉ của bạn</Text>
-          {editable && (
-            <TouchableOpacity style={styles.editTouch}>
-              <Text style={styles.editText}>Thay đổi</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={{flex: 5, marginLeft: 40}}>
-          <Text
-            style={[
-              styles.textBold,
-              {fontSize: 16, marginBottom: 15, marginTop: 5},
-            ]}>
-            Nguyễn Văn A - 0912345678
-          </Text>
-          <Text style={{color: 'black'}}>
-            123 Minh Khai, Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội
-          </Text>
-        </View>
-      </View>
-      <View
-        style={[
-          styles.box,
-          {height: 0.15 * height, flexDirection: 'column', marginTop: 10},
-        ]}>
+        style={[styles.box, {height: 0.15 * height, flexDirection: 'column'}]}>
         <View style={styles.boxHeader}>
           <Ionicons
             name="md-calendar-sharp"
@@ -144,11 +141,7 @@ const RequestForm = function ({
           </TouchableOpacity>
         </View>
       </View>
-      <View
-        style={[
-          styles.box,
-          {height: 0.2 * height, flexDirection: 'column', marginTop: 10},
-        ]}>
+      <View style={[styles.box, {height: 0.2 * height}]}>
         <View style={styles.boxHeader}>
           <Ionicons
             name="document-text-outline"
@@ -174,13 +167,7 @@ const RequestForm = function ({
           />
         </View>
       </View>
-      <View
-        style={[
-          styles.box,
-          {
-            marginTop: 10,
-          },
-        ]}>
+      <View style={styles.box}>
         <View
           style={{
             flexDirection: 'row',
@@ -194,11 +181,6 @@ const RequestForm = function ({
             style={{marginBottom: 3}}
           />
           <Text style={styles.tittleText}>Flix voucher</Text>
-          {editable && (
-            <TouchableOpacity style={styles.editTouch}>
-              <Text style={styles.editText}>Chọn hoặc nhập mã</Text>
-            </TouchableOpacity>
-          )}
         </View>
         <Text style={{marginLeft: 40, color: '#12B76A', fontWeight: 'bold'}}>
           Giảm 10%
@@ -217,18 +199,10 @@ const RequestForm = function ({
         </View>
       </View>
       <View
-        style={[
-          styles.box,
-          {height: 0.15 * height, flexDirection: 'column', marginTop: 10},
-        ]}>
+        style={[styles.box, {height: 0.15 * height, flexDirection: 'column'}]}>
         <View style={styles.boxHeader}>
           <Ionicons name="wallet-outline" size={20} style={{marginBottom: 3}} />
           <Text style={styles.tittleText}>Phương thức thanh toán</Text>
-          {editable && (
-            <TouchableOpacity style={styles.editTouch}>
-              <Text style={styles.editText}>Thay đổi</Text>
-            </TouchableOpacity>
-          )}
         </View>
         <View
           style={{
@@ -240,37 +214,31 @@ const RequestForm = function ({
           <Text style={{color: 'black', fontSize: 16}}>Tiền mặt</Text>
         </View>
       </View>
-      {isOrderIdVisible && (
-        <View
-          style={[
-            styles.box,
-            {height: 0.1 * height, flexDirection: 'column', marginTop: 10},
-          ]}>
-          <View style={styles.boxHeader}>
-            <Ionicons
-              name="information-circle-outline"
-              size={20}
-              style={{marginBottom: 3}}
-            />
-            <Text style={styles.tittleText}>Mã yêu cầu</Text>
-            <Text
-              style={{color: '#FEC54B', marginLeft: 'auto', marginBottom: 3}}>
-              FASG1212342
-            </Text>
-          </View>
-          <View
-            style={{
-              flex: 3,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
-              Thời gian
-            </Text>
-            <Text style={{marginLeft: 'auto'}}>13:05 - 20/05/2022</Text>
-          </View>
+      <View
+        style={[styles.box, {height: 0.1 * height, flexDirection: 'column'}]}>
+        <View style={styles.boxHeader}>
+          <Ionicons
+            name="information-circle-outline"
+            size={20}
+            style={{marginBottom: 3}}
+          />
+          <Text style={styles.tittleText}>Mã yêu cầu</Text>
+          <Text style={{color: '#FEC54B', marginLeft: 'auto', marginBottom: 3}}>
+            FASG1212342
+          </Text>
         </View>
-      )}
+        <View
+          style={{
+            flex: 3,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
+            Thời gian
+          </Text>
+          <Text style={{marginLeft: 'auto'}}>13:05 - 20/05/2022</Text>
+        </View>
+      </View>
       <View
         style={{
           paddingHorizontal: 10,
@@ -305,8 +273,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingLeft: 20,
     paddingRight: 20,
+    marginTop: 10,
   },
-  boxHeader: {flexDirection: 'row', flex: 2, alignItems: 'flex-end'},
+  boxHeader: {flexDirection: 'row', height: 40, alignItems: 'flex-end'},
   tittleText: {
     fontWeight: 'bold',
     fontSize: 18,
@@ -322,22 +291,19 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontWeight: 'bold',
   },
-  boxBody: {flex: 8, flexDirection: 'row'},
+  boxBody: {flex: 1, flexDirection: 'row'},
   boxBodyContent: {
     marginLeft: 20,
-    height: '70%',
     width: '100%',
-    paddingBottom: 5,
+    paddingBottom: 10,
+    paddingRight: 5,
     justifyContent: 'space-between',
   },
   viewServiceButton: {
-    paddingTop: 3,
-    paddingBottom: 3,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 15,
     backgroundColor: '#FEC54B',
-    marginLeft: 'auto',
   },
   textBold: {
     fontWeight: 'bold',

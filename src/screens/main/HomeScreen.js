@@ -2,256 +2,311 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
+  FlatList,
   Image,
   SafeAreaView,
-  TextInput,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
+  Dimensions,
+  ScrollView,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
-const {width} = Dimensions.get('window');
-import Carousel from 'react-native-snap-carousel';
-import BannerSlider from '../../components/BannerSlider';
-import ForwardButton from '../../components/ForwardButton';
-import MajorComponent from '../../components/MajorComponent';
+import React, {useState} from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
-const ENTRIES = [
-  {
-    title: 'Ưu đãi hôm nay',
-    image:
-      'https://i.postimg.cc/QN2jQkDW/emmanuel-ikwuegbu-0-kl1-Bjv-Fc-unsplash.jpg',
-  },
-  {
-    title: 'Ưu đãi cho khách hàng mới',
-    image: 'https://i.imgur.com/UPrs1EWl.jpg',
-  },
-];
+import {Checkbox, NativeBaseProvider} from 'native-base';
 
-const MAJORS = [
-  {
-    title: 'Thiết bị giặt ủi',
-    image:
-      'https://i.postimg.cc/L85TSmzM/engin-akyurt-y-CYVV8-k-QNM-unsplash.jpg',
-  },
-  {
-    title: 'Thiết bị nhà bếp',
-    image:
-      'https://i.postimg.cc/dQRnmHqg/erik-mclean-a-Po-F91-L-n6k-unsplash.jpg',
-  },
-  {
-    title: 'Thiết bị giải trí',
-    image:
-      'https://i.postimg.cc/NjjN06vS/fabio-silva-nm-Tm7kn-Unqs-unsplash.jpg',
-  },
-  {
-    title: 'Thiết bị văn phòng',
-    image:
-      'https://i.postimg.cc/ZKVcXWvc/linus-mimietz-gvpt-Kmonylk-unsplash.jpg',
-  },
-];
+import CustomModal from '../../components/CustomModal';
 
+const {width, height} = Dimensions.get('window');
+const items = [{id: 1}, {id: 2}];
 const HomeScreen = () => {
-  const [search, setSearch] = useState('');
-  const [entries, setEntries] = useState([]);
-  const [majors, setMajors] = useState([]);
-  const carouselRef = useRef(null);
-
-  const goForward = () => {
-    carouselRef.current.snapToNext();
+  const [buttonIndex, setButtonIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const handleSuggestButton = () => {
+    setButtonIndex(0);
   };
-
-  useEffect(() => {
-    setEntries(ENTRIES);
-  }, []);
-
-  useEffect(() => {
-    setMajors(MAJORS);
-  }, []);
-
-  const renderBanner = ({item, index}) => {
-    return <BannerSlider data={item} />;
+  const handleInterrestButton = () => {
+    setButtonIndex(1);
   };
-
+  const handleFilterClicked = () => {
+    setButtonIndex(2);
+    setModalVisible(true);
+  };
+  const renderItem = ({item}) => {
+    return (
+      <View style={styles.box}>
+        <View style={styles.headerBox}>
+          <TouchableOpacity
+            style={{
+              width: 0.1 * width,
+              aspectRatio: 1,
+              borderRadius: 0.05 * width,
+              resizeMode: 'contain',
+              overflow: 'hidden',
+            }}>
+            <Image
+              source={require('../../../assets/images/extra_icon/filter.png')}
+              resizeMode="cover"
+              style={{width: '100%', height: '100%'}}
+            />
+          </TouchableOpacity>
+          <View style={styles.profileView}>
+            <Text style={[styles.textBold, {fontSize: 16}]}>Johnny Depp</Text>
+            <Text>08:47 - 27/05/2022</Text>
+          </View>
+          <TouchableOpacity style={styles.viewDetail}>
+            <Text style={styles.viewDetailText}>{'Xem chi tiết>'}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{width: '100%', overflow: 'hidden'}}>
+          <View style={styles.bodyRow}>
+            <View style={styles.rowIcon}>
+              <Icon name="tools" size={22} style={styles.icon} />
+            </View>
+            <Text style={[styles.textBold, {fontSize: 18}]}>Điều hòa</Text>
+          </View>
+          <View style={styles.bodyRow}>
+            <View style={styles.rowIcon}>
+              <Ionicons
+                name="md-calendar-sharp"
+                size={22}
+                style={styles.icon}
+              />
+            </View>
+            <Text style={styles.textBold}>31/05/2022</Text>
+          </View>
+          <View style={styles.bodyRow}>
+            <View style={styles.rowIcon}>
+              <Ionicons
+                name="document-text-outline"
+                size={22}
+                style={styles.icon}
+              />
+            </View>
+            <ScrollView
+              style={{
+                width: '60%',
+                height: 40,
+                backgroundColor: 'white',
+                borderRadius: 10,
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                }}>
+                to popular belief, Lorem Ipsum is not simply random text. It has
+                roots in a piece of classical Latin literature from 45 BC,
+                making it over 2000 years old. Richard McClintock, a Latin
+                professor at Hampden-Sydney College in Virginia, looked up one
+                of the more obscure Latin words
+              </Text>
+            </ScrollView>
+          </View>
+          <View style={styles.bodyRow}>
+            <View style={styles.rowIcon}>
+              <Ionicons name="location-outline" size={22} style={styles.icon} />
+            </View>
+            <Text
+              style={{
+                fontSize: 16,
+                marginRight: 10,
+                color: 'black',
+                flex: 1,
+              }}>
+              Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+  const renderService = ({item}) => {
+    return (
+      <View style={styles.selectedService}>
+        <Ionicons name="location-outline" size={22} />
+        <Text>Máy tính</Text>
+        <TouchableOpacity style={styles.closeIcon}>
+          <Ionicons name="close" size={16} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <SafeAreaView style={styles.container}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}>
-          <View style={styles.searchForm}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Tìm kiếm dịch vụ"
-              onChangeText={text => setSearch(text)}
-              defaultValue={search}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottomWidth: 1,
+            borderBottomColor: '#CACACA',
+            paddingBottom: 10,
+          }}>
+          <TouchableOpacity
+            style={[
+              styles.suggestButton,
+              buttonIndex === 0 ? {backgroundColor: '#FEC54B'} : {},
+            ]}
+            onPress={handleSuggestButton}>
+            <Text style={[styles.textBold]}>Gợi ý cho bạn</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.suggestButton,
+              buttonIndex === 1 ? {backgroundColor: '#FEC54B'} : {},
+            ]}
+            onPress={handleInterrestButton}>
+            <Text style={[styles.textBold]}>Có thể bạn quan tâm</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.suggestButton,
+              {
+                width: '12%',
+                resizeMode: 'contain',
+              },
+              buttonIndex === 2 ? {backgroundColor: '#FEC54B'} : {},
+            ]}
+            onPress={handleFilterClicked}>
+            <Image
+              source={require('../../../assets/images/extra_icon/filter.png')}
+              resizeMode="cover"
+              style={{width: '60%', height: '60%'}}
             />
-            <Icon
-              name="search"
-              size={24}
-              style={{paddingTop: 12, alignItems: 'center'}}
-            />
-          </View>
-          <View>
-            <Carousel
-              ref={carouselRef}
-              data={entries}
-              renderItem={renderBanner}
-              sliderWidth={width}
-              itemWidth={300}
-              loop={true}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={{
-                fontSize: 20,
-                color: 'black',
-                fontFamily: 'Poppins',
-                fontWeight: '700',
-              }}>
-              Dịch vụ sửa chữa nổi bật
-            </Text>
-            <ForwardButton color="black" onPressHandler={console.log('a')} />
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-            }}>
-            {majors.map((data, index) => {
-              return (
-                <MajorComponent
-                  key={index}
-                  data={data}
-                  onPressHandler={console.log('a')}
-                />
-              );
-            })}
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text
-              style={{
-                fontSize: 20,
-                color: 'black',
-                fontFamily: 'Poppins',
-                fontWeight: '700',
-              }}>
-              Danh mục
-            </Text>
-            <ForwardButton color="black" onPressHandler={console.log('a')} />
-          </View>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{marginBottom: 50, marginTop: 10}}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FEC54B',
-                height: width * 0.22,
-                width: width * 0.25,
-                borderRadius: 18,
-                alignItems: 'center',
-                marginRight: 10,
-              }}
-              onPress={console.log('a')}>
-              <Image
-                source={require('../../../assets/images/type/wrench.png')}
-                style={{width: 30, height: 30, marginTop: 20}}
-              />
-              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
-                Dịch vụ
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FEC54B',
-                height: width * 0.22,
-                width: width * 0.25,
-                borderRadius: 18,
-                alignItems: 'center',
-                marginHorizontal: 10,
-              }}
-              onPress={console.log('a')}>
-              <Image
-                source={require('../../../assets/images/type/cpu.png')}
-                style={{width: 30, height: 30, marginTop: 20}}
-              />
-              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
-                Linh kiện
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FEC54B',
-                height: width * 0.22,
-                width: width * 0.25,
-                borderRadius: 18,
-                alignItems: 'center',
-                marginHorizontal: 10,
-              }}
-              onPress={console.log('a')}>
-              <Image
-                source={require('../../../assets/images/type/discount.png')}
-                style={{width: 30, height: 30, marginTop: 20}}
-              />
-              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
-                Ưu đãi
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#FEC54B',
-                height: width * 0.22,
-                width: width * 0.25,
-                borderRadius: 18,
-                alignItems: 'center',
-                marginLeft: 10,
-              }}
-              onPress={console.log('a')}>
-              <Image
-                source={require('../../../assets/images/type/discount.png')}
-                style={{width: 30, height: 30, marginTop: 20}}
-              />
-              <Text style={{fontSize: 16, fontWeight: '700', color: 'black'}}>
-                Sự kiện
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </ScrollView>
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          data={items}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+        />
       </SafeAreaView>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalRatio={0.6}
+        modalStyle={{padding: 30}}>
+        <Text style={styles.modalText}>Tùy chỉnh bộ lọc</Text>
+        <View style={[styles.box, {height: 0.25 * width}]}>
+          <View style={styles.boxHeader}>
+            <Icon name="tools" size={25} style={{marginBottom: 3}} />
+            <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
+
+            <NativeBaseProvider>
+              <View style={{marginLeft: 'auto'}}>
+                <Checkbox
+                  // value={toggleCheckBox}
+                  onChange={() => console.log('testing smth')}
+                  colorScheme="yellow"
+                  _icon={{color: 'black'}}
+                />
+              </View>
+            </NativeBaseProvider>
+          </View>
+          <ScrollView style={{flexDirection: 'row'}}>
+            <FlatList
+              data={items}
+              keyExtractor={item => item.id}
+              renderItem={renderService}
+              style={{
+                backgroundColor: 'red',
+                width: '100%',
+              }}
+            />
+          </ScrollView>
+        </View>
+      </CustomModal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  searchForm: {
-    flexDirection: 'row',
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'space-between',
-    borderRadius: 18,
-    paddingHorizontal: 15,
-  },
-  searchInput: {
-    width: '80%',
-  },
   container: {
-    paddingHorizontal: '7%',
+    paddingHorizontal: 20,
     paddingTop: 16,
     backgroundColor: 'white',
     height: '100%',
+  },
+  box: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 15,
+    width: '100%',
+  },
+  headerBox: {
+    flexDirection: 'row',
+  },
+  profileView: {
+    marginLeft: 20,
+  },
+  viewDetail: {
+    marginLeft: 'auto',
+  },
+  viewDetailText: {
+    fontWeight: 'bold',
+    color: '#FEC54B',
+    fontSize: 15,
+  },
+  bodyRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+    flexWrap: 'wrap',
+  },
+  rowIcon: {width: 0.1 * width, marginRight: 20},
+  icon: {marginLeft: 'auto', color: 'black'},
+  suggestButton: {
+    width: '40%',
+    height: 35,
+    borderWidth: 2,
+    borderColor: '#FEC54B',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textBold: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+  },
+  boxHeader: {flexDirection: 'row', alignItems: 'flex-end'},
+  tittleText: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: 'black',
+    marginLeft: 20,
+    marginBottom: 3,
+  },
+  selectedService: {
+    flexDirection: 'row',
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 10,
+    backgroundColor: '#CACACA',
+  },
+
+  closeIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#FEC54B',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: -10,
+    right: -10,
   },
 });
 

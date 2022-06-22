@@ -1,16 +1,7 @@
 import React, {useState} from 'react';
-import {
-  Modal,
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import CreateAddressForm from '../../components/CreateAddressForm';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-const {height, width} = Dimensions.get('window');
-
+import CustomModal from '../../components/CustomModal';
 const EditAddressScreen = ({navigation}) => {
   const [cityId, setCityId] = useState(null);
   const [districtId, setDistrictId] = useState(null);
@@ -34,65 +25,35 @@ const EditAddressScreen = ({navigation}) => {
           showModal={showModal}
         />
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Bạn có chắc chắn muốn xóa địa chỉ này không?
-            </Text>
-            <View
-              style={{
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-around',
-              }}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonOpen]}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Text style={styles.textStyle}>XÓA</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Text style={styles.textStyle}>THOÁT</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalRatio={0.35}>
+        <Text style={styles.modalText}>
+          Bạn có chắc chắn muốn xóa địa chỉ này không?
+        </Text>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => console.log('handle this')}>
+            <Text style={styles.textStyle}>XÓA</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => setModalVisible(!modalVisible)}>
+            <Text style={styles.textStyle}>THOÁT</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </CustomModal>
     </>
   );
 };
 const styles = StyleSheet.create({
-  centeredView: {
-    top: 0.65 * height,
-    height: 0.35 * height,
-    width: width,
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalView: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 30,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   button: {
     width: '40%',
     borderRadius: 20,

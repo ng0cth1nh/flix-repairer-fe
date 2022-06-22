@@ -6,7 +6,7 @@ import moment from 'moment';
 import BackButton from '../../components/BackButton';
 import RequestForm from '../../components/RequestForm';
 
-const OrderScreen = ({navigation}) => {
+const AddRequestScreen = ({navigation}) => {
   const [date, setDate] = useState(moment());
   const [description, setDiscription] = useState('');
   function handlerButtonClick() {
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderScreen;
+export default AddRequestScreen;
