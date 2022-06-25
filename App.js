@@ -5,6 +5,7 @@ import {Image} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {navigationRef} from './src/RootNavigation';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {ModalsProvider} from 'react-native-nested-modals';
 import {
   Provider as AuthProvider,
   Context as AuthContext,
@@ -25,7 +26,9 @@ import AddFixedAccessoriesScreen from './src/screens/request/AddFixedAccessories
 import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import AddressListScreen from './src/screens/address/AddressListScreen';
 import EditAddressScreen from './src/screens/address/EditAddressScreen';
+import InvoiceScreen from './src/screens/request/InvoiceScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
+import ServiceFilterScreen from './src/screens/main/ServiceFilterScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
 import Toast from 'react-native-toast-message';
@@ -52,11 +55,22 @@ function App() {
   if (isLoading) {
     return <SplashScreen />;
   }
+  function HomeStackScreen() {
+    return (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen
+          name="ServiceFilterScreen"
+          component={ServiceFilterScreen}
+        />
+      </Stack.Navigator>
+    );
+  }
   return (
     <>
       <NavigationContainer ref={navigationRef}>
         {/* state.token */}
-        {true ? (
+        {false ? (
           <Tab.Navigator
             tabBarOptions={{
               showLabel: false,
@@ -73,7 +87,7 @@ function App() {
               },
               tabBarIcon: ({focused, size, color}) => {
                 let icon;
-                if (route.name === 'Home') {
+                if (route.name === 'HomeStackScreen') {
                   icon = focused
                     ? require('./assets/images/type/home-active.png')
                     : require('./assets/images/type/home.png');
@@ -93,7 +107,7 @@ function App() {
                 return <Image style={{height: 24, width: 24}} source={icon} />;
               },
             })}>
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="HomeStackScreen" component={HomeStackScreen} />
             <Tab.Screen
               name="RequestHistory"
               component={RequestHistoryScreen}
@@ -103,10 +117,7 @@ function App() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen
-              name="EditAddressScreen"
-              component={EditAddressScreen}
-            />
+            <Stack.Screen name="InvoiceScreen" component={InvoiceScreen} />
             <Stack.Screen
               name="RegisterScreen"
               component={RegisterScreen}

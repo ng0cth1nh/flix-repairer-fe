@@ -6985,6 +6985,11 @@ react-native-modal@^13.0.1:
     prop-types "^15.6.2"
     react-native-animatable "1.3.3"
 
+react-native-nested-modals@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-nested-modals/-/react-native-nested-modals-1.1.1.tgz#fa3007607e68dcc42a34a7a1e60287ecc92494dc"
+  integrity sha512-lbFP4/g4k1OAmvpt2NInUQ+wXwLmvD/GAeU+8yyAYl2nqQGEEUeWhoLSE0dRvj54iB4/GgY5Xjzr2lSqGUtddw==
+
 react-native-pager-view@^5.4.24:
   version "5.4.24"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.4.24.tgz#8626e757ddc55e41eca66d2f8a8a75aec54591ee"
