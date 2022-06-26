@@ -29,6 +29,7 @@ import EditAddressScreen from './src/screens/address/EditAddressScreen';
 import InvoiceScreen from './src/screens/request/InvoiceScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import ServiceFilterScreen from './src/screens/main/ServiceFilterScreen';
+import SearchServiceFilterScreen from './src/screens/main/SearchServiceFilterScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
 import Toast from 'react-native-toast-message';
@@ -63,6 +64,10 @@ function App() {
           name="ServiceFilterScreen"
           component={ServiceFilterScreen}
         />
+        <Stack.Screen
+          name="SearchServiceFilterScreen"
+          component={SearchServiceFilterScreen}
+        />
       </Stack.Navigator>
     );
   }
@@ -70,7 +75,7 @@ function App() {
     <>
       <NavigationContainer ref={navigationRef}>
         {/* state.token */}
-        {false ? (
+        {true ? (
           <Tab.Navigator
             tabBarOptions={{
               showLabel: false,

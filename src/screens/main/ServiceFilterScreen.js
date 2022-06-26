@@ -3,6 +3,7 @@ import {
   Text,
   View,
   ScrollView,
+  StatusBar,
   FlatList,
   TouchableOpacity,
   Dimensions,
@@ -16,10 +17,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const {width} = Dimensions.get('window');
 
 import CustomDatePicker from '../../components/CustomDatePicker';
+import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
 
 const items = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}];
-export default function ServiceFilterScreen() {
+export default function ServiceFilterScreen({navigation}) {
   const [fromDate, setFromDate] = useState(moment());
   const [fromDateVisible, setFromDateVisible] = useState(false);
   const [toDate, setToDate] = useState(moment());
@@ -31,18 +33,18 @@ export default function ServiceFilterScreen() {
   const hideFromDatePicker = () => {
     setFromDateVisible(false);
   };
-  //   const handlerToDateConfirm = selectedDate => {
-  //     setToDate(moment(selectedDate));
-  //     setToDateVisible(false);
-  //   };
-  //   const hideToDatePicker = () => {
-  //     setToDateVisible(false);
-  //   };
+  const handlerToDateConfirm = selectedDate => {
+    setToDate(moment(selectedDate));
+    setToDateVisible(false);
+  };
+  const hideToDatePicker = () => {
+    setToDateVisible(false);
+  };
   const renderService = ({item}) => {
     return (
       <View style={styles.selectedService}>
-        <Ionicons name="location-outline" size={22} />
-        <Text style={{marginLeft: 5}}>Máy tính abcjsjs</Text>
+        <Ionicons name="location-outline" size={22} style={{color: 'black'}} />
+        <Text style={{marginLeft: 5, color: 'black'}}>Máy tính abcjsjs</Text>
         <TouchableOpacity style={styles.closeIcon}>
           <Ionicons name="close" size={16} />
         </TouchableOpacity>
@@ -50,189 +52,195 @@ export default function ServiceFilterScreen() {
     );
   };
   return (
-    <View style={{padding: 20}}>
-      <Text style={styles.modalText}>Tùy chỉnh bộ lọc</Text>
-      <ScrollView>
-        <View style={[styles.box, {minHeight: 0.28 * width}]}>
-          <View style={styles.boxHeader}>
-            <Icon name="tools" size={25} style={{marginBottom: 3}} />
-            <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
+      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      <View style={{padding: 20}}>
+        <Text style={styles.modalText}>Tùy chỉnh bộ lọc</Text>
+        <ScrollView>
+          <TouchableOpacity
+            style={[styles.box, {minHeight: 0.28 * width}]}
+            onPress={() => navigation.push('SearchServiceFilterScreen')}>
+            <View style={styles.boxHeader}>
+              <Icon name="tools" size={25} style={{marginBottom: 3}} />
+              <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
 
-            <NativeBaseProvider>
-              <View style={{marginLeft: 'auto'}}>
-                <Checkbox
-                  // value={toggleCheckBox}
-                  onChange={() => console.log('testing smth')}
-                  colorScheme="yellow"
-                  _icon={{color: 'black'}}
-                />
-              </View>
-            </NativeBaseProvider>
-          </View>
+              <NativeBaseProvider>
+                <View style={{marginLeft: 'auto'}}>
+                  <Checkbox
+                    // value={toggleCheckBox}
+                    onChange={() => console.log('testing smth')}
+                    colorScheme="yellow"
+                    _icon={{color: 'black'}}
+                  />
+                </View>
+              </NativeBaseProvider>
+            </View>
 
-          <FlatList
-            data={items}
-            keyExtractor={item => item.id}
-            renderItem={renderService}
-            contentContainerStyle={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              marginBottom: 5,
-            }}
-          />
-        </View>
-        <View style={styles.box}>
-          <View style={styles.boxHeader}>
-            <Ionicons
-              name="location-outline"
-              size={25}
-              style={{marginBottom: 3}}
+            <FlatList
+              data={items}
+              keyExtractor={item => item.id}
+              renderItem={renderService}
+              contentContainerStyle={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                marginBottom: 5,
+              }}
             />
-            <Text style={styles.tittleText}>Khu vực muốn sửa</Text>
+          </TouchableOpacity>
+          <View style={styles.box}>
+            <View style={styles.boxHeader}>
+              <Ionicons
+                name="location-outline"
+                size={25}
+                style={{marginBottom: 3}}
+              />
+              <Text style={styles.tittleText}>Khu vực muốn sửa</Text>
 
-            <NativeBaseProvider>
-              <View style={{marginLeft: 'auto'}}>
-                <Checkbox
-                  // value={toggleCheckBox}
-                  onChange={() => console.log('testing smth')}
-                  colorScheme="yellow"
-                  _icon={{color: 'black'}}
-                />
-              </View>
-            </NativeBaseProvider>
-          </View>
-          <View style={styles.valueSpace}>
-            <RNPickerSelect
-              // value={cityId}
-              fixAndroidTouchableBug={true}
-              // onValueChange={value => setCityId(value)}
-              placeholder={{
-                label: 'Tỉnh/Thành Phố',
-                value: null,
-              }}
-              useNativeAndroidPickerStyle={false}
-              style={styles.pickerStyle}
-              items={[{label: 'Phú Thọ', value: 'thang'}]}
-              Icon={() => (
-                <Icon name="caret-down" size={20} style={{marginTop: 5}} />
-              )}
-            />
-          </View>
-          <View style={styles.valueSpace}>
-            <RNPickerSelect
-              // value={cityId}
-              fixAndroidTouchableBug={true}
-              // onValueChange={value => setCityId(value)}
-              placeholder={{
-                label: 'Quận/Huyện',
-                value: null,
-              }}
-              useNativeAndroidPickerStyle={false}
-              style={styles.pickerStyle}
-              items={[{label: 'Phú Thọ', value: 'thang'}]}
-              Icon={() => (
-                <Icon name="caret-down" size={20} style={{marginTop: 5}} />
-              )}
-            />
-          </View>
-          <View style={styles.valueSpace}>
-            <RNPickerSelect
-              // value={cityId}
-              fixAndroidTouchableBug={true}
-              // onValueChange={value => setCityId(value)}
-              placeholder={{
-                label: 'Phường/Xã',
-                value: null,
-              }}
-              useNativeAndroidPickerStyle={false}
-              style={styles.pickerStyle}
-              items={[{label: 'Phú Thọ', value: 'thang'}]}
-              Icon={() => (
-                <Icon name="caret-down" size={20} style={{marginTop: 5}} />
-              )}
-            />
-          </View>
-        </View>
-        <View style={styles.box}>
-          <View style={styles.boxHeader}>
-            <Ionicons
-              name="md-calendar-sharp"
-              size={20}
-              style={{marginBottom: 3}}
-            />
-            <Text style={styles.tittleText}>Chọn ngày muốn sửa</Text>
-            <NativeBaseProvider>
-              <View style={{marginLeft: 'auto'}}>
-                <Checkbox
-                  // value={toggleCheckBox}
-                  onChange={() => console.log('testing smth')}
-                  colorScheme="yellow"
-                  _icon={{color: 'black'}}
-                />
-              </View>
-            </NativeBaseProvider>
-          </View>
-          <View style={styles.dateForm}>
-            <Text style={styles.dateLabel}>Từ ngày</Text>
-            <View style={{marginLeft: 40, marginTop: 10}}>
-              <TouchableOpacity
-                style={styles.datePicker}
-                onPress={() => {
-                  setFromDateVisible(true);
-                }}>
-                <Text style={styles.textBold}>
-                  {fromDate.format('DD/MM/YYYY')}
-                </Text>
-                <Ionicons
-                  name="chevron-down-sharp"
-                  size={20}
-                  style={{
-                    marginBottom: 3,
-                    color: 'black',
-                    marginLeft: 'auto',
-                  }}
-                />
-                <CustomDatePicker
-                  isVisible={fromDateVisible}
-                  handleConfirm={handlerFromDateConfirm}
-                  hideDatePicker={hideFromDatePicker}
-                />
-              </TouchableOpacity>
+              <NativeBaseProvider>
+                <View style={{marginLeft: 'auto'}}>
+                  <Checkbox
+                    // value={toggleCheckBox}
+                    onChange={() => console.log('testing smth')}
+                    colorScheme="yellow"
+                    _icon={{color: 'black'}}
+                  />
+                </View>
+              </NativeBaseProvider>
+            </View>
+            <View style={styles.valueSpace}>
+              <RNPickerSelect
+                // value={cityId}
+                fixAndroidTouchableBug={true}
+                // onValueChange={value => setCityId(value)}
+                placeholder={{
+                  label: 'Tỉnh/Thành Phố',
+                  value: null,
+                }}
+                useNativeAndroidPickerStyle={false}
+                style={styles.pickerStyle}
+                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                Icon={() => (
+                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                )}
+              />
+            </View>
+            <View style={styles.valueSpace}>
+              <RNPickerSelect
+                // value={cityId}
+                fixAndroidTouchableBug={true}
+                // onValueChange={value => setCityId(value)}
+                placeholder={{
+                  label: 'Quận/Huyện',
+                  value: null,
+                }}
+                useNativeAndroidPickerStyle={false}
+                style={styles.pickerStyle}
+                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                Icon={() => (
+                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                )}
+              />
+            </View>
+            <View style={styles.valueSpace}>
+              <RNPickerSelect
+                // value={cityId}
+                fixAndroidTouchableBug={true}
+                // onValueChange={value => setCityId(value)}
+                placeholder={{
+                  label: 'Phường/Xã',
+                  value: null,
+                }}
+                useNativeAndroidPickerStyle={false}
+                style={styles.pickerStyle}
+                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                Icon={() => (
+                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                )}
+              />
             </View>
           </View>
-          {/* <View style={styles.dateForm}>
-            <Text style={styles.dateLabel}>Đến ngày</Text>
-            <View style={{marginLeft: 40, marginTop: 10}}>
-              <TouchableOpacity
-                style={styles.datePicker}
-                onPress={() => setToDateVisible(true)}>
-                <Text style={styles.textBold}>
-                  {toDate.format('DD/MM/YYYY')}
-                </Text>
-                <Ionicons
-                  name="chevron-down-sharp"
-                  size={20}
-                  style={{
-                    marginBottom: 3,
-                    color: 'black',
-                    marginLeft: 'auto',
-                  }}
-                />
-                <CustomDatePicker
-                  isVisible={toDateVisible}
-                  handleConfirm={handlerToDateConfirm}
-                  hideDatePicker={hideToDatePicker}
-                />
-              </TouchableOpacity>
-            </View> */}
-          {/* </View> */}
-        </View>
-        <Button
-          style={{marginTop: 10, marginHorizontal: 10, marginBottom: 20}}
-          onPress={() => {}}
-          buttonText="ÁP DỤNG"
-        />
-      </ScrollView>
+          <View style={styles.box}>
+            <View style={styles.boxHeader}>
+              <Ionicons
+                name="md-calendar-sharp"
+                size={20}
+                style={{marginBottom: 3}}
+              />
+              <Text style={styles.tittleText}>Chọn ngày muốn sửa</Text>
+              <NativeBaseProvider>
+                <View style={{marginLeft: 'auto'}}>
+                  <Checkbox
+                    // value={toggleCheckBox}
+                    onChange={() => console.log('testing smth')}
+                    colorScheme="yellow"
+                    _icon={{color: 'black'}}
+                  />
+                </View>
+              </NativeBaseProvider>
+            </View>
+            <View style={styles.dateForm}>
+              <Text style={styles.dateLabel}>Từ ngày</Text>
+              <View style={{marginTop: 10, width: '65%'}}>
+                <TouchableOpacity
+                  style={styles.datePicker}
+                  onPress={() => {
+                    setFromDateVisible(true);
+                  }}>
+                  <Text style={styles.textBold}>
+                    {fromDate.format('DD/MM/YYYY')}
+                  </Text>
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 3,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
+                  <CustomDatePicker
+                    isVisible={fromDateVisible}
+                    handleConfirm={handlerFromDateConfirm}
+                    hideDatePicker={hideFromDatePicker}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.dateForm}>
+              <Text style={styles.dateLabel}>Đến ngày</Text>
+              <View style={{marginTop: 10, width: '65%'}}>
+                <TouchableOpacity
+                  style={styles.datePicker}
+                  onPress={() => setToDateVisible(true)}>
+                  <Text style={styles.textBold}>
+                    {toDate.format('DD/MM/YYYY')}
+                  </Text>
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 3,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
+                  <CustomDatePicker
+                    isVisible={toDateVisible}
+                    handleConfirm={handlerToDateConfirm}
+                    hideDatePicker={hideToDatePicker}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <Button
+            style={{marginTop: 10, marginHorizontal: 10, marginBottom: 40}}
+            onPress={() => {}}
+            buttonText="ÁP DỤNG"
+          />
+        </ScrollView>
+      </View>
+      <BackButton onPressHandler={navigation.goBack} color="black" />
     </View>
   );
 }
@@ -244,6 +252,13 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     marginBottom: 5,
+  },
+  box: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 10,
   },
   boxHeader: {
     flexDirection: 'row',
@@ -306,11 +321,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft: 40,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   dateLabel: {
     color: 'black',
     fontSize: 15,
+    width: '35%',
   },
   datePicker: {
     flexDirection: 'row',
