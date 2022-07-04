@@ -54,9 +54,6 @@ export default function SearchServiceFilterScreen({navigation}) {
               _icon={{color: 'black'}}
             />
           </View>
-          {/* <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-            150,000 vnđ
-          </Text> */}
         </View>
       </NativeBaseProvider>
     );
