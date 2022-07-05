@@ -6,16 +6,21 @@ import constants from '../constants/Api';
 import axios from 'axios';
 import qs from 'qs';
 import getErrorMessage from '../utils/getErrorMessage';
+import jwt_decode from 'jwt-decode';
+import dayjs from 'dayjs';
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'add_error':
-      return {...state, errorMessage: action.payload};
+      return {...state, errorMessage: action.payload, loading: false};
     case 'login':
-      return {errorMessage: '', token: action.payload};
+      return {errorMessage: '', token: action.payload, loading: false};
     case 'clear_error_message':
-      return {...state, errorMessage: ''};
+      return {...state, errorMessage: '', loading: false};
+    case 'show_loader':
+      return {...state, loading: true};
     case 'logout':
-      return {token: null, errorMessage: ''};
+      return {token: null, errorMessage: '', loading: false};
     default:
       return state;
   }
@@ -23,12 +28,22 @@ const authReducer = (state, action) => {
 const clearErrorMessage = dispatch => {
   return () => dispatch({type: 'clear_error_message'});
 };
+const showLoader = dispatch => {
+  return () => dispatch({type: 'show_loader'});
+};
 
 const TryLocalLogin = dispatch =>
   useCallback(async () => {
     const token = await AsyncStorage.getItem('token');
     if (token) {
-      dispatch({type: 'login', payload: token});
+      // dispatch({type: 'login', payload: token});
+      const user = jwt_decode(token);
+      const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
+      if (!isExpired) {
+        dispatch({type: 'login', payload: token});
+      } else {
+        await refreshToken();
+      }
     }
   }, [dispatch]);
 
@@ -84,7 +99,8 @@ const confirmOTP = dispatch => async params => {
 
 const refreshToken = dispatch => async () => {
   try {
-    const refresh_token = await AsyncStorage.get('refreshToken');
+    console.log('run refresh token');
+    const refresh_token = await AsyncStorage.getItem('refreshToken');
     if (!refresh_token) {
       throw new Error();
     }
@@ -93,12 +109,14 @@ const refreshToken = dispatch => async () => {
         Authorization: `Bearer ${refresh_token}`,
       },
     });
+    console.log('response refresh token: \n' + response);
     await AsyncStorage.setItem('token', response.data.accessToken);
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
     dispatch({type: 'login', payload: response.data.accessToken});
   } catch (err) {
-    await AsyncStorage.removeItem('accessToken');
-    await AsyncStorage.removeItem('kerefreshToken');
+    console.log(err.toString());
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('refreshToken');
     dispatch({type: 'logout'});
   }
 };
@@ -122,6 +140,7 @@ const login = dispatch => async params => {
       type: 'add_error',
       payload: getErrorMessage(err),
     });
+    console.log(err.toString());
   }
 };
 const logout = dispatch => async () => {
@@ -132,6 +151,7 @@ export const {Provider, Context} = createDataContext(
   authReducer,
   {
     login,
+    showLoader,
     register,
     logout,
     clearErrorMessage,

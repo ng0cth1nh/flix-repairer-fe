@@ -73,7 +73,7 @@ const InvoiceScreen = ({navigation}) => {
               </View>
               <View style={styles.boxBody}>
                 <Image
-                  source={require('../../../assets/images/login_register_bg/bg.png')}
+                  source={require('../../../assets/images/login_register_bg/bg.jpg')}
                   style={{
                     width: '15%',
                     aspectRatio: 0.85,
@@ -94,7 +94,7 @@ const InvoiceScreen = ({navigation}) => {
               </View>
               <View style={styles.boxHeader}>
                 <Image
-                  source={require('../../../assets/images/type/repairman.png')}
+                  source={require('../../../assets/images/login_register_bg/bg.jpg')}
                   style={{
                     width: 25,
                     aspectRatio: 1,
@@ -107,7 +107,7 @@ const InvoiceScreen = ({navigation}) => {
               </View>
               <View style={styles.boxBody}>
                 <Image
-                  source={require('../../../assets/images/login_register_bg/bg.png')}
+                  source={require('../../../assets/images/login_register_bg/bg.jpg')}
                   style={{
                     width: '15%',
                     aspectRatio: 0.85,
@@ -132,7 +132,7 @@ const InvoiceScreen = ({navigation}) => {
               </View>
               <View style={styles.boxBody}>
                 <Image
-                  source={require('../../../assets/images/login_register_bg/bg.png')}
+                  source={require('../../../assets/images/login_register_bg/bg.jpg')}
                   style={{
                     width: '25%',
                     aspectRatio: 0.9,

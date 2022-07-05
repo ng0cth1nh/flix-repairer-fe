@@ -14,9 +14,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderComponent from '../../components/HeaderComponent';
 import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
+import ProgressLoader from 'rn-progress-loader';
 
 export default function LoginScreen({navigation}) {
-  const {login, state, clearErrorMessage} = useContext(AuthContext);
+  const {login, showLoader, state, clearErrorMessage} = useContext(AuthContext);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [phoneInputError, setPhoneInputError] = useState(null);
@@ -57,6 +58,7 @@ export default function LoginScreen({navigation}) {
     let passwordValid = checkPasswordValid();
     const isValidForm = phoneValid && passwordValid;
     if (isValidForm) {
+      showLoader();
       login({username: phoneNumber, password});
     }
   };
@@ -84,7 +86,6 @@ export default function LoginScreen({navigation}) {
           {phoneInputError && (
             <Text style={styles.errorMessage}>{phoneInputError}</Text>
           )}
-          {/* <ActivityIndicator size="large" animating={true} /> */}
           <View
             style={[
               styles.inputView,
@@ -106,7 +107,11 @@ export default function LoginScreen({navigation}) {
             <TouchableOpacity
               style={styles.iconView}
               onPress={() => setCoverPassword(!coverPassword)}>
-              <Icon name="eye-slash" size={18} />
+              {coverPassword ? (
+                <Icon name="eye" size={18} />
+              ) : (
+                <Icon name="eye-slash" size={18} />
+              )}
             </TouchableOpacity>
           </View>
           {passwordInputError && (
@@ -127,6 +132,7 @@ export default function LoginScreen({navigation}) {
             onPress={loginHandler}
             buttonText="ĐĂNG NHẬP"
           />
+
           <View style={styles.registerView}>
             <Text style={styles.registerText}>Bạn chưa có tài khoản? </Text>
             <TouchableOpacity onPress={() => navigation.push('RegisterScreen')}>
@@ -141,6 +147,13 @@ export default function LoginScreen({navigation}) {
           </View>
         </Card>
       </SafeAreaView>
+      <ProgressLoader
+        visible={state.loading ? state.loading : false}
+        isModal={true}
+        isHUD={true}
+        hudColor={'#FEC54B'}
+        color={'#000000'}
+      />
     </>
   );
 }
@@ -205,5 +218,8 @@ const styles = StyleSheet.create({
     color: '#E67F1E',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

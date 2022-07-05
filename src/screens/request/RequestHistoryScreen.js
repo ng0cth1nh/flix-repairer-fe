@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -9,14 +9,13 @@ import {
 } from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-
-const {width} = Dimensions.get('window');
-import ScreenA from '../request_history/ScreenA';
-import ScreenB from '../request_history/ScreenB';
-import ScreenC from '../request_history/ScreenC';
-import ScreenD from '../request_history/ScreenD';
-import ScreenE from '../request_history/ScreenE';
-import ScreenF from '../request_history/ScreenF';
+const {width, height} = Dimensions.get('window');
+import ApprovedScreen from '../request_history/ApprovedScreen';
+import CancelledScreen from '../request_history/CancelledScreen';
+import DoneScreen from '../request_history/DoneScreen';
+import FixingScreen from '../request_history/FixingScreen';
+import PaymentWaitingScreen from '../request_history/PaymentWaitingScreen';
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 
 const TopTabs = createMaterialTopTabNavigator();
 function RequestHistory() {
@@ -24,7 +23,7 @@ function RequestHistory() {
     <TopTabs.Navigator
       tabBarOptions={{
         scrollEnabled: true,
-        tabStyle: {width: 0.28 * width},
+        tabStyle: {width: 0.3 * width},
         indicatorStyle: {
           backgroundColor: '#FEC54B',
         },
@@ -44,38 +43,31 @@ function RequestHistory() {
           );
         },
       })}>
-      <TopTabs.Screen name="Chờ xác nhận" component={ScreenA} />
-      <TopTabs.Screen name="Đã xác nhận" component={ScreenB} />
-      <TopTabs.Screen name="ScreenC" component={ScreenC} />
-      <TopTabs.Screen name="ScreenD" component={ScreenD} />
-      <TopTabs.Screen name="ScreenE" component={ScreenE} />
-      <TopTabs.Screen name="ScreenF" component={ScreenF} />
+      <TopTabs.Screen name="Đã xác nhận" component={ApprovedScreen} />
+      <TopTabs.Screen name="Đang sửa" component={FixingScreen} />
+      <TopTabs.Screen name="Chờ thanh toán" component={PaymentWaitingScreen} />
+      <TopTabs.Screen name="Đã hoàn thành" component={DoneScreen} />
+      <TopTabs.Screen name="Đã hủy" component={CancelledScreen} />
     </TopTabs.Navigator>
   );
 }
-const RequestHistoryScreen = () => {
+const RequestHistoryScreen = ({navigation}) => {
+  const [reqStatus, setReqStatus] = useState(0);
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Lịch sử sửa chữa"
+        isBackButton={false}
+        statusBarColor="white"
+      />
       <SafeAreaView style={{flex: 1}}>
-        <Text style={styles.headerText}>Lịch sử sửa chữa</Text>
         <RequestHistory />
       </SafeAreaView>
     </View>
   );
 };
 const styles = StyleSheet.create({
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    textAlign: 'center',
-    color: 'black',
-    marginTop: getStatusBarHeight(),
-    paddingBottom: 15,
-    brequestBottomWidth: 0.7,
-    brequestBottomColor: '#CACACA',
-    width: '100%',
-  },
   label: {
     fontSize: 12,
     textTransform: 'none',
