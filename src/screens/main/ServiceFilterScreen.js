@@ -3,180 +3,355 @@ import {
   Text,
   View,
   ScrollView,
-  StatusBar,
+  SafeAreaView,
   FlatList,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import moment from 'moment';
 import {Checkbox, NativeBaseProvider} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 const {width} = Dimensions.get('window');
-
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 import CustomDatePicker from '../../components/CustomDatePicker';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
+import useFetchData from '../../hooks/useFetchData';
+import ApiConstants from '../../constants/Api';
+import useAxios from '../../hooks/useAxios';
+import CustomModal from '../../components/CustomModal';
+import {set} from 'react-native-reanimated';
 
-const items = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}];
-export default function ServiceFilterScreen({navigation}) {
-  const [fromDate, setFromDate] = useState(moment());
-  const [fromDateVisible, setFromDateVisible] = useState(false);
-  const [toDate, setToDate] = useState(moment());
-  const [toDateVisible, setToDateVisible] = useState(false);
-  const handlerFromDateConfirm = selectedDate => {
-    setFromDate(moment(selectedDate));
-    setFromDateVisible(false);
+export default function ServiceFilterScreen({route, navigation}) {
+  const {
+    setFilter,
+    addedServices,
+    setAddedServices,
+    endDates,
+    setEndDates,
+    startDates,
+    setStartDates,
+    districtIds,
+    setDistrictIds,
+    cityIds,
+    setCityIds,
+    communeIds,
+    setCommuneIds,
+  } = route.params;
+  const [addedService, setAddedService] = useState(addedServices);
+  const [startDate, setStartDate] = useState(startDates);
+  const [startDateVisible, setStartDateVisible] = useState(false);
+  const [endDate, setEndDate] = useState(endDates);
+  const [endDateVisible, setEndDateVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const repairerAPI = useAxios();
+  const [cityId, setCityId] = useState(cityIds);
+  const [districtId, setDistrictId] = useState(null);
+  const [communeId, setCommuneId] = useState(null);
+  const [listCity, setListCity] = useState([]);
+  const [listDistrict, setListDistrict] = useState([]);
+  const [listCommune, setListCommune] = useState([]);
+
+  const handlerStartDateConfirm = selectedDate => {
+    setStartDate(moment(selectedDate));
+    setStartDateVisible(false);
   };
-  const hideFromDatePicker = () => {
-    setFromDateVisible(false);
+  const hideStartDatePicker = () => {
+    setStartDateVisible(false);
   };
-  const handlerToDateConfirm = selectedDate => {
-    setToDate(moment(selectedDate));
-    setToDateVisible(false);
+  const handlerEndDateConfirm = selectedDate => {
+    setEndDate(moment(selectedDate));
+    setEndDateVisible(false);
   };
-  const hideToDatePicker = () => {
-    setToDateVisible(false);
+  const hideEndDatePicker = () => {
+    setEndDateVisible(false);
   };
-  const renderService = ({item}) => {
-    return (
-      <View style={styles.selectedService}>
-        <Ionicons name="location-outline" size={22} style={{color: 'black'}} />
-        <Text style={{marginLeft: 5, color: 'black'}}>Máy tính abcjsjs</Text>
-        <TouchableOpacity style={styles.closeIcon}>
-          <Ionicons name="close" size={16} />
-        </TouchableOpacity>
-      </View>
-    );
+
+  const fetchDistricts = async cityId => {
+    try {
+      let response = await repairerAPI.get(
+        ApiConstants.GET_DISTRICT_BY_CITY_API,
+        {
+          params: {cityId},
+        },
+      );
+      setListDistrict(response.data.districts);
+    } catch (err) {
+      // setAddressError(err.message);
+    }
   };
+
+  const fetchCommunes = async districtId => {
+    try {
+      let response = await repairerAPI.get(
+        ApiConstants.GET_COMMUNE_BY_DISTRICT_API,
+        {
+          params: {districtId},
+        },
+      );
+      setListCommune(response.data.communes);
+    } catch (err) {
+      // setAddressError(err.message);
+    }
+  };
+
+  const onchangeCity = async value => {
+    setCityId(value);
+    setDistrictId(null);
+    setCommuneId(null);
+    if (!value) {
+      setListDistrict([]);
+      setListCommune([]);
+      return;
+    }
+    fetchDistricts(value);
+  };
+  const onchangeDistrict = async value => {
+    setDistrictId(value);
+    setCommuneId(null);
+    if (!value) {
+      setListCommune([]);
+      return;
+    }
+    fetchCommunes(value);
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let response = await repairerAPI.get(ApiConstants.GET_ALL_CITY_API);
+        setListCity(response.data.cities);
+        if (cityId) {
+          await fetchDistricts(cityId);
+          setDistrictId(districtIds);
+        }
+        if (districtIds) {
+          await fetchCommunes(districtId);
+          setCommuneId(communeIds);
+        }
+      } catch (err) {
+        // setAddressError(err.message);
+      }
+    })();
+  }, []);
+
+  const handleDeleteAddedService = async index => {
+    const temp = [];
+    for (let i = 0; i < addedService.length; i++) {
+      if (i !== index) {
+        temp.push(addedService[i]);
+      }
+    }
+    setAddedService(temp);
+  };
+
+  const getStartDate = () => {
+    return startDate;
+  };
+  const getEndDate = () => {
+    return endDate;
+  };
+
+  const handleApplyButton = async () => {
+    if (addedService.length === 0 || !cityId) {
+      setModalVisible(true);
+    } else {
+      let temp = addedService.map((item, index) => {
+        let [serviceId, serviceName, icon] = item.split('[SPACE]');
+        return serviceId;
+      });
+      let serviceIds = temp.join(',');
+
+      let locationType = communeId
+        ? 'COMMUNE'
+        : districtId
+        ? 'DISTRICT'
+        : 'CITY';
+      let locationId = communeId ? communeId : districtId ? districtId : cityId;
+      let startDate = getStartDate().format('DD-MM-YYYY');
+      let endDate = getEndDate().format('DD-MM-YYYY');
+      console.log({serviceIds, locationId, locationType, startDate, endDate});
+      setFilter({
+        serviceIds,
+        locationId,
+        locationType,
+        startDate,
+        endDate,
+      });
+      setAddedServices(addedService);
+      setStartDates(getStartDate());
+      setEndDates(getEndDate());
+      setCityIds(cityId);
+      setDistrictIds(districtId);
+      setCommuneIds(communeId);
+      navigation.goBack();
+    }
+  };
+
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-      <View style={{padding: 20}}>
-        <Text style={styles.modalText}>Tùy chỉnh bộ lọc</Text>
-        <ScrollView>
-          <TouchableOpacity
-            style={[styles.box, {minHeight: 0.28 * width}]}
-            onPress={() => navigation.push('SearchServiceFilterScreen')}>
-            <View style={styles.boxHeader}>
-              <Icon name="tools" size={25} style={{marginBottom: 3}} />
-              <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
-
-              <NativeBaseProvider>
-                <View style={{marginLeft: 'auto'}}>
-                  <Checkbox
-                    // value={toggleCheckBox}
-                    onChange={() => console.log('testing smth')}
-                    colorScheme="yellow"
-                    _icon={{color: 'black'}}
-                  />
-                </View>
-              </NativeBaseProvider>
-            </View>
-
-            <FlatList
-              data={items}
-              keyExtractor={item => item.id}
-              renderItem={renderService}
-              contentContainerStyle={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                marginBottom: 5,
-              }}
-            />
-          </TouchableOpacity>
+    <View style={{flex: 1, backgroundColor: 'white', paddingHorizontal: '4%'}}>
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Tùy chỉnh bộ lọc"
+        isBackButton={true}
+        statusBarColor="white"
+      />
+      <SafeAreaView style={{flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.box}>
             <View style={styles.boxHeader}>
-              <Ionicons
-                name="location-outline"
-                size={25}
-                style={{marginBottom: 3}}
+              <Image
+                source={require('../../../assets/images/type/support.png')}
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
+              />
+              <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
+              <TouchableOpacity
+                style={styles.editTouch}
+                onPress={() =>
+                  navigation.push('SearchServiceFilterScreen', {
+                    addedService,
+                    setAddedService,
+                  })
+                }>
+                <Text style={styles.editText}>Thêm</Text>
+              </TouchableOpacity>
+            </View>
+
+            {addedService.length !== 0 ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  marginBottom: 5,
+                }}>
+                {addedService.map((item, index) => {
+                  const [serviceId, serviceName, icon] = item.split('[SPACE]');
+                  return (
+                    <View style={styles.selectedService} key={index.toString()}>
+                      <Image
+                        source={{uri: icon}}
+                        style={{width: 24, height: 24}}
+                      />
+                      <Text style={{marginLeft: 5, color: 'black'}}>
+                        {serviceName}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => handleDeleteAddedService(index)}
+                        style={styles.closeIcon}>
+                        <Ionicons name="close" size={16} />
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            ) : null}
+          </View>
+          <View style={styles.box}>
+            <View style={styles.boxHeader}>
+              <Image
+                source={require('../../../assets/images/type/address.png')}
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
               />
               <Text style={styles.tittleText}>Khu vực muốn sửa</Text>
-
-              <NativeBaseProvider>
-                <View style={{marginLeft: 'auto'}}>
-                  <Checkbox
-                    // value={toggleCheckBox}
-                    onChange={() => console.log('testing smth')}
-                    colorScheme="yellow"
-                    _icon={{color: 'black'}}
-                  />
-                </View>
-              </NativeBaseProvider>
             </View>
             <View style={styles.valueSpace}>
               <RNPickerSelect
-                // value={cityId}
+                value={cityId}
                 fixAndroidTouchableBug={true}
-                // onValueChange={value => setCityId(value)}
+                onValueChange={onchangeCity}
                 placeholder={{
                   label: 'Tỉnh/Thành Phố',
                   value: null,
                 }}
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
-                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                items={listCity}
                 Icon={() => (
-                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 3,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
                 )}
               />
             </View>
             <View style={styles.valueSpace}>
               <RNPickerSelect
-                // value={cityId}
+                value={districtId}
                 fixAndroidTouchableBug={true}
-                // onValueChange={value => setCityId(value)}
+                onValueChange={onchangeDistrict}
                 placeholder={{
                   label: 'Quận/Huyện',
                   value: null,
                 }}
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
-                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                items={listDistrict}
                 Icon={() => (
-                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 2,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
                 )}
               />
             </View>
             <View style={styles.valueSpace}>
               <RNPickerSelect
-                // value={cityId}
+                value={communeId}
                 fixAndroidTouchableBug={true}
-                // onValueChange={value => setCityId(value)}
+                onValueChange={value => {
+                  setCommuneId(value);
+                }}
                 placeholder={{
                   label: 'Phường/Xã',
                   value: null,
                 }}
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
-                items={[{label: 'Phú Thọ', value: 'thang'}]}
+                items={listCommune}
                 Icon={() => (
-                  <Icon name="caret-down" size={20} style={{marginTop: 5}} />
+                  <Ionicons
+                    name="chevron-down-sharp"
+                    size={20}
+                    style={{
+                      marginBottom: 3,
+                      color: 'black',
+                      marginLeft: 'auto',
+                    }}
+                  />
                 )}
               />
             </View>
           </View>
           <View style={styles.box}>
             <View style={styles.boxHeader}>
-              <Ionicons
-                name="md-calendar-sharp"
-                size={20}
-                style={{marginBottom: 3}}
+              <Image
+                source={require('../../../assets/images/type/calendar.png')}
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
               />
               <Text style={styles.tittleText}>Chọn ngày muốn sửa</Text>
-              <NativeBaseProvider>
-                <View style={{marginLeft: 'auto'}}>
-                  <Checkbox
-                    // value={toggleCheckBox}
-                    onChange={() => console.log('testing smth')}
-                    colorScheme="yellow"
-                    _icon={{color: 'black'}}
-                  />
-                </View>
-              </NativeBaseProvider>
             </View>
             <View style={styles.dateForm}>
               <Text style={styles.dateLabel}>Từ ngày</Text>
@@ -184,10 +359,10 @@ export default function ServiceFilterScreen({navigation}) {
                 <TouchableOpacity
                   style={styles.datePicker}
                   onPress={() => {
-                    setFromDateVisible(true);
+                    setStartDateVisible(true);
                   }}>
                   <Text style={styles.textBold}>
-                    {fromDate.format('DD/MM/YYYY')}
+                    {startDate.format('DD/MM/YYYY')}
                   </Text>
                   <Ionicons
                     name="chevron-down-sharp"
@@ -199,9 +374,9 @@ export default function ServiceFilterScreen({navigation}) {
                     }}
                   />
                   <CustomDatePicker
-                    isVisible={fromDateVisible}
-                    handleConfirm={handlerFromDateConfirm}
-                    hideDatePicker={hideFromDatePicker}
+                    isVisible={startDateVisible}
+                    handleConfirm={handlerStartDateConfirm}
+                    hideDatePicker={hideStartDatePicker}
                   />
                 </TouchableOpacity>
               </View>
@@ -211,9 +386,9 @@ export default function ServiceFilterScreen({navigation}) {
               <View style={{marginTop: 10, width: '65%'}}>
                 <TouchableOpacity
                   style={styles.datePicker}
-                  onPress={() => setToDateVisible(true)}>
+                  onPress={() => setEndDateVisible(true)}>
                   <Text style={styles.textBold}>
-                    {toDate.format('DD/MM/YYYY')}
+                    {endDate.format('DD/MM/YYYY')}
                   </Text>
                   <Ionicons
                     name="chevron-down-sharp"
@@ -225,22 +400,48 @@ export default function ServiceFilterScreen({navigation}) {
                     }}
                   />
                   <CustomDatePicker
-                    isVisible={toDateVisible}
-                    handleConfirm={handlerToDateConfirm}
-                    hideDatePicker={hideToDatePicker}
+                    isVisible={endDateVisible}
+                    handleConfirm={handlerEndDateConfirm}
+                    hideDatePicker={hideEndDatePicker}
                   />
                 </TouchableOpacity>
               </View>
             </View>
           </View>
-          <Button
-            style={{marginTop: 10, marginHorizontal: 10, marginBottom: 40}}
-            onPress={() => {}}
-            buttonText="ÁP DỤNG"
-          />
         </ScrollView>
-      </View>
-      <BackButton onPressHandler={navigation.goBack} color="black" />
+        <Button
+          style={{
+            marginVertical: 8,
+            width: '100%',
+            alignSelf: 'center',
+          }}
+          onPress={handleApplyButton}
+          buttonText="ÁP DỤNG"
+        />
+        <CustomModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          modalRatio={0.5}>
+          <Text style={styles.modalText}>Lưu ý</Text>
+          <Text>Vui lòng chọn ít nhất 1 dịch vụ.</Text>
+          <Text>Chọn khu vực muốn sửa mức chi tiết ít nhất là thành phố.</Text>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              marginVertical: 20,
+            }}>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonOpen]}
+              onPress={() => {
+                setModalVisible(false);
+              }}>
+              <Text style={styles.textStyle}>Đồng ý</Text>
+            </TouchableOpacity>
+          </View>
+        </CustomModal>
+      </SafeAreaView>
     </View>
   );
 }
@@ -255,14 +456,15 @@ const styles = StyleSheet.create({
   },
   box: {
     backgroundColor: '#F0F0F0',
-    borderRadius: 20,
+    borderRadius: 18,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginTop: 10,
+    height: 'auto',
   },
   boxHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     marginBottom: 5,
   },
   tittleText: {
@@ -282,7 +484,15 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginRight: 15,
   },
-
+  editTouch: {
+    marginLeft: 'auto',
+  },
+  editText: {
+    color: '#FEC54B',
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
   closeIcon: {
     width: 20,
     height: 20,

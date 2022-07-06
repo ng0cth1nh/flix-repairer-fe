@@ -2,7 +2,7 @@ import useAxios from './useAxios';
 import {useEffect, useState} from 'react';
 
 function useFetchData(URL = '', params = {}) {
-  const customerAPI = useAxios();
+  const repairerAPI = useAxios();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [isError, setIsError] = useState(false);
@@ -12,7 +12,7 @@ function useFetchData(URL = '', params = {}) {
     let isSubscribe = true;
     (async function fetchData() {
       try {
-        const response = await customerAPI.get(URL, params);
+        const response = await repairerAPI.get(URL, params);
         if (isSubscribe && response.status === 200) {
           setData(response.data || null);
         }

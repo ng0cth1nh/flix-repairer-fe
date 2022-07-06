@@ -36,6 +36,9 @@ const FixingScreen = ({navigation}) => {
   const handelNavigationToDetailRequest = requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isShowCancelButton: false,
+      buttonText: 'Tạo hóa đơn',
+      isAddableDetailService: true,
     });
   };
 

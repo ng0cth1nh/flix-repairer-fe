@@ -31,7 +31,7 @@ const listId = [
   {id: 12},
 ];
 
-export default function AddFixedAccessoriesScreen({navigation}) {
+export default function AddSubServiceScreen({navigation}) {
   const [search, setSearch] = useState('');
   const renderItem = ({item}) => {
     return (
@@ -55,7 +55,7 @@ export default function AddFixedAccessoriesScreen({navigation}) {
     <View style={{backgroundColor: 'white', flex: 1}}>
       <TopHeaderComponent
         navigation={navigation}
-        title="Thêm linh kiện đã thay"
+        title="Thêm dịch vụ đã sửa"
         isBackButton={true}
         statusBarColor="white"
       />

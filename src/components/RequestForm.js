@@ -28,8 +28,11 @@ const RequestForm = function ({
   data,
   description,
   setDiscription,
+  isShowCancelButton,
   handlerCancel,
+  isAddableDetailService,
   handlerConfirmFixingButtonClick,
+  handlerAddDetailServiceButtonClick,
   isRequestIdVisible = false,
 }) {
   const [dateVisible, setDateVisible] = useState(false);
@@ -105,6 +108,13 @@ const RequestForm = function ({
               }}
             />
             <Text style={styles.tittleText}>Dịch vụ sửa chữa</Text>
+            {isAddableDetailService && (
+              <TouchableOpacity
+                style={styles.editTouch}
+                onPress={handlerAddDetailServiceButtonClick}>
+                <Text style={styles.editText}>Thêm</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.boxBody}>
             <Image
@@ -291,9 +301,7 @@ const RequestForm = function ({
         <View
           style={{
             paddingHorizontal: 10,
-            paddingBottom: 40,
-            borderBottomWidth: 1,
-            borderBottomColor: '#CACACA',
+            paddingBottom: 20,
           }}>
           <View style={styles.serviceRow}>
             <Text style={styles.serviceName}>Phí dịch vụ kiểm tra</Text>
@@ -324,11 +332,13 @@ const RequestForm = function ({
             </Text>
           </View>
         </View>
-        <Button
-          style={{marginVertical: 10, height: 40}}
-          onPress={handlerCancel}
-          buttonText={buttonText}
-        />
+        {isShowCancelButton ? (
+          <Button
+            style={{marginVertical: 10, height: 40}}
+            onPress={handlerCancel}
+            buttonText="Hủy yêu cầu"
+          />
+        ) : null}
       </ScrollView>
       <SubmitButton
         style={{
@@ -337,7 +347,7 @@ const RequestForm = function ({
           alignSelf: 'center',
         }}
         onPress={handlerConfirmFixingButtonClick}
-        buttonText="Xác nhận đang sửa"
+        buttonText={buttonText}
       />
     </SafeAreaView>
   );

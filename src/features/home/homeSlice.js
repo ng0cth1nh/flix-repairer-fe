@@ -1,33 +1,47 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import ApiConstants from '../../constants/Api';
 import getErrorMessage from '../../utils/getErrorMessage';
-import {RequestStatus} from '../../utils/util';
 
 const initialState = {
   requests: {
-    pending: null,
-    approved: null,
-    done: null,
-    fixing: null,
-    paymentWaiting: null,
-    cancelled: null,
+    suggested: null,
+    interested: null,
+    filtered: null,
   },
   errorMessage: null,
   isLoading: false,
 };
 
-export const fetchRequests = createAsyncThunk(
-  'home/fetchRequests',
-  async ({repairerAPI, status}, {rejectWithValue}) => {
+export const fetchSuggestRequests = createAsyncThunk(
+  'home/fetchSuggestRequests',
+  async ({repairerAPI, type}, {rejectWithValue}) => {
     try {
       const response = await repairerAPI.get(
-        ApiConstants.GET_REQUEST_HISTORY_LIST_API,
+        ApiConstants.GET_SUGGEST_REQUEST_API,
         {
-          params: {status},
+          params: {type},
         },
       );
+      console.log('GET_' + type + '_REQUEST_API: ' + response.data.requestList);
+      return {requests: response.data.requestList, type};
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
 
-      return {requests: response.data.requestHistories, type: status};
+export const fetchFilteredRequests = createAsyncThunk(
+  'home/fetchFilteredRequests',
+  async ({repairerAPI, param}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.get(
+        ApiConstants.GET_FILTERED_REQUEST_API,
+        {
+          params: param,
+        },
+      );
+      console.log('GET_FILTERED_REQUEST_API: ' + response.data.requestList);
+      return response.data.requestList;
     } catch (err) {
       return rejectWithValue(getErrorMessage(err));
     }
@@ -84,33 +98,31 @@ export const homeSlice = createSlice({
     // builder.addCase(fetchRequests.pending, state => {
     //   state.isLoading = true;
     // });
-    builder.addCase(fetchRequests.fulfilled, (state, action) => {
+    builder.addCase(fetchSuggestRequests.fulfilled, (state, action) => {
       state.isLoading = false;
       state.errorMessage = null;
       switch (action.payload.type) {
-        case RequestStatus.APPROVED:
-          state.requests.approved = action.payload.requests;
+        case 'SUGGESTED':
+          state.requests.suggested = action.payload.requests;
           break;
-        case RequestStatus.CANCELLED:
-          state.requests.cancelled = action.payload.requests;
-          break;
-        case RequestStatus.PENDING:
-          state.requests.pending = action.payload.requests;
-          break;
-        case RequestStatus.DONE:
-          state.requests.done = action.payload.requests;
-          break;
-        case RequestStatus.FIXING:
-          state.requests.fixing = action.payload.requests;
-          break;
-        case RequestStatus.PAYMENT_WAITING:
-          state.requests.paymentWaiting = action.payload.requests;
+        case 'INTERESTED':
+          state.requests.interested = action.payload.requests;
           break;
         default:
           break;
       }
     });
-    builder.addCase(fetchRequests.rejected, (state, action) => {
+    builder.addCase(fetchSuggestRequests.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(fetchFilteredRequests.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+      state.requests.filtered = action.payload;
+    });
+    builder.addCase(fetchFilteredRequests.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });
@@ -142,7 +154,7 @@ export const homeSlice = createSlice({
 });
 
 export const {setIsLoading} = homeSlice.actions;
-export const selectRequests = state => state.request.requests;
-export const selectErrorMessage = state => state.request.errorMessage;
-export const selectIsLoading = state => state.request.isLoading;
+export const selectRequests = state => state.home.requests;
+export const selectErrorMessage = state => state.home.errorMessage;
+export const selectIsLoading = state => state.home.isLoading;
 export default homeSlice.reducer;

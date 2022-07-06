@@ -2,7 +2,10 @@ import 'react-native-gesture-handler';
 import React, {useEffect, useState, useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {Image, View, Text, Dimensions} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 import {navigationRef} from './src/RootNavigation';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ModalsProvider} from 'react-native-nested-modals';
@@ -22,6 +25,7 @@ import ChoosePaymentMethodScreen from './src/screens/request/ChoosePaymentMethod
 import RequestHistoryScreen from './src/screens/request/RequestHistoryScreen';
 import AddFixedServiceScreen from './src/screens/request/AddFixedServiceScreen';
 import AddExtraServiceScreen from './src/screens/request/AddExtraServiceScreen';
+import AddSubServiceScreen from './src/screens/request/AddSubServiceScreen';
 import AddFixedAccessoriesScreen from './src/screens/request/AddFixedAccessoriesScreen';
 import AddAddressScreen from './src/screens/address/AddAddressScreen';
 import AddressListScreen from './src/screens/address/AddressListScreen';
@@ -104,7 +108,13 @@ function App() {
   }
   function HomeStackScreen() {
     return (
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen
           name="ServiceFilterScreen"
@@ -114,13 +124,23 @@ function App() {
           name="SearchServiceFilterScreen"
           component={SearchServiceFilterScreen}
         />
+        <Stack.Screen
+          name="RequestDetailScreen"
+          component={RequestDetailScreen}
+        />
       </Stack.Navigator>
     );
   }
 
   function RequestHistoryStackScreen() {
     return (
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
         <Stack.Screen
           name="RequestHistoryScreen"
           component={RequestHistoryScreen}
@@ -128,6 +148,22 @@ function App() {
         <Stack.Screen
           name="RequestDetailScreen"
           component={RequestDetailScreen}
+        />
+        <Stack.Screen
+          name="AddFixedServiceScreen"
+          component={AddFixedServiceScreen}
+        />
+        <Stack.Screen
+          name="AddFixedAccessoriesScreen"
+          component={AddFixedAccessoriesScreen}
+        />
+        <Stack.Screen
+          name="AddExtraServiceScreen"
+          component={AddExtraServiceScreen}
+        />
+        <Stack.Screen
+          name="AddSubServiceScreen"
+          component={AddSubServiceScreen}
         />
       </Stack.Navigator>
     );
@@ -186,7 +222,13 @@ function App() {
               <Tab.Screen name="Profile" component={ProfileScreen} />
             </Tab.Navigator>
           ) : (
-            <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+                gestureEnabled: true,
+                gestureDirection: 'horizontal',
+                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+              }}>
               <Stack.Screen
                 name="LoginScreen"
                 component={LoginScreen}

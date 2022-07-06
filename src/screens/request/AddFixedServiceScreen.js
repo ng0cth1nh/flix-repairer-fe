@@ -2,21 +2,60 @@ import {
   View,
   Text,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   FlatList,
   ScrollView,
 } from 'react-native';
 import React from 'react';
 import {Checkbox, NativeBaseProvider} from 'native-base';
-import BackButton from '../../components/BackButton';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Button from '../../components/SubmitButton';
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 
 const listId = [{id: 1}, {id: 2}, {id: 3}, {id: 4}];
 function AddFixedServiceScreen({navigation}) {
   // const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const handlerAddFixedAccessoriesButtonClick = async () => {
+    try {
+      navigation.push('AddFixedAccessoriesScreen', {
+        // serviceName: service.serviceName,
+        // serviceId: 1,
+      });
+    } catch (err) {
+      // Toast.show({
+      //   type: 'customErrorToast',
+      //   text1: err,
+      // });
+    }
+  };
+  const handlerAddExtraServiceButtonClick = async () => {
+    try {
+      navigation.push('AddExtraServiceScreen', {
+        // serviceName: service.serviceName,
+        // serviceId: 1,
+      });
+    } catch (err) {
+      // Toast.show({
+      //   type: 'customErrorToast',
+      //   text1: err,
+      // });
+    }
+  };
+  const handlerAddSubServiceButtonClick = async () => {
+    try {
+      navigation.push('AddSubServiceScreen', {
+        // serviceName: service.serviceName,
+        // serviceId: 1,
+      });
+    } catch (err) {
+      // Toast.show({
+      //   type: 'customErrorToast',
+      //   text1: err,
+      // });
+    }
+  };
 
   const renderItem = ({item}) => {
     return (
@@ -38,69 +77,103 @@ function AddFixedServiceScreen({navigation}) {
   };
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-      <BackButton onPressHandler={navigation.goBack} color="black" />
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Dịch vụ đã sửa"
+        isBackButton={true}
+        statusBarColor="white"
+      />
       <SafeAreaView style={{flex: 1}}>
-        <View style={styles.headerBox}>
-          <View style={{flex: 1, marginLeft: 20}}>
-            <Text style={styles.headerText}>Thêm dịch vụ đã sửa</Text>
-          </View>
-        </View>
         <View
           style={{
             flex: 1,
             paddingBottom: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: '#CACACA',
           }}>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.service}>
               <View style={styles.titleBox}>
                 <Text style={[styles.textBold, {fontSize: 20}]}>
                   Linh kiện đã thay
                 </Text>
-                <TouchableOpacity>
-                  <Text style={styles.editItem}>{'Thêm>'}</Text>
+                <TouchableOpacity
+                  onPress={handlerAddFixedAccessoriesButtonClick}>
+                  <Text style={styles.editItem}>Thêm</Text>
                 </TouchableOpacity>
               </View>
-              <FlatList
-                nestedScrollEnabled
-                data={listId}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-              />
+              {listId.map((item, index) => {
+                return (
+                  <NativeBaseProvider>
+                    <View style={styles.serviceRow}>
+                      <Checkbox
+                        // value={toggleCheckBox}
+                        onChange={() => console.log('testing smth')}
+                        colorScheme="yellow"
+                        _icon={{color: 'black'}}>
+                        Điện trở lò nướng
+                      </Checkbox>
+                      <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
+                        150,000 vnđ
+                      </Text>
+                    </View>
+                  </NativeBaseProvider>
+                );
+              })}
             </View>
             <View style={styles.service}>
               <View style={styles.titleBox}>
                 <Text style={[styles.textBold, {fontSize: 20}]}>
                   Dịch vụ đã sửa
                 </Text>
-                <TouchableOpacity>
-                  <Text style={styles.editItem}>{'Thêm>'}</Text>
+                <TouchableOpacity onPress={handlerAddExtraServiceButtonClick}>
+                  <Text style={styles.editItem}>Thêm</Text>
                 </TouchableOpacity>
               </View>
-              <FlatList
-                nestedScrollEnabled
-                data={listId}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-              />
+              {listId.map((item, index) => {
+                return (
+                  <NativeBaseProvider key={({index}) => index}>
+                    <View style={styles.serviceRow}>
+                      <Checkbox
+                        // value={toggleCheckBox}
+                        onChange={() => console.log('testing smth')}
+                        colorScheme="yellow"
+                        _icon={{color: 'black'}}>
+                        Điện trở lò nướng
+                      </Checkbox>
+                      <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
+                        150,000 vnđ
+                      </Text>
+                    </View>
+                  </NativeBaseProvider>
+                );
+              })}
             </View>
             <View style={styles.service}>
               <View style={styles.titleBox}>
                 <Text style={[styles.textBold, {fontSize: 20}]}>
                   Dịch vụ bên ngoài
                 </Text>
-                <TouchableOpacity>
-                  <Text style={styles.editItem}>{'Thêm>'}</Text>
+                <TouchableOpacity onPress={handlerAddSubServiceButtonClick}>
+                  <Text style={styles.editItem}>Thêm</Text>
                 </TouchableOpacity>
               </View>
-              <FlatList
-                nestedScrollEnabled
-                data={listId}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-              />
+              {listId.map((item, index) => {
+                return (
+                  <NativeBaseProvider>
+                    <View style={styles.serviceRow}>
+                      <Checkbox
+                        // value={toggleCheckBox}
+                        onChange={() => console.log('testing smth')}
+                        colorScheme="yellow"
+                        _icon={{color: 'black'}}>
+                        Điện trở lò nướng
+                      </Checkbox>
+                      <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
+                        150,000 vnđ
+                      </Text>
+                    </View>
+                  </NativeBaseProvider>
+                );
+              })}
             </View>
           </ScrollView>
         </View>

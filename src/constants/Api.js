@@ -22,6 +22,10 @@ const ApiConstants = {
   GET_REQUEST_DETAIL_API: '/repairer/request/detail',
   CANCEL_REQUEST_API: '/repairer/request/cancel',
   CONFIRM_FIXING_REQUEST_API: '/repairer/request/confirmFixing',
+  GET_FIXING_REQUEST_API: '/repairer/invoice/fixedService',
+  GET_SUGGEST_REQUEST_API: '/repairer/request/list/suggestion',
+  GET_FILTERED_REQUEST_API: '/repairer/request/list/filter',
+  SEARCH_SERVICE_API: '/category/services/search',
 };
 
 //http://localhost:8000

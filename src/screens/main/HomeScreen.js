@@ -8,116 +8,107 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
+  RefreshControl,
+  ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import moment from 'moment';
+import React, {useState, useEffect} from 'react';
+import Empty from '../../components/Empty';
 const {width} = Dimensions.get('window');
-const items = [{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}];
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  fetchSuggestRequests,
+  selectRequests,
+  selectErrorMessage,
+  fetchFilteredRequests,
+  setIsLoading,
+  selectIsLoading,
+} from '../../features/home/homeSlice';
+import useAxios from '../../hooks/useAxios';
+
 const HomeScreen = ({navigation}) => {
   const [buttonIndex, setButtonIndex] = useState(0);
+  const isLoading = useSelector(selectIsLoading);
+  const requests = useSelector(selectRequests);
+  const [renderList, setRenderList] = useState(null);
+  const [refreshControl, setRefreshControl] = useState(false);
+  const [filter, setFilter] = useState(null);
+  const [addedServices, setAddedServices] = useState([]);
+  const [startDates, setStartDates] = useState(moment());
+  const [endDates, setEndDates] = useState(moment());
+  const [cityIds, setCityIds] = useState(null);
+  const [districtIds, setDistrictIds] = useState(null);
+  const [communeIds, setCommuneIds] = useState(null);
+
+  const repairerAPI = useAxios();
+  const dispatch = useDispatch();
+
   const handleSuggestButton = () => {
     setButtonIndex(0);
+    setRenderList(requests.suggested);
   };
-  const handleInterrestButton = () => {
+  const handleInterestButton = () => {
     setButtonIndex(1);
+    setRenderList(requests.interested);
+    console.log('requests.interested: ' + requests.interested);
   };
+
+  const handleOnPressItem = async requestCode => {
+    navigation.push('RequestDetailScreen', {
+      requestCode,
+    });
+  };
+
   const handleFilterClicked = () => {
     setButtonIndex(2);
-    navigation.push('ServiceFilterScreen');
+    navigation.push('ServiceFilterScreen', {
+      setFilter,
+      addedServices,
+      setAddedServices,
+      endDates,
+      setEndDates,
+      startDates,
+      setStartDates,
+      districtIds,
+      setDistrictIds,
+      cityIds,
+      setCityIds,
+      communeIds,
+      setCommuneIds,
+    });
   };
-  const renderItem = ({item}) => {
-    return (
-      <View style={styles.box}>
-        <View style={styles.headerBox}>
-          <TouchableOpacity
-            style={{
-              width: 0.1 * width,
-              aspectRatio: 1,
-              borderRadius: 0.05 * width,
-              resizeMode: 'contain',
-              overflow: 'hidden',
-            }}>
-            <Image
-              source={require('../../../assets/images/extra_icon/filter.png')}
-              resizeMode="cover"
-              style={{width: '100%', height: '100%'}}
-            />
-          </TouchableOpacity>
-          <View style={styles.profileView}>
-            <Text style={[styles.textBold, {fontSize: 16}]}>Johnny Depp</Text>
-            <Text>08:47 - 27/05/2022</Text>
-          </View>
-          <TouchableOpacity style={styles.viewDetail}>
-            <Text style={styles.viewDetailText}>{'Xem chi tiết>'}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{width: '100%', overflow: 'hidden'}}>
-          <View style={styles.bodyRow}>
-            <View style={styles.rowIcon}>
-              <Icon name="tools" size={22} style={styles.icon} />
-            </View>
-            <Text style={[styles.textBold, {fontSize: 18}]}>Điều hòa</Text>
-          </View>
-          <View style={styles.bodyRow}>
-            <View style={styles.rowIcon}>
-              <Ionicons
-                name="md-calendar-sharp"
-                size={22}
-                style={styles.icon}
-              />
-            </View>
-            <Text style={styles.textBold}>31/05/2022</Text>
-          </View>
-          <View style={styles.bodyRow}>
-            <View style={styles.rowIcon}>
-              <Ionicons
-                name="document-text-outline"
-                size={22}
-                style={styles.icon}
-              />
-            </View>
-            <ScrollView
-              style={{
-                width: '60%',
-                height: 40,
-                backgroundColor: 'white',
-                borderRadius: 10,
-              }}>
-              <Text
-                style={{
-                  color: 'black',
-                  paddingHorizontal: 10,
-                  paddingVertical: 3,
-                }}>
-                to popular belief, Lorem Ipsum is not simply random text. It has
-                roots in a piece of classical Latin literature from 45 BC,
-                making it over 2000 years old. Richard McClintock, a Latin
-                professor at Hampden-Sydney College in Virginia, looked up one
-                of the more obscure Latin words
-              </Text>
-            </ScrollView>
-          </View>
-          <View style={styles.bodyRow}>
-            <View style={styles.rowIcon}>
-              <Ionicons name="location-outline" size={22} style={styles.icon} />
-            </View>
-            <Text
-              style={{
-                fontSize: 16,
-                marginRight: 10,
-                color: 'black',
-                flex: 1,
-              }}>
-              Phường Minh Khai, Quận Hai Bà Trưng, Hà Nội
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await dispatch(setIsLoading());
+        const data = await dispatch(
+          fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'}),
+        ).unwrap();
+        setRenderList(data.requests);
+        dispatch(
+          fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
+        ).unwrap();
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await dispatch(setIsLoading());
+        const data = await dispatch(
+          fetchFilteredRequests({repairerAPI, param: filter}),
+        ).unwrap();
+        setRenderList(data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [filter]);
 
   return (
     <>
@@ -145,7 +136,7 @@ const HomeScreen = ({navigation}) => {
               styles.suggestButton,
               buttonIndex === 1 ? {backgroundColor: '#FEC54B'} : {},
             ]}
-            onPress={handleInterrestButton}>
+            onPress={handleInterestButton}>
             <Text style={[styles.textBold]}>Có thể bạn quan tâm</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -165,11 +156,160 @@ const HomeScreen = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-        <FlatList
-          data={items}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-        />
+        {isLoading ? (
+          <ActivityIndicator
+            size="small"
+            color="#FEC54B"
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        ) : (
+          <FlatList
+            data={renderList}
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={Empty}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshControl}
+                onRefresh={async () => {
+                  setRefreshControl(true);
+                  if (buttonIndex === 0) {
+                    await dispatch(
+                      fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'}),
+                    );
+                    setRenderList(requests.suggested);
+                  } else if (buttonIndex === 1) {
+                    await dispatch(
+                      fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
+                    );
+                    setRenderList(requests.interested);
+                  } else {
+                    await dispatch(
+                      fetchFilteredRequests({repairerAPI, param: filter}),
+                    );
+                    setRenderList(requests.filtered);
+                  }
+                  setRefreshControl(false);
+                }}
+                colors={['#FEC54B']}
+              />
+            }
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() => handleOnPressItem(item.requestCode)}
+                style={styles.box}>
+                <View style={styles.headerBox}>
+                  <Image
+                    source={{uri: item.avatar}}
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 0.05 * width,
+                    }}
+                  />
+                  <View style={[styles.profileView, {flex: 2}]}>
+                    <Text style={[styles.textBold, {fontSize: 18}]}>
+                      {item.customerName}
+                    </Text>
+                    <Text style={{fontSize: 12}}>
+                      {moment(item.createdAt).format('HH:mm - DD/MM/YYYY')}
+                    </Text>
+                  </View>
+                  <Image
+                    source={{uri: item.iconImage}}
+                    style={{width: 24, height: 24}}
+                  />
+                </View>
+                <View style={{width: '100%', overflow: 'hidden'}}>
+                  <View style={[styles.bodyRow, {marginTop: 10}]}>
+                    <View style={styles.rowIcon}>
+                      <Image
+                        source={require('../../../assets/images/type/support.png')}
+                        style={{
+                          height: 20,
+                          width: 20,
+                        }}
+                      />
+                    </View>
+                    <Text style={[styles.textBold, {fontSize: 18}]}>
+                      {item.serviceName}
+                    </Text>
+                  </View>
+                  <View style={styles.bodyRow}>
+                    <View style={styles.rowIcon}>
+                      <Image
+                        source={require('../../../assets/images/type/calendar.png')}
+                        style={{
+                          height: 20,
+                          width: 20,
+                        }}
+                      />
+                    </View>
+                    <Text style={styles.textBold}>
+                      {moment(item.expectFixingTime).format(
+                        'HH:mm - DD/MM/YYYY',
+                      )}
+                    </Text>
+                  </View>
+                  <View style={styles.bodyRow}>
+                    <View style={styles.rowIcon}>
+                      <Image
+                        source={require('../../../assets/images/type/writing.png')}
+                        style={{
+                          height: 20,
+                          width: 20,
+                        }}
+                      />
+                    </View>
+                    <ScrollView
+                      style={{
+                        width: '60%',
+                        height: 40,
+                        backgroundColor: 'white',
+                        borderRadius: 10,
+                      }}>
+                      <Text
+                        style={{
+                          color: 'black',
+                          paddingHorizontal: 10,
+                          paddingVertical: 3,
+                        }}>
+                        {item.description}
+                      </Text>
+                    </ScrollView>
+                  </View>
+                  <View style={styles.bodyRow}>
+                    <View style={styles.rowIcon}>
+                      <Image
+                        source={require('../../../assets/images/type/address.png')}
+                        style={{
+                          height: 20,
+                          width: 20,
+                        }}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        marginRight: 10,
+                        color: 'black',
+                        flex: 1,
+                      }}>
+                      {item.address}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </SafeAreaView>
     </>
   );
@@ -177,14 +317,14 @@ const HomeScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: '4%',
     paddingTop: 16,
     backgroundColor: 'white',
     height: '100%',
   },
   box: {
     backgroundColor: '#F0F0F0',
-    borderRadius: 20,
+    borderRadius: 18,
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginTop: 10,
@@ -192,9 +332,10 @@ const styles = StyleSheet.create({
   },
   headerBox: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   profileView: {
-    marginLeft: 20,
+    marginLeft: 14,
   },
   viewDetail: {
     marginLeft: 'auto',
@@ -206,10 +347,11 @@ const styles = StyleSheet.create({
   },
   bodyRow: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginVertical: 8,
+    marginLeft: 10,
     flexWrap: 'wrap',
   },
-  rowIcon: {width: 0.1 * width, marginRight: 20},
+  rowIcon: {width: 0.1 * width},
   icon: {marginLeft: 'auto', color: 'black'},
   suggestButton: {
     width: '40%',

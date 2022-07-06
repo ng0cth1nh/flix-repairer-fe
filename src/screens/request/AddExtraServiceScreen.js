@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 const {height} = Dimensions.get('window');
-
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
 import {formatCurrency, removeCommas} from '../../utils/FormattingCurrency';
@@ -24,14 +24,13 @@ export default function AddExtraServiceScreen({navigation}) {
   const [price, setPrice] = useState('');
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-      <BackButton onPressHandler={navigation.goBack} color="black" />
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Thêm dịch vụ bên ngoài"
+        isBackButton={true}
+        statusBarColor="white"
+      />
       <SafeAreaView style={{flex: 1}}>
-        <View style={styles.headerBox}>
-          <View style={{flex: 1, marginLeft: 20}}>
-            <Text style={styles.headerText}>Thêm dịch vụ bên ngoài</Text>
-          </View>
-        </View>
         <View
           style={{
             flex: 1,

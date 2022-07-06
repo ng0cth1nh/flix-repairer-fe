@@ -56,7 +56,6 @@ const ApprovedScreen = ({navigation}) => {
           }}
         />
       ) : null}
-      {/* {isError ? <NotFound /> : null} */}
       {requests.approved ? (
         <FlatList
           showsVerticalScrollIndicator={false}

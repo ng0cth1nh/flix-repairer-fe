@@ -28,11 +28,13 @@ import {
   setIsLoading,
   selectIsLoading,
 } from '../../features/request/requestSlice';
+import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
 
 const RequestDetailScreen = ({route, navigation}) => {
-  const {requestCode} = route.params;
+  const {requestCode, isShowCancelButton, isAddableDetailService, buttonText} =
+    route.params;
   const [date, setDate] = useState(moment());
   const isLoading = useSelector(selectIsLoading);
   const [reason, setReason] = useState({index: 0, reason: CancelReasons[0]});
@@ -113,6 +115,20 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
+  const handlerAddDetailServiceButtonClick = async () => {
+    try {
+      navigation.push('AddFixedServiceScreen', {
+        // serviceName: service.serviceName,
+        // serviceId: 1,
+      });
+    } catch (err) {
+      Toast.show({
+        type: 'customErrorToast',
+        text1: err,
+      });
+    }
+  };
+
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <TopHeaderComponent
@@ -138,22 +154,27 @@ const RequestDetailScreen = ({route, navigation}) => {
             }}
           />
         ) : null}
-        {/* <ProgressLoader
-        sible={isLoading}
-        iModal={true}
-        isHUD={true}
-        dColor={'#FEC54B'}
-        clor={'#000000'}
-      /> */}
+        <ProgressLoader
+          visible={isLoading}
+          isModal={true}
+          isHUD={true}
+          hudColor={'#FEC54B'}
+          color={'#000000'}
+        />
         {data !== null ? (
           <RequestForm
             buttonClicked={handlerButtonClick}
-            buttonText="Hủy yêu cầu"
+            buttonText={buttonText}
             date={date}
             setDate={setDate}
             data={data}
             description={description}
             handlerConfirmFixingButtonClick={handlerConfirmFixingButtonClick}
+            isShowCancelButton={isShowCancelButton}
+            isAddableDetailService={isAddableDetailService}
+            handlerAddDetailServiceButtonClick={
+              handlerAddDetailServiceButtonClick
+            }
             handlerCancel={showModal}
             setDiscription={setDiscription}
             editable={false}
@@ -163,12 +184,13 @@ const RequestDetailScreen = ({route, navigation}) => {
         <CustomModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          modalRatio={0.8}>
+          modalRatio={0.68}>
           <Text style={styles.modalText}>Chọn lý do hủy</Text>
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{
               flex: 1,
+              width: '100%',
             }}>
             {CancelReasons.map((item, index) => {
               return (
@@ -180,6 +202,9 @@ const RequestDetailScreen = ({route, navigation}) => {
                   key={index}>
                   <RadioButton
                     value={item}
+                    onPress={() => {
+                      setReason({index, reason: CancelReasons[index]});
+                    }}
                     status={index === reason.index ? 'checked' : 'unchecked'}
                     color="#FFBC00"
                   />
@@ -193,6 +218,9 @@ const RequestDetailScreen = ({route, navigation}) => {
               }}
               style={styles.box}>
               <RadioButton
+                onPress={() => {
+                  setReason({index: -1, reason: contentOtherReason});
+                }}
                 status={reason.index === -1 ? 'checked' : 'unchecked'}
                 color="#FFBC00"
               />
@@ -234,8 +262,8 @@ const RequestDetailScreen = ({route, navigation}) => {
         </CustomModal>
         <CustomModal
           modalVisible={warningModalVisible}
-          setModalVisible={setModalVisible}
-          modalRatio={0.38}>
+          setModalVisible={setWarningModalVisible}
+          modalRatio={0.34}>
           <Text style={styles.modalText}>
             Bạn có chắc chắn muốn hủy đơn sửa này không?
           </Text>
@@ -257,7 +285,7 @@ const RequestDetailScreen = ({route, navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
+              onPress={() => setWarningModalVisible(!warningModalVisible)}>
               <Text style={styles.textStyle}>THOÁT</Text>
             </TouchableOpacity>
           </View>
