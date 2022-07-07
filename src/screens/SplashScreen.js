@@ -21,12 +21,7 @@ export default function SplashScreen() {
           </View>
         </View>
         <View style={[styles.introText, {opacity: 1}]}>
-          <Text style={styles.headerText}>
-            Dịch vụ tìm thợ sửa chữa đồ gia dụng
-          </Text>
-          <Text style={styles.descriptionText}>
-            Chuyên nghiệp, nhanh chóng, tiện lợi
-          </Text>
+          <Text style={styles.headerText}>Dành cho thợ</Text>
         </View>
       </SafeAreaView>
     </>

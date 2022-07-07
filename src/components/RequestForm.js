@@ -21,7 +21,7 @@ import Toast from 'react-native-toast-message';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 const RequestForm = function ({
-  buttonText,
+  submitButtonText,
   buttonClicked,
   date,
   setDate,
@@ -31,7 +31,7 @@ const RequestForm = function ({
   isShowCancelButton,
   handlerCancel,
   isAddableDetailService,
-  handlerConfirmFixingButtonClick,
+  handlerSubmitButtonClick,
   handlerAddDetailServiceButtonClick,
   isRequestIdVisible = false,
 }) {
@@ -346,8 +346,8 @@ const RequestForm = function ({
           width: '100%',
           alignSelf: 'center',
         }}
-        onPress={handlerConfirmFixingButtonClick}
-        buttonText={buttonText}
+        onPress={handlerSubmitButtonClick}
+        buttonText={submitButtonText}
       />
     </SafeAreaView>
   );

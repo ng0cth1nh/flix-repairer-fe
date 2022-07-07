@@ -4,12 +4,12 @@ import RequestItem from '../../components/RequestItem';
 import Empty from '../../components/Empty';
 import {RequestStatus} from '../../utils/util';
 import {useSelector, useDispatch} from 'react-redux';
+import useAxios from '../../hooks/useAxios';
 import {
   fetchRequests,
   selectRequests,
   selectIsLoading,
 } from '../../features/request/requestSlice';
-import useAxios from '../../hooks/useAxios';
 
 const ApprovedScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -36,6 +36,10 @@ const ApprovedScreen = ({navigation}) => {
   const handelNavigationToDetailRequest = requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isShowCancelButton: true,
+      submitButtonText: 'Xác nhận đang sửa',
+      isAddableDetailService: false,
+      typeSubmitButtonClick: 'CONFIRM_FIXING',
     });
   };
 

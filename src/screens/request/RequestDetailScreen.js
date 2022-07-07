@@ -25,6 +25,9 @@ import {
   fetchRequests,
   cancelRequest,
   confirmFixingRequest,
+  approveRequest,
+  fetchSuggestRequests,
+  fetchFilteredRequests,
   setIsLoading,
   selectIsLoading,
 } from '../../features/request/requestSlice';
@@ -33,8 +36,14 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
 
 const RequestDetailScreen = ({route, navigation}) => {
-  const {requestCode, isShowCancelButton, isAddableDetailService, buttonText} =
-    route.params;
+  const {
+    requestCode,
+    isShowCancelButton,
+    isAddableDetailService,
+    submitButtonText,
+    typeSubmitButtonClick,
+    filter,
+  } = route.params;
   const [date, setDate] = useState(moment());
   const isLoading = useSelector(selectIsLoading);
   const [reason, setReason] = useState({index: 0, reason: CancelReasons[0]});
@@ -115,6 +124,61 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
+  const handlerApproveRequestButtonClick = async () => {
+    try {
+      await dispatch(setIsLoading());
+      await dispatch(
+        approveRequest({
+          repairerAPI,
+          body: {requestCode},
+        }),
+      ).unwrap();
+      Toast.show({
+        type: 'customToast',
+        text1: 'Xác nhận yêu cầu thành công',
+      });
+      navigation.goBack();
+      await dispatch(setIsLoading());
+      dispatch(fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'})).unwrap();
+      dispatch(
+        fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
+      ).unwrap();
+      dispatch(fetchFilteredRequests({repairerAPI, param: filter})).unwrap();
+    } catch (err) {
+      Toast.show({
+        type: 'customErrorToast',
+        text1: err,
+      });
+    }
+  };
+  const handlerCreateInvoiceButtonClick = async () => {
+    try {
+      await dispatch(setIsLoading());
+      await dispatch(
+        confirmFixingRequest({
+          repairerAPI,
+          body: {requestCode},
+        }),
+      ).unwrap();
+      Toast.show({
+        type: 'customToast',
+        text1: 'Xác nhận đang sửa thành công',
+      });
+      dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
+      ).unwrap();
+      navigation.goBack();
+      dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
+      ).unwrap();
+    } catch (err) {
+      Toast.show({
+        type: 'customErrorToast',
+        text1: err,
+      });
+    }
+  };
+
   const handlerAddDetailServiceButtonClick = async () => {
     try {
       navigation.push('AddFixedServiceScreen', {
@@ -163,13 +227,20 @@ const RequestDetailScreen = ({route, navigation}) => {
         />
         {data !== null ? (
           <RequestForm
-            buttonClicked={handlerButtonClick}
-            buttonText={buttonText}
+            submitButtonText={submitButtonText}
             date={date}
             setDate={setDate}
             data={data}
             description={description}
-            handlerConfirmFixingButtonClick={handlerConfirmFixingButtonClick}
+            handlerSubmitButtonClick={
+              typeSubmitButtonClick === 'CONFIRM_FIXING'
+                ? handlerConfirmFixingButtonClick
+                : typeSubmitButtonClick === 'APPROVE_REQUEST'
+                ? handlerApproveRequestButtonClick
+                : typeSubmitButtonClick === 'CREATE_INVOICE'
+                ? handlerCreateInvoiceButtonClick
+                : null
+            }
             isShowCancelButton={isShowCancelButton}
             isAddableDetailService={isAddableDetailService}
             handlerAddDetailServiceButtonClick={

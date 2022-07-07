@@ -25,7 +25,6 @@ LogBox.ignoreLogs([
 ]);
 
 export default function SearchServiceFilterScreen({route, navigation}) {
-  console.log('render');
   const [search, setSearch] = useState('');
   const {addedService, setAddedService} = route.params;
   const [searchedService, setSearchedService] = useState(null);
@@ -36,7 +35,9 @@ export default function SearchServiceFilterScreen({route, navigation}) {
 
   const handleOnChangeSearch = async text => {
     setSearch(text);
-    if (text === '') return;
+    if (text === '') {
+      return;
+    }
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }

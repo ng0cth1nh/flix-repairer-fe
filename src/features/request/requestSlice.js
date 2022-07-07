@@ -71,6 +71,25 @@ export const confirmFixingRequest = createAsyncThunk(
   },
 );
 
+export const approveRequest = createAsyncThunk(
+  'request/approveRequest',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      await repairerAPI.post(
+        ApiConstants.APPROVE_REQUEST_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
 export const cancelRequest = createAsyncThunk(
   'request/cancelRequest',
   async ({repairerAPI, body}, {rejectWithValue}) => {
@@ -147,6 +166,15 @@ export const requestSlice = createSlice({
       state.errorMessage = null;
     });
     builder.addCase(confirmFixingRequest.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(approveRequest.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(approveRequest.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });

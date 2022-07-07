@@ -37,8 +37,9 @@ const FixingScreen = ({navigation}) => {
     navigation.push('RequestDetailScreen', {
       requestCode,
       isShowCancelButton: false,
-      buttonText: 'Tạo hóa đơn',
+      submitButtonText: 'Tạo hóa đơn',
       isAddableDetailService: true,
+      typeSubmitButtonClick: 'CREATE_INVOICE',
     });
   };
 

@@ -57,6 +57,11 @@ const HomeScreen = ({navigation}) => {
   const handleOnPressItem = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isShowCancelButton: false,
+      submitButtonText: 'Xác nhận yêu cầu',
+      isAddableDetailService: false,
+      typeSubmitButtonClick: 'APPROVE_REQUEST',
+      filter,
     });
   };
 
@@ -175,6 +180,7 @@ const HomeScreen = ({navigation}) => {
             data={renderList}
             keyExtractor={(item, index) => index.toString()}
             ListEmptyComponent={Empty}
+            showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl
                 refreshing={refreshControl}
@@ -211,7 +217,7 @@ const HomeScreen = ({navigation}) => {
                     style={{
                       width: 42,
                       height: 42,
-                      borderRadius: 0.05 * width,
+                      borderRadius: 0.5 * width,
                     }}
                   />
                   <View style={[styles.profileView, {flex: 2}]}>
