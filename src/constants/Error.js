@@ -7,4 +7,6 @@ export default {
   INVALID_CITY: 'Địa chỉ thành phố không tồn tại!',
   INVALID_DISTRICT: 'Địa chỉ Quận/Huyện không tồn tại!',
   INVALID_COMMUNE: 'Địa chỉ Phường/Xã không tồn tại!',
+  CAN_NOT_ACCEPT_REQUEST_WHEN_ON_ANOTHER_FIXING:
+    'Bạn đang sửa yêu cầu khác nên không thể chấp nhận',
 };

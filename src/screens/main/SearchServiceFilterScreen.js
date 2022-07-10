@@ -3,84 +3,84 @@ import {
   Text,
   View,
   SafeAreaView,
-  StatusBar,
+  ActivityIndicator,
+  Image,
   ScrollView,
-  FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {Checkbox, NativeBaseProvider} from 'native-base';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
-
-import BackButton from '../../components/BackButton';
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 import Button from '../../components/SubmitButton';
 import SearchForm from '../../components/SearchForm';
+import useAxios from '../../hooks/useAxios';
+import ApiConstants from '../../constants/Api';
+import NotFound from '../../components/NotFound';
+import {LogBox} from 'react-native';
 
-const listId = [
-  {id: 1},
-  {id: 2},
-  {id: 3},
-  {id: 4},
-  {id: 5},
-  {id: 6},
-  {id: 7},
-  {id: 8},
-  {id: 9},
-  {id: 10},
-  {id: 11},
-  {id: 12},
-];
-const items = [{id: 1}, {id: 2}, {id: 3}];
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
-export default function SearchServiceFilterScreen({navigation}) {
+export default function SearchServiceFilterScreen({route, navigation}) {
   const [search, setSearch] = useState('');
-  const renderItem = ({item}) => {
-    return (
-      <NativeBaseProvider>
-        <View style={styles.serviceRow}>
-          <Icon
-            name="tools"
-            size={20}
-            style={{marginBottom: 3, marginRight: 15}}
-          />
-          <Text style={{color: 'black', fontSize: 16}}>Tủ lạnh</Text>
-          <View style={{marginLeft: 'auto'}}>
-            <Checkbox
-              value={'fjsdkfjsldf'}
-              onChange={() => console.log('testing smth')}
-              colorScheme="yellow"
-              _icon={{color: 'black'}}
-            />
-          </View>
-        </View>
-      </NativeBaseProvider>
-    );
+  const {addedService, setAddedService} = route.params;
+  const [searchedService, setSearchedService] = useState(null);
+  const [addService, setAddService] = useState(addedService);
+  const [loading, setLoading] = useState(false);
+  const typingTimeoutRef = useRef(null);
+  const repairerAPI = useAxios();
+
+  const handleOnChangeSearch = async text => {
+    setSearch(text);
+    if (text === '') {
+      return;
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    setLoading(true);
+    typingTimeoutRef.current = setTimeout(async () => {
+      let response = await repairerAPI.get(ApiConstants.SEARCH_SERVICE_API, {
+        params: {keyword: text},
+      });
+      console.log('search: ' + text);
+      setSearchedService(response.data.services);
+      setLoading(false);
+    }, 200);
   };
-  const renderService = ({item}) => {
-    return (
-      <View style={styles.selectedService}>
-        <Ionicons name="location-outline" size={22} style={{color: 'black'}} />
-        <Text style={{marginLeft: 5, color: 'black'}}>Máy tính abcjsjs</Text>
-        <TouchableOpacity style={styles.closeIcon}>
-          <Ionicons name="close" size={16} />
-        </TouchableOpacity>
-      </View>
-    );
+
+  const handleDeleteAddedService = async index => {
+    const temp = [];
+    for (let i = 0; i < addService.length; i++) {
+      if (i !== index) {
+        temp.push(addService[i]);
+      }
+    }
+    setAddService(temp);
   };
+
+  const handleAddButton = async () => {
+    setAddedService(addService);
+    navigation.goBack();
+  };
+
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
-      <SafeAreaView style={{flex: 1, paddingHorizontal: 20}}>
-        <View style={styles.headerBox}>
-          <View style={{flex: 1, marginLeft: 20}}>
-            <Text style={styles.headerText}>Dịch vụ sửa chữa</Text>
-          </View>
-        </View>
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Dịch vụ sửa chữa"
+        isBackButton={true}
+        statusBarColor="white"
+      />
+      <SafeAreaView
+        style={{flex: 1, paddingHorizontal: '4%', marginVertical: 10}}>
         <SearchForm
           search={search}
           setSearch={setSearch}
+          handleOnChangeSearch={handleOnChangeSearch}
           placeholder="Tìm kiếm dịch vụ"
         />
         <View
@@ -91,49 +91,112 @@ export default function SearchServiceFilterScreen({navigation}) {
             borderBottomColor: '#CACACA',
           }}>
           <ScrollView>
-            {items.length !== 0 && (
-              <View style={{marginBottom: 20}}>
+            {addService.length !== 0 ? (
+              <View>
                 <View style={styles.titleBox}>
                   <Text style={[styles.textBold, {fontSize: 20}]}>Đã thêm</Text>
                 </View>
-                <FlatList
-                  data={items}
-                  keyExtractor={item => item.id}
-                  renderItem={renderService}
-                  contentContainerStyle={{
+                <View
+                  style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
                     marginBottom: 5,
-                  }}
-                />
+                  }}>
+                  {addService.map((item, index) => {
+                    const [serviceId, serviceName, icon] =
+                      item.split('[SPACE]');
+                    return (
+                      <View
+                        style={styles.selectedService}
+                        key={index.toString()}>
+                        <Image
+                          source={{uri: icon}}
+                          style={{width: 24, height: 24}}
+                        />
+                        <Text style={{marginLeft: 5, color: 'black'}}>
+                          {serviceName}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => handleDeleteAddedService(index)}
+                          style={styles.closeIcon}>
+                          <Ionicons name="close" size={16} />
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
+            {loading ? (
+              <ActivityIndicator
+                size="small"
+                color="#FEC54B"
+                style={{
+                  marginTop: 30,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              />
+            ) : (
+              <View>
+                {searchedService !== null ? (
+                  searchedService.length !== 0 ? (
+                    <NativeBaseProvider>
+                      <View style={styles.titleBox}>
+                        <Text style={[styles.textBold, {fontSize: 20}]}>
+                          Tất cả dịch vụ
+                        </Text>
+                      </View>
+                      <Checkbox.Group
+                        onChange={setAddService}
+                        value={addService}
+                        accessibilityLabel="choose numbers">
+                        {searchedService.map((item, index) => (
+                          <View
+                            style={styles.serviceRow}
+                            key={index.toString()}>
+                            <Image
+                              source={{uri: item.icon}}
+                              style={{width: 24, height: 24}}
+                            />
+                            <Text
+                              style={{
+                                color: 'black',
+                                fontSize: 16,
+                                marginLeft: 20,
+                              }}>
+                              {item.serviceName}
+                            </Text>
+                            <View style={{marginLeft: 'auto'}}>
+                              <Checkbox
+                                accessibilityLabel={item.serviceName}
+                                value={`${item.serviceId}[SPACE]${item.serviceName}[SPACE]${item.icon}`}
+                                colorScheme="yellow"
+                                _icon={{color: 'black'}}
+                              />
+                            </View>
+                          </View>
+                        ))}
+                      </Checkbox.Group>
+                    </NativeBaseProvider>
+                  ) : (
+                    <NotFound />
+                  )
+                ) : null}
               </View>
             )}
-            <View>
-              <View style={styles.titleBox}>
-                <Text style={[styles.textBold, {fontSize: 20}]}>
-                  Tất cả dịch vụ
-                </Text>
-              </View>
-              <FlatList
-                nestedScrollEnabled
-                data={listId}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-              />
-            </View>
           </ScrollView>
         </View>
         <Button
           style={{
-            width: '80%',
+            marginVertical: 8,
+            width: '100%',
             alignSelf: 'center',
-            marginVertical: 10,
           }}
-          onPress={() => console.log('test')}
+          onPress={handleAddButton}
           buttonText="THÊM"
         />
       </SafeAreaView>
-      <BackButton onPressHandler={navigation.goBack} color="black" />
     </View>
   );
 }
@@ -170,21 +233,21 @@ const styles = StyleSheet.create({
   serviceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 7,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
     backgroundColor: '#D3D3D3',
-    marginTop: 10,
+    marginVertical: 6,
+    width: '100%',
   },
   selectedService: {
     flexDirection: 'row',
-    paddingLeft: 5,
-    paddingRight: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 16,
+    marginBottom: 16,
     borderRadius: 10,
     backgroundColor: '#CACACA',
-    marginTop: 15,
-    marginRight: 15,
   },
 
   closeIcon: {

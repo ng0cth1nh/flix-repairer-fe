@@ -14,7 +14,7 @@ const Button = props => {
 const styles = StyleSheet.create({
   loginButton: {
     height: 0.075 * height,
-    borderRadius: 30,
+    borderRadius: 16,
     backgroundColor: '#FEC54B',
     justifyContent: 'center',
     alignItems: 'center',

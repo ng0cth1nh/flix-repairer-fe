@@ -4,5 +4,5 @@ export function formatCurrency(price) {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 export function removeCommas(price) {
-  return price.split(',').join('');
+  return price.includes(',') ? price.split(',').join('') : price;
 }

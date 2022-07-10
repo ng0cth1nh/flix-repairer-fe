@@ -8,6 +8,7 @@ export default function BackButton({color, onPressHandler}) {
     <TouchableOpacity
       style={{
         position: 'absolute',
+        zIndex: 1,
         marginTop: getStatusBarHeight(),
         marginLeft: 20,
       }}

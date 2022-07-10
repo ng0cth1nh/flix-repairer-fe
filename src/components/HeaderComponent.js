@@ -3,7 +3,7 @@ import {ImageBackground, StatusBar} from 'react-native';
 const HeaderComponent = ({height}) => {
   return (
     <ImageBackground
-      source={require('../../assets/images/login_register_bg/bg.png')}
+      source={require('../../assets/images/login_register_bg/bg.jpg')}
       resizeMode="cover"
       style={{
         width: '100%',

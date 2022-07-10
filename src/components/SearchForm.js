@@ -3,13 +3,18 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-export default function SearchForm({search, setSearch, placeholder = ''}) {
+export default function SearchForm({
+  search,
+  setSearch,
+  handleOnChangeSearch,
+  placeholder = '',
+}) {
   return (
     <View style={styles.searchForm}>
       <TextInput
         style={styles.searchInput}
         placeholder={placeholder}
-        onChangeText={text => setSearch(text)}
+        onChangeText={handleOnChangeSearch}
         defaultValue={search}
       />
       {search ? (
@@ -17,10 +22,10 @@ export default function SearchForm({search, setSearch, placeholder = ''}) {
           onPress={() => {
             setSearch('');
           }}>
-          <Icon name="remove" size={24} />
+          <Icon name="remove" size={20} />
         </TouchableOpacity>
       ) : (
-        <Icon name="search" size={24} />
+        <Icon name="search" size={20} />
       )}
     </View>
   );
