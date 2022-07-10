@@ -9,6 +9,7 @@ import {
   fetchRequests,
   selectRequests,
   selectIsLoading,
+  setIsLoading,
 } from '../../features/request/requestSlice';
 
 const ApprovedScreen = ({navigation}) => {
@@ -20,26 +21,29 @@ const ApprovedScreen = ({navigation}) => {
 
   useEffect(() => {
     (async () => {
+      await dispatch(setIsLoading());
       await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
       );
     })();
   }, []);
 
-  const handelNavigationToListPrice = service => {
+  const handelNavigationToListPrice = async service => {
     navigation.push('ServicePriceScreen', {
       serviceName: service.serviceName,
-      serviceId: 1,
+      serviceId: service.serviceId,
     });
   };
 
-  const handelNavigationToDetailRequest = requestCode => {
+  const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
       isShowCancelButton: true,
       submitButtonText: 'Xác nhận đang sửa',
       isAddableDetailService: false,
       typeSubmitButtonClick: 'CONFIRM_FIXING',
+      isCancelFromApprovedStatus: true,
+      isFetchFixedService: false,
     });
   };
 
@@ -82,10 +86,12 @@ const ApprovedScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              handelNavigationToListPrice={handelNavigationToListPrice}
-              handelNavigationToDetailRequest={handelNavigationToDetailRequest}
+              handleButtonPress={handelNavigationToListPrice}
+              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              textButton="Xem giá dịch vụ"
+              text="Tổng thanh toán (dự kiến)"
             />
           )}
         />

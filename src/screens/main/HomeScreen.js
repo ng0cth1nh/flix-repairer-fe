@@ -46,12 +46,14 @@ const HomeScreen = ({navigation}) => {
 
   const handleSuggestButton = () => {
     setButtonIndex(0);
+    console.log('handleSuggestButton: buttonIndex = ' + buttonIndex);
     setRenderList(requests.suggested);
   };
   const handleInterestButton = () => {
     setButtonIndex(1);
+    console.log('handleInterestButton: buttonIndex = ' + buttonIndex);
     setRenderList(requests.interested);
-    console.log('requests.interested: ' + requests.interested);
+    // console.log('requests.interested: ' + requests.interested);
   };
 
   const handleOnPressItem = async requestCode => {
@@ -62,11 +64,14 @@ const HomeScreen = ({navigation}) => {
       isAddableDetailService: false,
       typeSubmitButtonClick: 'APPROVE_REQUEST',
       filter,
+      buttonIndex,
+      setRenderList,
     });
   };
 
   const handleFilterClicked = () => {
     setButtonIndex(2);
+    // console.log('handleFilterClicked: buttonIndex = ' + buttonIndex);
     navigation.push('ServiceFilterScreen', {
       setFilter,
       addedServices,
@@ -102,18 +107,34 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await dispatch(setIsLoading());
-        const data = await dispatch(
-          fetchFilteredRequests({repairerAPI, param: filter}),
-        ).unwrap();
-        setRenderList(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    if (filter) {
+      (async () => {
+        try {
+          await dispatch(setIsLoading());
+          const data = await dispatch(
+            fetchFilteredRequests({repairerAPI, param: filter}),
+          ).unwrap();
+          setRenderList(data);
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
   }, [filter]);
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     console.log('HOME FOCUS: buttonIndex = ' + buttonIndex);
+  //     console.log('HOME FOCUS: requests.filtered = ' + requests.filtered);
+  //     buttonIndex === 0
+  //       ? setRenderList(requests.suggested)
+  //       : buttonIndex === 1
+  //       ? setRenderList(requests.interested)
+  //       : setRenderList(requests.filtered);
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
 
   return (
     <>

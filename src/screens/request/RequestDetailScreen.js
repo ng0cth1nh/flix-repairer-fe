@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -26,11 +26,16 @@ import {
   cancelRequest,
   confirmFixingRequest,
   approveRequest,
-  fetchSuggestRequests,
-  fetchFilteredRequests,
   setIsLoading,
   selectIsLoading,
+  fetchFixedService,
+  createInvoice,
 } from '../../features/request/requestSlice';
+import {
+  fetchSuggestRequests,
+  fetchFilteredRequests,
+  setIsLoading as setIsLoadingHome,
+} from '../../features/home/homeSlice';
 import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
@@ -43,22 +48,51 @@ const RequestDetailScreen = ({route, navigation}) => {
     submitButtonText,
     typeSubmitButtonClick,
     filter,
+    buttonIndex,
+    setRenderList,
+    isCancelFromApprovedStatus,
+    isFetchFixedService,
   } = route.params;
   const [date, setDate] = useState(moment());
   const isLoading = useSelector(selectIsLoading);
   const [reason, setReason] = useState({index: 0, reason: CancelReasons[0]});
   const [modalVisible, setModalVisible] = useState(false);
+  const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
   const [warningModalVisible, setWarningModalVisible] = useState(false);
   const [description, setDiscription] = useState('');
   const [contentOtherReason, setContentOtherReason] = useState('');
+  const [fixedService, setFixedService] = useState(null);
+  const [isLoad, setIsLoad] = useState(false);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
+
   const showModal = () => {
     setWarningModalVisible(true);
   };
-  function handlerButtonClick() {
-    console.log(date);
-  }
+  const showInvoiceModal = () => {
+    setInvoiceModalVisible(true);
+  };
+
+  useEffect(() => {
+    if (isFetchFixedService) {
+      (async () => {
+        try {
+          await setIsLoad(true);
+          let data = await dispatch(
+            fetchFixedService({
+              repairerAPI,
+              requestCode,
+            }),
+          ).unwrap();
+          setFixedService(data);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          await setIsLoad(false);
+        }
+      })();
+    }
+  }, []);
 
   const {loading, data, isError} = useFetchData(
     ApiConstants.GET_REQUEST_DETAIL_API,
@@ -81,9 +115,13 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Hủy yêu cầu thành công',
       });
-      dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.PENDING}),
-      ).unwrap();
+      isCancelFromApprovedStatus
+        ? dispatch(
+            fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
+          ).unwrap()
+        : dispatch(
+            fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
+          ).unwrap();
       navigation.goBack();
       dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}),
@@ -137,13 +175,28 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Xác nhận yêu cầu thành công',
       });
+      await dispatch(setIsLoadingHome());
+      let data = null;
+      if (buttonIndex === 0) {
+        data = (
+          await dispatch(
+            fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'}),
+          ).unwrap()
+        ).requests;
+      } else if (buttonIndex === 1) {
+        data = (
+          await dispatch(
+            fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
+          ).unwrap()
+        ).requests;
+      } else {
+        data = await dispatch(
+          fetchFilteredRequests({repairerAPI, param: filter}),
+        ).unwrap();
+      }
+      setRenderList(data);
       navigation.goBack();
-      await dispatch(setIsLoading());
-      dispatch(fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'})).unwrap();
-      dispatch(
-        fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
-      ).unwrap();
-      dispatch(fetchFilteredRequests({repairerAPI, param: filter})).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -153,23 +206,24 @@ const RequestDetailScreen = ({route, navigation}) => {
   };
   const handlerCreateInvoiceButtonClick = async () => {
     try {
+      await setInvoiceModalVisible(false);
       await dispatch(setIsLoading());
       await dispatch(
-        confirmFixingRequest({
+        createInvoice({
           repairerAPI,
           body: {requestCode},
         }),
       ).unwrap();
       Toast.show({
         type: 'customToast',
-        text1: 'Xác nhận đang sửa thành công',
+        text1: 'Tạo hóa đơn thành công',
       });
       dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
       ).unwrap();
       navigation.goBack();
       dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
+        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
       ).unwrap();
     } catch (err) {
       Toast.show({
@@ -180,17 +234,10 @@ const RequestDetailScreen = ({route, navigation}) => {
   };
 
   const handlerAddDetailServiceButtonClick = async () => {
-    try {
-      navigation.push('AddFixedServiceScreen', {
-        // serviceName: service.serviceName,
-        // serviceId: 1,
-      });
-    } catch (err) {
-      Toast.show({
-        type: 'customErrorToast',
-        text1: err,
-      });
-    }
+    navigation.push('AddFixedServiceScreen', {
+      requestCode: data.requestCode,
+      serviceId: data.serviceId,
+    });
   };
 
   return (
@@ -203,7 +250,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       />
       <SafeAreaView style={{flex: 1}}>
         {isError ? <NotFound /> : null}
-        {loading ? (
+        {loading || isLoad ? (
           <ActivityIndicator
             size="small"
             color="#FEC54B"
@@ -231,6 +278,7 @@ const RequestDetailScreen = ({route, navigation}) => {
             date={date}
             setDate={setDate}
             data={data}
+            fixedService={fixedService}
             description={description}
             handlerSubmitButtonClick={
               typeSubmitButtonClick === 'CONFIRM_FIXING'
@@ -238,7 +286,7 @@ const RequestDetailScreen = ({route, navigation}) => {
                 : typeSubmitButtonClick === 'APPROVE_REQUEST'
                 ? handlerApproveRequestButtonClick
                 : typeSubmitButtonClick === 'CREATE_INVOICE'
-                ? handlerCreateInvoiceButtonClick
+                ? showInvoiceModal
                 : null
             }
             isShowCancelButton={isShowCancelButton}
@@ -361,6 +409,32 @@ const RequestDetailScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
         </CustomModal>
+        <CustomModal
+          modalVisible={invoiceModalVisible}
+          setModalVisible={setInvoiceModalVisible}
+          modalRatio={0.3}>
+          <Text style={styles.modalText}>
+            Bạn có chắc chắn muốn tạo hóa đơn không?
+          </Text>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              marginVertical: 20,
+            }}>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonOpen]}
+              onPress={handlerCreateInvoiceButtonClick}>
+              <Text style={styles.textStyle}>ĐỒNG Ý</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setInvoiceModalVisible(!invoiceModalVisible)}>
+              <Text style={styles.textStyle}>THOÁT</Text>
+            </TouchableOpacity>
+          </View>
+        </CustomModal>
       </SafeAreaView>
     </View>
   );
@@ -402,7 +476,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   modalText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 10,

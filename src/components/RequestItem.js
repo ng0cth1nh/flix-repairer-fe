@@ -13,13 +13,15 @@ import {numberWithCommas} from '../utils/util';
 export default function RequestItem({
   item,
   index,
-  handelNavigationToDetailRequest,
-  handelNavigationToListPrice,
+  handleNavigationToDetailRequest,
+  handleButtonPress,
+  textButton,
+  text,
 }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        handelNavigationToDetailRequest(item.requestCode);
+        handleNavigationToDetailRequest(item.requestCode, item.serviceId);
       }}
       style={[
         styles.box,
@@ -58,7 +60,7 @@ export default function RequestItem({
             {item.serviceName}
           </Text>
           <Text style={{fontSize: 16, color: 'black', marginVertical: 6}}>
-            Phí dịch vụ kiểm tra
+            {text}
           </Text>
           <View
             style={{
@@ -67,17 +69,14 @@ export default function RequestItem({
               justifyContent: 'space-between',
             }}>
             <Text style={styles.textBold}>{`${numberWithCommas(
-              item.price,
+              item.actualPrice,
             )} vnđ`}</Text>
             <TouchableOpacity
               style={styles.viewServiceButton}
-              onPress={() =>
-                handelNavigationToListPrice({
-                  serviceName: item.serviceName,
-                  serviceId: 1,
-                })
-              }>
-              <Text style={styles.textBold}>Cập nhật</Text>
+              onPress={() => {
+                handleButtonPress(item);
+              }}>
+              <Text style={styles.textBold}>{textButton}</Text>
             </TouchableOpacity>
           </View>
         </View>

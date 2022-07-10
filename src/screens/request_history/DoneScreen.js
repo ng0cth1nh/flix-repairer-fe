@@ -9,7 +9,6 @@ import {
   selectRequests,
   selectIsLoading,
 } from '../../features/request/requestSlice';
-
 import useAxios from '../../hooks/useAxios';
 
 const DoneScreen = ({navigation}) => {
@@ -24,14 +23,14 @@ const DoneScreen = ({navigation}) => {
     })();
   }, []);
 
-  const handelNavigationToListPrice = service => {
-    navigation.push('ServicePriceScreen', {
-      serviceName: service.serviceName,
-      serviceId: 1,
+  const handleGetInvoiceButton = async service => {
+    navigation.push('InvoiceScreen', {
+      service,
+      isShowConfirm: false,
     });
   };
 
-  const handelNavigationToDetailRequest = requestCode => {
+  const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
     });
@@ -77,10 +76,12 @@ const DoneScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              handelNavigationToListPrice={handelNavigationToListPrice}
-              handelNavigationToDetailRequest={handelNavigationToDetailRequest}
+              handleButtonPress={handleGetInvoiceButton}
+              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              textButton="Xem hóa đơn"
+              text="Tổng thanh toán"
             />
           )}
         />

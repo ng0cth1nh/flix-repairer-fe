@@ -26,20 +26,22 @@ const FixingScreen = ({navigation}) => {
     })();
   }, []);
 
-  const handelNavigationToListPrice = service => {
+  const handleNavigationToListPrice = async service => {
     navigation.push('ServicePriceScreen', {
       serviceName: service.serviceName,
-      serviceId: 1,
+      serviceId: service.serviceId,
     });
   };
 
-  const handelNavigationToDetailRequest = requestCode => {
+  const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
-      isShowCancelButton: false,
+      isShowCancelButton: true,
       submitButtonText: 'Tạo hóa đơn',
       isAddableDetailService: true,
       typeSubmitButtonClick: 'CREATE_INVOICE',
+      isCancelFromApprovedStatus: false,
+      isFetchFixedService: true,
     });
   };
 
@@ -83,10 +85,13 @@ const FixingScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              handelNavigationToListPrice={handelNavigationToListPrice}
-              handelNavigationToDetailRequest={handelNavigationToDetailRequest}
+              isGetPriceList={true}
+              handleButtonPress={handleNavigationToListPrice}
+              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              textButton="Xem giá dịch vụ"
+              text="Tổng thanh toán (dự kiến)"
             />
           )}
         />

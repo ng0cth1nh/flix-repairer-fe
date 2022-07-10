@@ -165,6 +165,7 @@ function App() {
           name="AddSubServiceScreen"
           component={AddSubServiceScreen}
         />
+        <Stack.Screen name="InvoiceScreen" component={InvoiceScreen} />
       </Stack.Navigator>
     );
   }

@@ -33,13 +33,34 @@ export const fetchRequests = createAsyncThunk(
   },
 );
 
-export const createRequest = createAsyncThunk(
-  'request/createRequest',
-  async ({repairerAPI, body}, {rejectWithValue}) => {
+export const updateRequest = createAsyncThunk(
+  'request/updateRequest',
+  async (
+    {repairerAPI, requestCode, subServiceIds, accessoryIds, extraServices},
+    {rejectWithValue},
+  ) => {
     try {
-      await repairerAPI.post(
-        ApiConstants.POST_REQUEST_API,
-        JSON.stringify(body),
+      await repairerAPI.put(
+        ApiConstants.PUT_FIXED_SUB_SERVICE_OF_REQUEST_API,
+        JSON.stringify({requestCode, subServiceIds}),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      await repairerAPI.put(
+        ApiConstants.PUT_FIXED_ACCESSORY_OF_REQUEST_API,
+        JSON.stringify({requestCode, accessoryIds}),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      await repairerAPI.put(
+        ApiConstants.PUT_FIXED_EXTRA_SERVICE_OF_REQUEST_API,
+        JSON.stringify({requestCode, extraServices}),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -109,6 +130,62 @@ export const cancelRequest = createAsyncThunk(
   },
 );
 
+export const createInvoice = createAsyncThunk(
+  'request/createInvoice',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      await repairerAPI.post(
+        ApiConstants.POST_INVOICE_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
+export const confirmPayment = createAsyncThunk(
+  'request/confirmPayment',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      await repairerAPI.put(
+        ApiConstants.CONFIRM_PAYMENT_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
+export const fetchFixedService = createAsyncThunk(
+  'request/fetchFixedService',
+  async ({repairerAPI, requestCode}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.get(
+        ApiConstants.GET_FIXED_SERVICE_OF_REQUEST_API,
+        {
+          params: {requestCode},
+        },
+      );
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
 export const requestSlice = createSlice({
   name: 'request',
   initialState,
@@ -118,9 +195,6 @@ export const requestSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // builder.addCase(fetchRequests.pending, state => {
-    //   state.isLoading = true;
-    // });
     builder.addCase(fetchRequests.fulfilled, (state, action) => {
       state.isLoading = false;
       state.errorMessage = null;
@@ -152,11 +226,11 @@ export const requestSlice = createSlice({
     // builder.addCase(createRequest.pending, state => {
     //   state.isLoading = true;
     // });
-    builder.addCase(createRequest.fulfilled, (state, action) => {
+    builder.addCase(updateRequest.fulfilled, (state, action) => {
       state.isLoading = false;
       state.errorMessage = null;
     });
-    builder.addCase(createRequest.rejected, (state, action) => {
+    builder.addCase(updateRequest.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });
@@ -175,6 +249,33 @@ export const requestSlice = createSlice({
       state.errorMessage = null;
     });
     builder.addCase(approveRequest.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(fetchFixedService.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(fetchFixedService.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(createInvoice.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(createInvoice.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(confirmPayment.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(confirmPayment.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });

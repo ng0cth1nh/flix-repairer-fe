@@ -26,14 +26,14 @@ const PaymentWaitingScreen = ({navigation}) => {
     })();
   }, []);
 
-  const handelNavigationToListPrice = service => {
-    navigation.push('ServicePriceScreen', {
-      serviceName: service.serviceName,
-      serviceId: 1,
+  const handleGetInvoiceButton = async service => {
+    navigation.push('InvoiceScreen', {
+      service,
+      isShowConfirm: true,
     });
   };
 
-  const handelNavigationToDetailRequest = requestCode => {
+  const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
     });
@@ -82,10 +82,11 @@ const PaymentWaitingScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              handelNavigationToListPrice={handelNavigationToListPrice}
-              handelNavigationToDetailRequest={handelNavigationToDetailRequest}
+              handleButtonPress={handleGetInvoiceButton}
+              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              textButton="Xem hóa đơn"
             />
           )}
         />

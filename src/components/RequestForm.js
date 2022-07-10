@@ -19,6 +19,7 @@ import moment from 'moment';
 import Clipboard from '@react-native-community/clipboard';
 import Toast from 'react-native-toast-message';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {removeCommas, formatCurrency} from '../utils/FormattingCurrency';
 
 const RequestForm = function ({
   submitButtonText,
@@ -26,8 +27,7 @@ const RequestForm = function ({
   date,
   setDate,
   data,
-  description,
-  setDiscription,
+  fixedService,
   isShowCancelButton,
   handlerCancel,
   isAddableDetailService,
@@ -36,13 +36,6 @@ const RequestForm = function ({
   isRequestIdVisible = false,
 }) {
   const [dateVisible, setDateVisible] = useState(false);
-  const handlerDateConfirm = selectedDate => {
-    setDate(moment(selectedDate));
-    setDateVisible(false);
-  };
-  const hideDatePicker = () => {
-    setDateVisible(false);
-  };
 
   const copyToClipboard = () => {
     Clipboard.setString(data.requestCode);
@@ -111,7 +104,7 @@ const RequestForm = function ({
             {isAddableDetailService && (
               <TouchableOpacity
                 style={styles.editTouch}
-                onPress={handlerAddDetailServiceButtonClick}>
+                onPress={() => handlerAddDetailServiceButtonClick()}>
                 <Text style={styles.editText}>Thêm</Text>
               </TouchableOpacity>
             )}
@@ -141,7 +134,7 @@ const RequestForm = function ({
                   justifyContent: 'space-between',
                 }}>
                 <Text style={styles.textBold}>{`${numberWithCommas(
-                  data.price,
+                  data.inspectionPrice,
                 )} vnđ`}</Text>
                 <TouchableOpacity style={styles.viewServiceButton}>
                   <Text style={styles.textBold}>Xem giá dịch vụ</Text>
@@ -149,6 +142,107 @@ const RequestForm = function ({
               </View>
             </View>
           </View>
+          {fixedService &&
+          fixedService.accessories.length !== 0 &&
+          fixedService.subServices.length !== 0 &&
+          fixedService.extraServices.length !== 0 ? (
+            <View
+              style={[
+                {
+                  borderTopColor: '#DDDDDD',
+                  borderTopWidth: 1,
+                  marginTop: 16,
+                  paddingTop: 16,
+                },
+              ]}>
+              {fixedService.subServices &&
+              fixedService.subServices.length !== 0 ? (
+                <View style={{width: '100%'}}>
+                  <Text style={styles.tittleText}>Dịch vụ đã sửa chi tiết</Text>
+                  {fixedService.subServices.map((item, index) => {
+                    return (
+                      <View
+                        key={index.toString()}
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          width: '90%',
+                          alignSelf: 'center',
+                          marginVertical: 6,
+                        }}>
+                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text
+                          style={{
+                            color: 'black',
+                            fontWeight: 'bold',
+                          }}>{`${formatCurrency(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              ) : null}
+              {fixedService.accessories &&
+              fixedService.accessories.length !== 0 ? (
+                <View style={{width: '100%', marginVertical: 16}}>
+                  <Text style={styles.tittleText}>Linh kiện đã thay</Text>
+                  {fixedService.accessories.map((item, index) => {
+                    return (
+                      <View
+                        key={index.toString()}
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          width: '90%',
+                          alignSelf: 'center',
+                          marginVertical: 6,
+                        }}>
+                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text
+                          style={{
+                            color: 'black',
+                            fontWeight: 'bold',
+                          }}>{`${formatCurrency(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              ) : null}
+              {fixedService.extraServices &&
+              fixedService.extraServices.length !== 0 ? (
+                <View style={{width: '100%', marginVertical: 16}}>
+                  <Text style={styles.tittleText}>
+                    Dịch vụ đã sửa bên ngoài
+                  </Text>
+                  {fixedService.extraServices.map((item, index) => {
+                    return (
+                      <View
+                        key={index.toString()}
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          width: '90%',
+                          alignSelf: 'center',
+                          marginVertical: 6,
+                        }}>
+                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text
+                          style={{
+                            color: 'black',
+                            fontWeight: 'bold',
+                          }}>{`${formatCurrency(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              ) : null}
+            </View>
+          ) : null}
         </View>
         <View
           style={[
@@ -203,18 +297,19 @@ const RequestForm = function ({
             />
           </View>
         </View>
-        <View style={[styles.box]}>
-          <View style={styles.boxHeader}>
-            <Image
-              source={require('../../assets/images/type/coupon.png')}
-              style={{
-                height: 20,
-                width: 20,
-              }}
-            />
-            <Text style={styles.tittleText}>Flix voucher</Text>
-          </View>
-          {/* <Text style={{marginLeft: 40, color: '#12B76A', fontWeight: 'bold'}}>
+        {data.voucherDiscount ? (
+          <View style={[styles.box]}>
+            <View style={styles.boxHeader}>
+              <Image
+                source={require('../../assets/images/type/coupon.png')}
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
+              />
+              <Text style={styles.tittleText}>Flix voucher</Text>
+            </View>
+            {/* <Text style={{marginLeft: 40, color: '#12B76A', fontWeight: 'bold'}}>
           Giảm 10%
         </Text>
         <View
@@ -228,8 +323,10 @@ const RequestForm = function ({
           <Text style={{color: 'black', fontSize: 16, width: '80%'}}>
             Mã giảm giá áp dụng cho tất cả các shop ở Hà Nội
           </Text>
-        </View> */}
-        </View>
+          </View>
+      */}
+          </View>
+        ) : null}
         <View
           style={[
             styles.box,
@@ -306,17 +403,64 @@ const RequestForm = function ({
           <View style={styles.serviceRow}>
             <Text style={styles.serviceName}>Phí dịch vụ kiểm tra</Text>
             <Text style={styles.servicePrice}>{`${numberWithCommas(
-              data.price,
+              data.inspectionPrice,
             )} vnđ`}</Text>
           </View>
-
+          {fixedService ? (
+            <>
+              {fixedService.subServices &&
+              fixedService.subServices.length !== 0 ? (
+                <>
+                  {fixedService.subServices.map((item, index) => {
+                    return (
+                      <View style={styles.serviceRow}>
+                        <Text style={styles.serviceName}>{item.name}</Text>
+                        <Text style={styles.servicePrice}>{`${numberWithCommas(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </>
+              ) : null}
+              {fixedService.accessories &&
+              fixedService.accessories.length !== 0 ? (
+                <>
+                  {fixedService.accessories.map((item, index) => {
+                    return (
+                      <View style={styles.serviceRow}>
+                        <Text style={styles.serviceName}>{item.name}</Text>
+                        <Text style={styles.servicePrice}>{`${numberWithCommas(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </>
+              ) : null}
+              {fixedService.extraServices &&
+              fixedService.extraServices.length !== 0 ? (
+                <>
+                  {fixedService.extraServices.map((item, index) => {
+                    return (
+                      <View style={styles.serviceRow}>
+                        <Text style={styles.serviceName}>{item.name}</Text>
+                        <Text style={styles.servicePrice}>{`${numberWithCommas(
+                          item.price.toString(),
+                        )} vnđ`}</Text>
+                      </View>
+                    );
+                  })}
+                </>
+              ) : null}
+            </>
+          ) : null}
           <View style={styles.serviceRow}>
             <Text style={styles.serviceName}>Thuế VAT(5%)</Text>
             <Text style={styles.servicePrice}>
               {`${numberWithCommas(data.vatPrice)} vnđ`}
             </Text>
           </View>
-
           {/* {service.actualPrice !== null ? (
           <View style={styles.serviceRow}>
             <Text style={styles.serviceName}>TỔNG THANH TOÁN(dự kiến)</Text>
@@ -326,7 +470,9 @@ const RequestForm = function ({
           </View>
         ) : null} */}
           <View style={styles.serviceRow}>
-            <Text style={styles.textBold}>TỔNG THANH TOÁN (dự kiến)</Text>
+            <Text style={styles.textBold}>
+              TỔNG THANH TOÁN {fixedService ? '' : '(dự kiến)'}
+            </Text>
             <Text style={styles.servicePrice}>
               {`${numberWithCommas(data.actualPrice)} vnđ`}
             </Text>

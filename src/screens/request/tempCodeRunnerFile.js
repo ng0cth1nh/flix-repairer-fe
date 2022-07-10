@@ -1,0 +1,1 @@
+{`${formatCurrency(item.price)} vnđ`}

@@ -24,10 +24,18 @@ const ApiConstants = {
   CONFIRM_FIXING_REQUEST_API: '/repairer/request/confirmFixing',
   APPROVE_REQUEST_API: '/repairer/request/approve',
   GET_FIXING_REQUEST_API: '/repairer/invoice/fixedService',
-  GET_SUGGEST_REQUEST_API: '/repairer/request/list/suggestion',
-  GET_FILTERED_REQUEST_API: '/repairer/request/list/filter',
+  GET_SUGGEST_REQUEST_API: '/commonRepairer/request/list/suggestion',
+  GET_FILTERED_REQUEST_API: '/commonRepairer/request/list/filter',
   SEARCH_SERVICE_API: '/category/services/search',
+  SEARCH_ACCESSORY_BY_SERVICE_API: '/commonRepairer/accessories',
+  SEARCH_SUB_SERVICE_BY_SERVICE_API: '/commonRepairer/subServices',
+  GET_FIXED_SERVICE_OF_REQUEST_API: '/confirmedUser/request/fixedService',
+  PUT_FIXED_SUB_SERVICE_OF_REQUEST_API: '/repairer/request/fixedSubService',
+  PUT_FIXED_EXTRA_SERVICE_OF_REQUEST_API: '/repairer/request/fixedExtraService',
+  PUT_FIXED_ACCESSORY_OF_REQUEST_API: '/repairer/request/fixedAccessory',
+  POST_INVOICE_API: '/repairer/invoice',
+  GET_INVOICE_API: '/confirmedUser/request/invoice',
+  CONFIRM_PAYMENT_API: '/repairer/invoice/confirm/paid',
 };
 
-//http://localhost:8000
 export default ApiConstants;

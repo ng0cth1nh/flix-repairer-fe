@@ -22,10 +22,10 @@ export default function SearchForm({
           onPress={() => {
             setSearch('');
           }}>
-          <Icon name="remove" size={24} />
+          <Icon name="remove" size={20} />
         </TouchableOpacity>
       ) : (
-        <Icon name="search" size={24} />
+        <Icon name="search" size={20} />
       )}
     </View>
   );

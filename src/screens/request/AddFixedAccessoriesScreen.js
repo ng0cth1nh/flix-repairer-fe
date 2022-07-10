@@ -5,64 +5,91 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
-  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, {useState, useRef} from 'react';
 import {Checkbox, NativeBaseProvider} from 'native-base';
-
+import useAxios from '../../hooks/useAxios';
+import ApiConstants from '../../constants/Api';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
-import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
 import SearchForm from '../../components/SearchForm';
+import NotFound from '../../components/NotFound';
 
-const listId = [
-  {id: 1},
-  {id: 2},
-  {id: 3},
-  {id: 4},
-  {id: 5},
-  {id: 6},
-  {id: 7},
-  {id: 8},
-  {id: 9},
-  {id: 10},
-  {id: 11},
-  {id: 12},
-];
-
-export default function AddFixedAccessoriesScreen({navigation}) {
+export default function AddFixedAccessoriesScreen({route, navigation}) {
   const [search, setSearch] = useState('');
-  const renderItem = ({item}) => {
-    return (
-      <NativeBaseProvider>
-        <View style={styles.serviceRow}>
-          <Checkbox
-            // value={toggleCheckBox}
-            onChange={() => console.log('testing smth')}
-            colorScheme="yellow"
-            _icon={{color: 'black'}}>
-            Điện trở lò nướng
-          </Checkbox>
-          <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-            150,000 vnđ
-          </Text>
-        </View>
-      </NativeBaseProvider>
-    );
+  const {
+    requestCode,
+    serviceId,
+    accessoryIds,
+    setAccessoryIds,
+    setAccessoryId,
+  } = route.params;
+  const [loading, setLoading] = useState(false);
+  const repairerAPI = useAxios();
+  const typingTimeoutRef = useRef(null);
+  const [addedAccessoryIds, setAddedAccessoryIds] = useState(accessoryIds);
+  const [searchedAccessoryId, setSearchedAccessoryId] = useState(null);
+
+  const handleOnChangeSearch = async text => {
+    setSearch(text);
+    if (text === '') {
+      return;
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    setLoading(true);
+    typingTimeoutRef.current = setTimeout(async () => {
+      let response = await repairerAPI.get(
+        ApiConstants.SEARCH_ACCESSORY_BY_SERVICE_API,
+        {
+          params: {keyword: text, serviceId},
+        },
+      );
+      console.log('search: ' + text);
+      setSearchedAccessoryId(response.data.accessories);
+      setLoading(false);
+    }, 200);
   };
+
+  const handleDeleteAddedService = async index => {
+    const temp = [];
+    for (let i = 0; i < addedAccessoryIds.length; i++) {
+      if (i !== index) {
+        temp.push(addedAccessoryIds[i]);
+      }
+    }
+    setAddedAccessoryIds(temp);
+  };
+
+  const handleAddButton = async () => {
+    let temp = addedAccessoryIds.map((item, index) => {
+      const [id, name, price] = item.split('[SPACE]');
+      return {id, name, price};
+    });
+    setAccessoryId(temp);
+    setAccessoryIds(addedAccessoryIds);
+    navigation.goBack();
+  };
+
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <TopHeaderComponent
         navigation={navigation}
-        title="Thêm linh kiện đã thay"
+        title="Thêm linh kiện đã thay thế "
         isBackButton={true}
         statusBarColor="white"
       />
-      <SafeAreaView style={{flex: 1, paddingHorizontal: 20}}>
+      <SafeAreaView
+        style={{flex: 1, marginHorizontal: '4%', marginVertical: 10}}>
         <SearchForm
           search={search}
           setSearch={setSearch}
+          handleOnChangeSearch={handleOnChangeSearch}
           placeholder="Nhập tên linh kiện"
         />
         <View
@@ -73,29 +100,98 @@ export default function AddFixedAccessoriesScreen({navigation}) {
             borderBottomColor: '#CACACA',
           }}>
           <ScrollView>
-            <View>
-              <View style={styles.titleBox}>
-                <Text style={[styles.textBold, {fontSize: 20}]}>
-                  Linh kiện đã thay
-                </Text>
+            {addedAccessoryIds.length !== 0 ? (
+              <View>
+                <View style={styles.titleBox}>
+                  <Text style={[styles.textBold, {fontSize: 20}]}>Đã thêm</Text>
+                </View>
+                {addedAccessoryIds.map((item, index) => {
+                  const [id, name, price] = item.split('[SPACE]');
+                  return (
+                    <View
+                      key={index.toString()}
+                      style={[
+                        styles.serviceRow,
+                        {
+                          paddingHorizontal: 20,
+                          width: '98%',
+                          marginVertical: 6,
+                          paddingVertical: 6,
+                        },
+                      ]}>
+                      <Text>{name}</Text>
+                      <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
+                        {price} vnđ
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => handleDeleteAddedService(index)}
+                        style={styles.closeIcon}>
+                        <Ionicons name="close" size={16} />
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
               </View>
-              <FlatList
-                nestedScrollEnabled
-                data={listId}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
+            ) : null}
+
+            {loading ? (
+              <ActivityIndicator
+                size="small"
+                color="#FEC54B"
+                style={{
+                  marginTop: 30,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               />
-            </View>
+            ) : (
+              <View>
+                {searchedAccessoryId !== null ? (
+                  searchedAccessoryId.length !== 0 ? (
+                    <NativeBaseProvider>
+                      <View style={styles.titleBox}>
+                        <Text style={[styles.textBold, {fontSize: 20}]}>
+                          Tất cả dịch vụ
+                        </Text>
+                      </View>
+                      <Checkbox.Group
+                        onChange={setAddedAccessoryIds}
+                        value={addedAccessoryIds}
+                        accessibilityLabel="choose numbers">
+                        {searchedAccessoryId.map((item, index) => (
+                          <View
+                            key={index.toString()}
+                            style={[styles.serviceRow, {marginVertical: 6}]}>
+                            <Checkbox
+                              accessibilityLabel={item.name}
+                              value={`${item.id}[SPACE]${item.name}[SPACE]${item.price}`}
+                              colorScheme="yellow"
+                              _icon={{color: 'black'}}>
+                              {item.name}
+                            </Checkbox>
+                            <Text
+                              style={[styles.textBold, {marginLeft: 'auto'}]}>
+                              {item.price} vnđ
+                            </Text>
+                          </View>
+                        ))}
+                      </Checkbox.Group>
+                    </NativeBaseProvider>
+                  ) : (
+                    <NotFound />
+                  )
+                ) : null}
+              </View>
+            )}
           </ScrollView>
         </View>
         <Button
           style={{
-            width: '80%',
+            marginVertical: 8,
+            width: '100%',
             alignSelf: 'center',
-            marginTop: 10,
-            marginBottom: 20,
           }}
-          onPress={() => console.log('test')}
+          onPress={handleAddButton}
           buttonText="THÊM"
         />
       </SafeAreaView>
@@ -140,5 +236,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#D3D3D3',
     marginTop: 7,
+    width: '100%',
+  },
+  closeIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#FEC54B',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: -10,
+    right: -6,
   },
 });

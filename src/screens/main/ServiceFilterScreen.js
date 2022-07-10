@@ -24,7 +24,6 @@ import useFetchData from '../../hooks/useFetchData';
 import ApiConstants from '../../constants/Api';
 import useAxios from '../../hooks/useAxios';
 import CustomModal from '../../components/CustomModal';
-import {set} from 'react-native-reanimated';
 
 export default function ServiceFilterScreen({route, navigation}) {
   const {
@@ -193,14 +192,14 @@ export default function ServiceFilterScreen({route, navigation}) {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white', paddingHorizontal: '4%'}}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopHeaderComponent
         navigation={navigation}
         title="Tùy chỉnh bộ lọc"
         isBackButton={true}
         statusBarColor="white"
       />
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{flex: 1, marginHorizontal: '4%'}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.box}>
             <View style={styles.boxHeader}>
@@ -276,17 +275,14 @@ export default function ServiceFilterScreen({route, navigation}) {
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
                 items={listCity}
-                Icon={() => (
-                  <Ionicons
-                    name="chevron-down-sharp"
-                    size={20}
-                    style={{
-                      marginBottom: 3,
-                      color: 'black',
-                      marginLeft: 'auto',
-                    }}
-                  />
-                )}
+              />
+              <Ionicons
+                name="chevron-down-sharp"
+                size={16}
+                style={{
+                  color: 'black',
+                  alignSelf: 'center',
+                }}
               />
             </View>
             <View style={styles.valueSpace}>
@@ -301,17 +297,14 @@ export default function ServiceFilterScreen({route, navigation}) {
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
                 items={listDistrict}
-                Icon={() => (
-                  <Ionicons
-                    name="chevron-down-sharp"
-                    size={20}
-                    style={{
-                      marginBottom: 2,
-                      color: 'black',
-                      marginLeft: 'auto',
-                    }}
-                  />
-                )}
+              />
+              <Ionicons
+                name="chevron-down-sharp"
+                size={16}
+                style={{
+                  color: 'black',
+                  alignSelf: 'center',
+                }}
               />
             </View>
             <View style={styles.valueSpace}>
@@ -328,17 +321,14 @@ export default function ServiceFilterScreen({route, navigation}) {
                 useNativeAndroidPickerStyle={false}
                 style={styles.pickerStyle}
                 items={listCommune}
-                Icon={() => (
-                  <Ionicons
-                    name="chevron-down-sharp"
-                    size={20}
-                    style={{
-                      marginBottom: 3,
-                      color: 'black',
-                      marginLeft: 'auto',
-                    }}
-                  />
-                )}
+              />
+              <Ionicons
+                name="chevron-down-sharp"
+                size={16}
+                style={{
+                  color: 'black',
+                  alignSelf: 'center',
+                }}
               />
             </View>
           </View>
@@ -368,7 +358,7 @@ export default function ServiceFilterScreen({route, navigation}) {
                     name="chevron-down-sharp"
                     size={20}
                     style={{
-                      marginBottom: 3,
+                      marginTop: 3,
                       color: 'black',
                       marginLeft: 'auto',
                     }}
@@ -421,16 +411,19 @@ export default function ServiceFilterScreen({route, navigation}) {
         <CustomModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          modalRatio={0.5}>
+          modalRatio={0.4}>
           <Text style={styles.modalText}>Lưu ý</Text>
-          <Text>Vui lòng chọn ít nhất 1 dịch vụ.</Text>
-          <Text>Chọn khu vực muốn sửa mức chi tiết ít nhất là thành phố.</Text>
+          <View style={{marginTop: 20, marginBottom: 40}}>
+            <Text>Vui lòng chọn ít nhất 1 dịch vụ.</Text>
+            <Text>
+              Chọn khu vực muốn sửa mức chi tiết ít nhất là thành phố.
+            </Text>
+          </View>
           <View
             style={{
               width: '100%',
               flexDirection: 'row',
               justifyContent: 'space-around',
-              marginVertical: 20,
             }}>
             <TouchableOpacity
               style={[styles.button, styles.buttonOpen]}
@@ -448,11 +441,24 @@ export default function ServiceFilterScreen({route, navigation}) {
 
 const styles = StyleSheet.create({
   modalText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
     marginBottom: 5,
+  },
+  textStyle: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+    borderRadius: 20,
+    paddingVertical: 10,
+  },
+  buttonOpen: {
+    backgroundColor: '#FEC54B',
   },
   box: {
     backgroundColor: '#F0F0F0',
@@ -507,10 +513,11 @@ const styles = StyleSheet.create({
   valueSpace: {
     height: 30,
     width: '55%',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 5,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
     marginLeft: 40,
     marginBottom: 8,
   },
@@ -525,7 +532,8 @@ const styles = StyleSheet.create({
       padding: 3,
     },
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: 'red',
   },
   dateForm: {
     flexDirection: 'row',

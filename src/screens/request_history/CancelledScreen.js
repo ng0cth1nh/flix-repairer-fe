@@ -41,11 +41,11 @@ const CancelledScreen = ({navigation}) => {
   const handelNavigationToListPrice = service => {
     navigation.push('ServicePriceScreen', {
       serviceName: service.serviceName,
-      serviceId: 1,
+      serviceId: service.serviceId,
     });
   };
 
-  const handelNavigationToDetailRequest = requestCode => {
+  const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
     });
@@ -94,10 +94,12 @@ const CancelledScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              handelNavigationToListPrice={handelNavigationToListPrice}
-              handelNavigationToDetailRequest={handelNavigationToDetailRequest}
+              handleButtonPress={handelNavigationToListPrice}
+              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              textButton="Xem giá dịch vụ"
+              text="Tổng thanh toán (dự kiến)"
             />
           )}
         />
