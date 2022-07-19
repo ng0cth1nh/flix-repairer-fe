@@ -5,6 +5,7 @@ const CustomDatePicker = ({
   isVisible,
   handleConfirm,
   hideDatePicker,
+  minimumDate,
   mode = 'date',
 }) => {
   return (
@@ -13,7 +14,7 @@ const CustomDatePicker = ({
       mode={mode}
       onConfirm={handleConfirm}
       onCancel={hideDatePicker}
-      minimumDate={new Date(moment())}
+      minimumDate={minimumDate ? new Date(moment()) : null}
       maximumDate={new Date(moment().add(120, 'days'))}
     />
   );

@@ -33,6 +33,24 @@ export const fetchRequests = createAsyncThunk(
   },
 );
 
+export const fetchRequestDetail = createAsyncThunk(
+  'request/fetchRequestDetail',
+  async ({repairerAPI, requestCode}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.get(
+        ApiConstants.GET_REQUEST_DETAIL_API,
+        {
+          params: {requestCode},
+        },
+      );
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
 export const updateRequest = createAsyncThunk(
   'request/updateRequest',
   async (
@@ -232,6 +250,13 @@ export const requestSlice = createSlice({
     });
     builder.addCase(updateRequest.rejected, (state, action) => {
       state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(fetchRequestDetail.fulfilled, (state, action) => {
+      state.errorMessage = null;
+    });
+    builder.addCase(fetchRequestDetail.rejected, (state, action) => {
       state.errorMessage = action.payload;
     });
 

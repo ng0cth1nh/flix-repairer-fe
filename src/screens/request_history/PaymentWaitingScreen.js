@@ -18,13 +18,13 @@ const PaymentWaitingScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
 
-  useEffect(() => {
-    (async () => {
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await dispatch(
+  //       fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+  //     );
+  //   })();
+  // }, []);
 
   const handleGetInvoiceButton = async service => {
     navigation.push('InvoiceScreen', {
@@ -36,6 +36,8 @@ const PaymentWaitingScreen = ({navigation}) => {
   const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isFetchFixedService: true,
+      isShowSubmitButton: false,
     });
   };
 
@@ -86,6 +88,7 @@ const PaymentWaitingScreen = ({navigation}) => {
               handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}
               index={index}
+              text="Tổng thanh toán"
               textButton="Xem hóa đơn"
             />
           )}

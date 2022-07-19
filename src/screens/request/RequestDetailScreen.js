@@ -13,9 +13,7 @@ import {RadioButton} from 'react-native-paper';
 import moment from 'moment';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import RequestForm from '../../components/RequestForm';
-import ApiConstants from '../../constants/Api';
 import NotFound from '../../components/NotFound';
-import useFetchData from '../../hooks/useFetchData';
 import CustomModal from '../../components/CustomModal';
 import useAxios from '../../hooks/useAxios';
 import Toast from 'react-native-toast-message';
@@ -30,6 +28,7 @@ import {
   selectIsLoading,
   fetchFixedService,
   createInvoice,
+  fetchRequestDetail,
 } from '../../features/request/requestSlice';
 import {
   fetchSuggestRequests,
@@ -52,6 +51,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     setRenderList,
     isCancelFromApprovedStatus,
     isFetchFixedService,
+    isShowSubmitButton,
   } = route.params;
   const [date, setDate] = useState(moment());
   const isLoading = useSelector(selectIsLoading);
@@ -62,7 +62,9 @@ const RequestDetailScreen = ({route, navigation}) => {
   const [description, setDiscription] = useState('');
   const [contentOtherReason, setContentOtherReason] = useState('');
   const [fixedService, setFixedService] = useState(null);
-  const [isLoad, setIsLoad] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [data, setData] = useState(null);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
 
@@ -73,33 +75,45 @@ const RequestDetailScreen = ({route, navigation}) => {
     setInvoiceModalVisible(true);
   };
 
+  const loadData = async () => {
+    try {
+      await setLoading(true);
+      if (isFetchFixedService) {
+        let fixedService = await dispatch(
+          fetchFixedService({
+            repairerAPI,
+            requestCode,
+          }),
+        ).unwrap();
+        setFixedService(fixedService);
+      }
+      let data = await dispatch(
+        fetchRequestDetail({
+          repairerAPI,
+          requestCode,
+        }),
+      ).unwrap();
+      setData(data);
+    } catch (err) {
+      setIsError(true);
+    } finally {
+      await setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (isFetchFixedService) {
+    if (fixedService) {
       (async () => {
-        try {
-          await setIsLoad(true);
-          let data = await dispatch(
-            fetchFixedService({
-              repairerAPI,
-              requestCode,
-            }),
-          ).unwrap();
-          setFixedService(data);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          await setIsLoad(false);
-        }
+        dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
       })();
     }
-  }, []);
+  }, [fixedService]);
 
-  const {loading, data, isError} = useFetchData(
-    ApiConstants.GET_REQUEST_DETAIL_API,
-    {
-      params: {requestCode},
-    },
-  );
+  useEffect(() => {
+    (async () => {
+      await loadData();
+    })();
+  }, []);
 
   const handlerCancelButtonClick = async () => {
     try {
@@ -116,10 +130,10 @@ const RequestDetailScreen = ({route, navigation}) => {
         text1: 'Hủy yêu cầu thành công',
       });
       isCancelFromApprovedStatus
-        ? dispatch(
+        ? await dispatch(
             fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
           ).unwrap()
-        : dispatch(
+        : await dispatch(
             fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
           ).unwrap();
       navigation.goBack();
@@ -147,13 +161,13 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Xác nhận đang sửa thành công',
       });
-      dispatch(
+      await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
       ).unwrap();
-      navigation.goBack();
-      dispatch(
+      await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
       ).unwrap();
+      navigation.goBack();
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -218,13 +232,14 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Tạo hóa đơn thành công',
       });
-      dispatch(
+      await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
       ).unwrap();
-      navigation.goBack();
-      dispatch(
+
+      await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
       ).unwrap();
+      navigation.goBack();
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -234,9 +249,58 @@ const RequestDetailScreen = ({route, navigation}) => {
   };
 
   const handlerAddDetailServiceButtonClick = async () => {
+    let subServiceIds = [],
+      extraServices = [],
+      subServiceId = [],
+      extraService = [],
+      accessoryIds = [],
+      accessoryId = [];
+
+    if (fixedService.subServices || fixedService.subServices.length !== 0) {
+      for (let item of fixedService.subServices) {
+        subServiceIds.push(`${item.id}[SPACE]${item.name}[SPACE]${item.price}`);
+        subServiceId.push({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+        });
+      }
+    }
+    if (fixedService.accessories || fixedService.accessories.length !== 0) {
+      for (let item of fixedService.accessories) {
+        accessoryIds.push(`${item.id}[SPACE]${item.name}[SPACE]${item.price}`);
+        accessoryId.push({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+        });
+      }
+    }
+    if (fixedService.extraServices || fixedService.extraServices.length !== 0) {
+      for (let item of fixedService.extraServices) {
+        extraServices.push(
+          `${item.name}[SPACE]${item.price}[SPACE]${item.description}[SPACE]${item.insuranceTime}`,
+        );
+        extraService.push({
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          insuranceTime: item.insuranceTime,
+        });
+      }
+    }
     navigation.push('AddFixedServiceScreen', {
       requestCode: data.requestCode,
       serviceId: data.serviceId,
+      loadData,
+      fixedService: {
+        subServiceIds,
+        extraServices,
+        subServiceId,
+        extraService,
+        accessoryIds,
+        accessoryId,
+      },
     });
   };
 
@@ -250,7 +314,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       />
       <SafeAreaView style={{flex: 1}}>
         {isError ? <NotFound /> : null}
-        {loading || isLoad ? (
+        {loading ? (
           <ActivityIndicator
             size="small"
             color="#FEC54B"
@@ -275,6 +339,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         {data !== null ? (
           <RequestForm
             submitButtonText={submitButtonText}
+            isShowSubmitButton={isShowSubmitButton}
             date={date}
             setDate={setDate}
             data={data}

@@ -19,14 +19,14 @@ const ApprovedScreen = ({navigation}) => {
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      await dispatch(setIsLoading());
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await dispatch(setIsLoading());
+  //     await dispatch(
+  //       fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
+  //     );
+  //   })();
+  // }, []);
 
   const handelNavigationToListPrice = async service => {
     navigation.push('ServicePriceScreen', {
@@ -44,6 +44,7 @@ const ApprovedScreen = ({navigation}) => {
       typeSubmitButtonClick: 'CONFIRM_FIXING',
       isCancelFromApprovedStatus: true,
       isFetchFixedService: false,
+      isShowSubmitButton: true,
     });
   };
 

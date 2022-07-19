@@ -18,13 +18,13 @@ const FixingScreen = ({navigation}) => {
   const requests = useSelector(selectRequests);
 
   const [refreshControl, setRefreshControl] = useState(false);
-  useEffect(() => {
-    (async () => {
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await dispatch(
+  //       fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
+  //     );
+  //   })();
+  // }, []);
 
   const handleNavigationToListPrice = async service => {
     navigation.push('ServicePriceScreen', {
@@ -42,6 +42,7 @@ const FixingScreen = ({navigation}) => {
       typeSubmitButtonClick: 'CREATE_INVOICE',
       isCancelFromApprovedStatus: false,
       isFetchFixedService: true,
+      isShowSubmitButton: true,
     });
   };
 
@@ -85,7 +86,6 @@ const FixingScreen = ({navigation}) => {
           }
           renderItem={({item, index}) => (
             <RequestItem
-              isGetPriceList={true}
               handleButtonPress={handleNavigationToListPrice}
               handleNavigationToDetailRequest={handleNavigationToDetailRequest}
               item={item}

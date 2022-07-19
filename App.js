@@ -98,7 +98,7 @@ function App() {
   useEffect(() => {
     TryLocalLogin();
     requestUserPermission();
-    notificationListener();
+    //notificationListener();
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);

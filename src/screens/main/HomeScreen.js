@@ -25,7 +25,10 @@ import {
   setIsLoading,
   selectIsLoading,
 } from '../../features/home/homeSlice';
+import {fetchRequests} from '../../features/request/requestSlice';
+import {RequestStatus} from '../../utils/util';
 import useAxios from '../../hooks/useAxios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const [buttonIndex, setButtonIndex] = useState(0);
@@ -53,7 +56,6 @@ const HomeScreen = ({navigation}) => {
     setButtonIndex(1);
     console.log('handleInterestButton: buttonIndex = ' + buttonIndex);
     setRenderList(requests.interested);
-    // console.log('requests.interested: ' + requests.interested);
   };
 
   const handleOnPressItem = async requestCode => {
@@ -61,6 +63,7 @@ const HomeScreen = ({navigation}) => {
       requestCode,
       isShowCancelButton: false,
       submitButtonText: 'Xác nhận yêu cầu',
+      isShowSubmitButton: true,
       isAddableDetailService: false,
       typeSubmitButtonClick: 'APPROVE_REQUEST',
       filter,
@@ -71,7 +74,6 @@ const HomeScreen = ({navigation}) => {
 
   const handleFilterClicked = () => {
     setButtonIndex(2);
-    // console.log('handleFilterClicked: buttonIndex = ' + buttonIndex);
     navigation.push('ServiceFilterScreen', {
       setFilter,
       addedServices,
@@ -121,6 +123,42 @@ const HomeScreen = ({navigation}) => {
       })();
     }
   }, [filter]);
+
+  useEffect(() => {
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
+    dispatch(
+      fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+    );
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}));
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        let filter = await AsyncStorage.getItem('filter');
+        if (filter) {
+          let {
+            addedServices,
+            startDates,
+            endDates,
+            cityIds,
+            districtIds,
+            communeIds,
+          } = JSON.parse(filter);
+          setAddedServices(addedServices);
+          setStartDates(startDates ? moment(startDates) : startDates);
+          setEndDates(endDates ? moment(endDates) : endDates);
+          setCityIds(cityIds);
+          setDistrictIds(districtIds);
+          setCommuneIds(communeIds);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener('focus', () => {

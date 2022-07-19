@@ -29,14 +29,14 @@ const CancelledScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);
-  useEffect(() => {
-    (async () => {
-      // await dispatch(setLoading());
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}),
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     // await dispatch(setLoading());
+  //     await dispatch(
+  //       fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}),
+  //     );
+  //   })();
+  // }, []);
 
   const handelNavigationToListPrice = service => {
     navigation.push('ServicePriceScreen', {
@@ -48,6 +48,8 @@ const CancelledScreen = ({navigation}) => {
   const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isFetchFixedService: true,
+      isShowSubmitButton: false,
     });
   };
 

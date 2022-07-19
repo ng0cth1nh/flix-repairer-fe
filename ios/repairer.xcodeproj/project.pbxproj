@@ -7,29 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* FlixMobileUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* FlixMobileUITests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-FlixMobileUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-FlixMobileUI.a */; };
+		00E356F31AD99517003FC87E /* repairerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* repairerTests.m */; };
+		0C80B921A6F3F58F76C31292 /* libPods-repairer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-repairer.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		7699B88040F8A987B510C191 /* libPods-FlixMobileUI-FlixMobileUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-FlixMobileUI-FlixMobileUITests.a */; };
+		7699B88040F8A987B510C191 /* libPods-repairer-repairerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-repairer-repairerTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		3E55E46BB2FD47C588831328 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC26A3EDA8464C1EB751A913 /* AntDesign.ttf */; };
-		2BA8D2836CD14016AE6492C3 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9E594454198E468FA5F8E3B2 /* Entypo.ttf */; };
-		7F03C3E16FA3450FA4CAB201 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2B1DA11BC114AAB8A3BF17E /* EvilIcons.ttf */; };
-		4C76D9037DBC4636BFDC281C /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3219231E4B3E4F64AB3C3847 /* Feather.ttf */; };
-		1D58EBA9067244A096C93DDA /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 900390D41D77458586D7C6F0 /* FontAwesome.ttf */; };
-		83742E10487743D58379E492 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FAC0AD8F10C4737B9406B2F /* FontAwesome5_Brands.ttf */; };
-		FD4C48ECA89743AD900B2C9D /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 34E33070F5BD4F6881BF6E30 /* FontAwesome5_Regular.ttf */; };
-		EEB83E3B58EE4A83A363B123 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B8B39746E046A6A338C76A /* FontAwesome5_Solid.ttf */; };
-		90348D4ABACF402580D2ED7B /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B06144A3C2E48FD95A3C60E /* Fontisto.ttf */; };
-		250F73F588E64BB5B791B06D /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACB9242D03B741539482B218 /* Foundation.ttf */; };
-		8945B4CB59314D8EAD6968A3 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F37DEA0004F34A889A9EA239 /* Ionicons.ttf */; };
-		0B2FD9826F8D4BDE996CEE12 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3483A49372B46C3B361D517 /* MaterialCommunityIcons.ttf */; };
-		07DCC7177CDF405BB2CD4803 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D27E560D60649A58A479BFB /* MaterialIcons.ttf */; };
-		BC77ABFF2387468D98540FD8 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 29C81FE3A2E74ED8AC0D9679 /* Octicons.ttf */; };
-		4EE90E611E304687B8522536 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6FA9F59AAEC74C80A3B7451C /* SimpleLineIcons.ttf */; };
-		0D95581640C64B75A15D10A0 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8A67EFEADB5141719E8B1439 /* Zocial.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,44 +22,28 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = FlixMobileUI;
+			remoteInfo = repairer;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* FlixMobileUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlixMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* repairerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = repairerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* FlixMobileUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlixMobileUITests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* FlixMobileUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlixMobileUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = FlixMobileUI/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = FlixMobileUI/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = FlixMobileUI/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FlixMobileUI/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FlixMobileUI/main.m; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-FlixMobileUI-FlixMobileUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlixMobileUI-FlixMobileUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B4392A12AC88292D35C810B /* Pods-FlixMobileUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlixMobileUI.debug.xcconfig"; path = "Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI.debug.xcconfig"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-FlixMobileUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlixMobileUI.release.xcconfig"; path = "Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-FlixMobileUI-FlixMobileUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlixMobileUI-FlixMobileUITests.debug.xcconfig"; path = "Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-FlixMobileUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FlixMobileUI.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FlixMobileUI/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-FlixMobileUI-FlixMobileUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlixMobileUI-FlixMobileUITests.release.xcconfig"; path = "Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests.release.xcconfig"; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* repairerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = repairerTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* repairer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = repairer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = repairer/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = repairer/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = repairer/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = repairer/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = repairer/main.m; sourceTree = "<group>"; };
+		19F6CBCC0A4E27FBF8BF4A61 /* libPods-repairer-repairerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-repairer-repairerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B4392A12AC88292D35C810B /* Pods-repairer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repairer.debug.xcconfig"; path = "Target Support Files/Pods-repairer/Pods-repairer.debug.xcconfig"; sourceTree = "<group>"; };
+		5709B34CF0A7D63546082F79 /* Pods-repairer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repairer.release.xcconfig"; path = "Target Support Files/Pods-repairer/Pods-repairer.release.xcconfig"; sourceTree = "<group>"; };
+		5B7EB9410499542E8C5724F5 /* Pods-repairer-repairerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repairer-repairerTests.debug.xcconfig"; path = "Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5DCACB8F33CDC322A6C60F78 /* libPods-repairer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-repairer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = repairer/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		89C6BE57DB24E9ADA2F236DE /* Pods-repairer-repairerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-repairer-repairerTests.release.xcconfig"; path = "Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EC26A3EDA8464C1EB751A913 /* AntDesign.ttf */ = {isa = PBXFileReference; name = "AntDesign.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9E594454198E468FA5F8E3B2 /* Entypo.ttf */ = {isa = PBXFileReference; name = "Entypo.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F2B1DA11BC114AAB8A3BF17E /* EvilIcons.ttf */ = {isa = PBXFileReference; name = "EvilIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		3219231E4B3E4F64AB3C3847 /* Feather.ttf */ = {isa = PBXFileReference; name = "Feather.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		900390D41D77458586D7C6F0 /* FontAwesome.ttf */ = {isa = PBXFileReference; name = "FontAwesome.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		4FAC0AD8F10C4737B9406B2F /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Brands.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		34E33070F5BD4F6881BF6E30 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D7B8B39746E046A6A338C76A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Solid.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		7B06144A3C2E48FD95A3C60E /* Fontisto.ttf */ = {isa = PBXFileReference; name = "Fontisto.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		ACB9242D03B741539482B218 /* Foundation.ttf */ = {isa = PBXFileReference; name = "Foundation.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F37DEA0004F34A889A9EA239 /* Ionicons.ttf */ = {isa = PBXFileReference; name = "Ionicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D3483A49372B46C3B361D517 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; name = "MaterialCommunityIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		5D27E560D60649A58A479BFB /* MaterialIcons.ttf */ = {isa = PBXFileReference; name = "MaterialIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		29C81FE3A2E74ED8AC0D9679 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		6FA9F59AAEC74C80A3B7451C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		8A67EFEADB5141719E8B1439 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-FlixMobileUI-FlixMobileUITests.a in Frameworks */,
+				7699B88040F8A987B510C191 /* libPods-repairer-repairerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,20 +59,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-FlixMobileUI.a in Frameworks */,
+				0C80B921A6F3F58F76C31292 /* libPods-repairer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* FlixMobileUITests */ = {
+		00E356EF1AD99517003FC87E /* repairerTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* FlixMobileUITests.m */,
+				00E356F21AD99517003FC87E /* repairerTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = FlixMobileUITests;
+			path = repairerTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -115,7 +83,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* FlixMobileUI */ = {
+		13B07FAE1A68108700A75B9A /* repairer */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -125,15 +93,15 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = FlixMobileUI;
+			name = repairer;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-FlixMobileUI.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-FlixMobileUI-FlixMobileUITests.a */,
+				5DCACB8F33CDC322A6C60F78 /* libPods-repairer.a */,
+				19F6CBCC0A4E27FBF8BF4A61 /* libPods-repairer-repairerTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -148,13 +116,12 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* FlixMobileUI */,
+				13B07FAE1A68108700A75B9A /* repairer */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* FlixMobileUITests */,
+				00E356EF1AD99517003FC87E /* repairerTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
-				9410911906554B478CEB92A6 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -164,8 +131,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* FlixMobileUI.app */,
-				00E356EE1AD99517003FC87E /* FlixMobileUITests.xctest */,
+				13B07F961A680F5B00A75B9A /* repairer.app */,
+				00E356EE1AD99517003FC87E /* repairerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,44 +140,20 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-FlixMobileUI.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-FlixMobileUI.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-FlixMobileUI-FlixMobileUITests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-FlixMobileUI-FlixMobileUITests.release.xcconfig */,
+				3B4392A12AC88292D35C810B /* Pods-repairer.debug.xcconfig */,
+				5709B34CF0A7D63546082F79 /* Pods-repairer.release.xcconfig */,
+				5B7EB9410499542E8C5724F5 /* Pods-repairer-repairerTests.debug.xcconfig */,
+				89C6BE57DB24E9ADA2F236DE /* Pods-repairer-repairerTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		9410911906554B478CEB92A6 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				EC26A3EDA8464C1EB751A913 /* AntDesign.ttf */,
-				9E594454198E468FA5F8E3B2 /* Entypo.ttf */,
-				F2B1DA11BC114AAB8A3BF17E /* EvilIcons.ttf */,
-				3219231E4B3E4F64AB3C3847 /* Feather.ttf */,
-				900390D41D77458586D7C6F0 /* FontAwesome.ttf */,
-				4FAC0AD8F10C4737B9406B2F /* FontAwesome5_Brands.ttf */,
-				34E33070F5BD4F6881BF6E30 /* FontAwesome5_Regular.ttf */,
-				D7B8B39746E046A6A338C76A /* FontAwesome5_Solid.ttf */,
-				7B06144A3C2E48FD95A3C60E /* Fontisto.ttf */,
-				ACB9242D03B741539482B218 /* Foundation.ttf */,
-				F37DEA0004F34A889A9EA239 /* Ionicons.ttf */,
-				D3483A49372B46C3B361D517 /* MaterialCommunityIcons.ttf */,
-				5D27E560D60649A58A479BFB /* MaterialIcons.ttf */,
-				29C81FE3A2E74ED8AC0D9679 /* Octicons.ttf */,
-				6FA9F59AAEC74C80A3B7451C /* SimpleLineIcons.ttf */,
-				8A67EFEADB5141719E8B1439 /* Zocial.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* FlixMobileUITests */ = {
+		00E356ED1AD99517003FC87E /* repairerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "FlixMobileUITests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "repairerTests" */;
 			buildPhases = (
 				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -224,14 +167,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = FlixMobileUITests;
-			productName = FlixMobileUITests;
-			productReference = 00E356EE1AD99517003FC87E /* FlixMobileUITests.xctest */;
+			name = repairerTests;
+			productName = repairerTests;
+			productReference = 00E356EE1AD99517003FC87E /* repairerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* FlixMobileUI */ = {
+		13B07F861A680F5B00A75B9A /* repairer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FlixMobileUI" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "repairer" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -246,9 +189,9 @@
 			);
 			dependencies = (
 			);
-			name = FlixMobileUI;
-			productName = FlixMobileUI;
-			productReference = 13B07F961A680F5B00A75B9A /* FlixMobileUI.app */;
+			name = repairer;
+			productName = repairer;
+			productReference = 13B07F961A680F5B00A75B9A /* repairer.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -268,7 +211,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FlixMobileUI" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "repairer" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -281,8 +224,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* FlixMobileUI */,
-				00E356ED1AD99517003FC87E /* FlixMobileUITests */,
+				13B07F861A680F5B00A75B9A /* repairer */,
+				00E356ED1AD99517003FC87E /* repairerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -301,22 +244,6 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				3E55E46BB2FD47C588831328 /* AntDesign.ttf in Resources */,
-				2BA8D2836CD14016AE6492C3 /* Entypo.ttf in Resources */,
-				7F03C3E16FA3450FA4CAB201 /* EvilIcons.ttf in Resources */,
-				4C76D9037DBC4636BFDC281C /* Feather.ttf in Resources */,
-				1D58EBA9067244A096C93DDA /* FontAwesome.ttf in Resources */,
-				83742E10487743D58379E492 /* FontAwesome5_Brands.ttf in Resources */,
-				FD4C48ECA89743AD900B2C9D /* FontAwesome5_Regular.ttf in Resources */,
-				EEB83E3B58EE4A83A363B123 /* FontAwesome5_Solid.ttf in Resources */,
-				90348D4ABACF402580D2ED7B /* Fontisto.ttf in Resources */,
-				250F73F588E64BB5B791B06D /* Foundation.ttf in Resources */,
-				8945B4CB59314D8EAD6968A3 /* Ionicons.ttf in Resources */,
-				0B2FD9826F8D4BDE996CEE12 /* MaterialCommunityIcons.ttf in Resources */,
-				07DCC7177CDF405BB2CD4803 /* MaterialIcons.ttf in Resources */,
-				BC77ABFF2387468D98540FD8 /* Octicons.ttf in Resources */,
-				4EE90E611E304687B8522536 /* SimpleLineIcons.ttf in Resources */,
-				0D95581640C64B75A15D10A0 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,15 +270,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
@@ -369,7 +296,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FlixMobileUI-FlixMobileUITests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-repairer-repairerTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -391,7 +318,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FlixMobileUI-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-repairer-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -404,15 +331,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
@@ -421,15 +348,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI/Pods-FlixMobileUI-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-repairer/Pods-repairer-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
@@ -438,15 +365,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlixMobileUI-FlixMobileUITests/Pods-FlixMobileUI-FlixMobileUITests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-repairer-repairerTests/Pods-repairer-repairerTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -475,7 +402,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* FlixMobileUITests.m in Sources */,
+				00E356F31AD99517003FC87E /* repairerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,7 +420,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* FlixMobileUI */;
+			target = 13B07F861A680F5B00A75B9A /* repairer */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -501,14 +428,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-FlixMobileUI-FlixMobileUITests.debug.xcconfig */;
+			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-repairer-repairerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = FlixMobileUITests/Info.plist;
+				INFOPLIST_FILE = repairerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -522,17 +449,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FlixMobileUI.app/FlixMobileUI";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repairer.app/repairer";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-FlixMobileUI-FlixMobileUITests.release.xcconfig */;
+			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-repairer-repairerTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = FlixMobileUITests/Info.plist;
+				INFOPLIST_FILE = repairerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -546,19 +473,19 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FlixMobileUI.app/FlixMobileUI";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/repairer.app/repairer";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-FlixMobileUI.debug.xcconfig */;
+			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-repairer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = FlixMobileUI/Info.plist;
+				INFOPLIST_FILE = repairer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -569,7 +496,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = FlixMobileUI;
+				PRODUCT_NAME = repairer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -578,12 +505,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-FlixMobileUI.release.xcconfig */;
+			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-repairer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = FlixMobileUI/Info.plist;
+				INFOPLIST_FILE = repairer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -594,7 +521,7 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = FlixMobileUI;
+				PRODUCT_NAME = repairer;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -738,7 +665,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "FlixMobileUITests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "repairerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -747,7 +674,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "FlixMobileUI" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "repairer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -756,7 +683,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "FlixMobileUI" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "repairer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

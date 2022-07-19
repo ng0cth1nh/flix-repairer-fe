@@ -23,9 +23,6 @@ import {removeCommas, formatCurrency} from '../utils/FormattingCurrency';
 
 const RequestForm = function ({
   submitButtonText,
-  buttonClicked,
-  date,
-  setDate,
   data,
   fixedService,
   isShowCancelButton,
@@ -34,9 +31,8 @@ const RequestForm = function ({
   handlerSubmitButtonClick,
   handlerAddDetailServiceButtonClick,
   isRequestIdVisible = false,
+  isShowSubmitButton,
 }) {
-  const [dateVisible, setDateVisible] = useState(false);
-
   const copyToClipboard = () => {
     Clipboard.setString(data.requestCode);
     Toast.show({
@@ -142,10 +138,10 @@ const RequestForm = function ({
               </View>
             </View>
           </View>
-          {fixedService &&
-          fixedService.accessories.length !== 0 &&
-          fixedService.subServices.length !== 0 &&
-          fixedService.extraServices.length !== 0 ? (
+          {fixedService !== null &&
+          (fixedService.accessories.length !== 0 ||
+            fixedService.subServices.length !== 0 ||
+            fixedService.extraServices.length !== 0) ? (
             <View
               style={[
                 {
@@ -155,7 +151,7 @@ const RequestForm = function ({
                   paddingTop: 16,
                 },
               ]}>
-              {fixedService.subServices &&
+              {fixedService.subServices !== null &&
               fixedService.subServices.length !== 0 ? (
                 <View style={{width: '100%'}}>
                   <Text style={styles.tittleText}>Dịch vụ đã sửa chi tiết</Text>
@@ -260,9 +256,7 @@ const RequestForm = function ({
             <Text style={styles.tittleText}>Ngày muốn sửa</Text>
           </View>
           <View style={{flex: 4, marginLeft: 40}}>
-            <TouchableOpacity
-              style={styles.datePicker}
-              onPress={() => setDateVisible(true)}>
+            <TouchableOpacity style={styles.datePicker}>
               <Text style={styles.textBold}>
                 {moment(data.expectFixingTime).format('HH:mm - DD/MM/YYYY')}
               </Text>
@@ -406,14 +400,14 @@ const RequestForm = function ({
               data.inspectionPrice,
             )} vnđ`}</Text>
           </View>
-          {fixedService ? (
+          {fixedService !== null ? (
             <>
               {fixedService.subServices &&
               fixedService.subServices.length !== 0 ? (
                 <>
                   {fixedService.subServices.map((item, index) => {
                     return (
-                      <View style={styles.serviceRow}>
+                      <View style={styles.serviceRow} key={index.toString()}>
                         <Text style={styles.serviceName}>{item.name}</Text>
                         <Text style={styles.servicePrice}>{`${numberWithCommas(
                           item.price.toString(),
@@ -428,7 +422,7 @@ const RequestForm = function ({
                 <>
                   {fixedService.accessories.map((item, index) => {
                     return (
-                      <View style={styles.serviceRow}>
+                      <View style={styles.serviceRow} key={index.toString()}>
                         <Text style={styles.serviceName}>{item.name}</Text>
                         <Text style={styles.servicePrice}>{`${numberWithCommas(
                           item.price.toString(),
@@ -443,7 +437,7 @@ const RequestForm = function ({
                 <>
                   {fixedService.extraServices.map((item, index) => {
                     return (
-                      <View style={styles.serviceRow}>
+                      <View style={styles.serviceRow} key={index.toString()}>
                         <Text style={styles.serviceName}>{item.name}</Text>
                         <Text style={styles.servicePrice}>{`${numberWithCommas(
                           item.price.toString(),
@@ -486,15 +480,17 @@ const RequestForm = function ({
           />
         ) : null}
       </ScrollView>
-      <SubmitButton
-        style={{
-          marginVertical: 8,
-          width: '100%',
-          alignSelf: 'center',
-        }}
-        onPress={handlerSubmitButtonClick}
-        buttonText={submitButtonText}
-      />
+      {isShowSubmitButton ? (
+        <SubmitButton
+          style={{
+            marginVertical: 8,
+            width: '100%',
+            alignSelf: 'center',
+          }}
+          onPress={handlerSubmitButtonClick}
+          buttonText={submitButtonText}
+        />
+      ) : null}
     </SafeAreaView>
   );
 };

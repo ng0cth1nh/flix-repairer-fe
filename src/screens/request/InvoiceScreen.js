@@ -4,7 +4,6 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
-  StatusBar,
   ScrollView,
   Image,
   TouchableOpacity,
@@ -25,7 +24,6 @@ import {
   fetchFixedService,
   confirmPayment,
 } from '../../features/request/requestSlice';
-
 import useAxios from '../../hooks/useAxios';
 import Toast from 'react-native-toast-message';
 import ApiConstants from '../../constants/Api';
@@ -443,7 +441,7 @@ const InvoiceScreen = ({route, navigation}) => {
                   Thời gian xác nhận
                 </Text>
                 <Text style={{marginLeft: 'auto'}}>
-                  {moment(data.createdAt).format('HH:mm - DD/MM/YYYY')}
+                  {moment(data.approvedTime).format('HH:mm - DD/MM/YYYY')}
                 </Text>
               </View>
             </View>

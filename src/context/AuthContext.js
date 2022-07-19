@@ -145,6 +145,8 @@ const login = dispatch => async params => {
 };
 const logout = dispatch => async () => {
   await AsyncStorage.removeItem('token');
+  await AsyncStorage.removeItem('refreshToken');
+  await AsyncStorage.removeItem('filter');
   dispatch({type: 'logout'});
 };
 export const {Provider, Context} = createDataContext(

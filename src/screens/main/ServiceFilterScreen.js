@@ -4,23 +4,17 @@ import {
   View,
   ScrollView,
   SafeAreaView,
-  FlatList,
   TouchableOpacity,
-  Dimensions,
   Image,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import RNPickerSelect from 'react-native-picker-select';
 import moment from 'moment';
-import {Checkbox, NativeBaseProvider} from 'native-base';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const {width} = Dimensions.get('window');
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import CustomDatePicker from '../../components/CustomDatePicker';
-import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
-import useFetchData from '../../hooks/useFetchData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiConstants from '../../constants/Api';
 import useAxios from '../../hooks/useAxios';
 import CustomModal from '../../components/CustomModal';
@@ -156,38 +150,57 @@ export default function ServiceFilterScreen({route, navigation}) {
   };
 
   const handleApplyButton = async () => {
-    if (addedService.length === 0 || !cityId) {
-      setModalVisible(true);
-    } else {
-      let temp = addedService.map((item, index) => {
-        let [serviceId, serviceName, icon] = item.split('[SPACE]');
-        return serviceId;
-      });
-      let serviceIds = temp.join(',');
+    try {
+      if (addedService.length === 0 || !cityId) {
+        setModalVisible(true);
+      } else {
+        let temp = addedService.map((item, index) => {
+          let [serviceId, serviceName, icon] = item.split('[SPACE]');
+          return serviceId;
+        });
+        let serviceIds = temp.join(',');
 
-      let locationType = communeId
-        ? 'COMMUNE'
-        : districtId
-        ? 'DISTRICT'
-        : 'CITY';
-      let locationId = communeId ? communeId : districtId ? districtId : cityId;
-      let startDate = getStartDate().format('DD-MM-YYYY');
-      let endDate = getEndDate().format('DD-MM-YYYY');
-      console.log({serviceIds, locationId, locationType, startDate, endDate});
-      setFilter({
-        serviceIds,
-        locationId,
-        locationType,
-        startDate,
-        endDate,
-      });
-      setAddedServices(addedService);
-      setStartDates(getStartDate());
-      setEndDates(getEndDate());
-      setCityIds(cityId);
-      setDistrictIds(districtId);
-      setCommuneIds(communeId);
-      navigation.goBack();
+        let locationType = communeId
+          ? 'COMMUNE'
+          : districtId
+          ? 'DISTRICT'
+          : 'CITY';
+        let locationId = communeId
+          ? communeId
+          : districtId
+          ? districtId
+          : cityId;
+        let startDate = getStartDate().format('DD-MM-YYYY');
+        let endDate = getEndDate().format('DD-MM-YYYY');
+        console.log({serviceIds, locationId, locationType, startDate, endDate});
+        setFilter({
+          serviceIds,
+          locationId,
+          locationType,
+          startDate,
+          endDate,
+        });
+        setAddedServices(addedService);
+        setStartDates(getStartDate());
+        setEndDates(getEndDate());
+        setCityIds(cityId);
+        setDistrictIds(districtId);
+        setCommuneIds(communeId);
+        await AsyncStorage.setItem(
+          'filter',
+          JSON.stringify({
+            addedServices: addedService,
+            startDates: getStartDate(),
+            endDates: getEndDate(),
+            cityIds: cityId,
+            districtIds: districtId,
+            communeIds: communeId,
+          }),
+        );
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -365,6 +378,7 @@ export default function ServiceFilterScreen({route, navigation}) {
                   />
                   <CustomDatePicker
                     isVisible={startDateVisible}
+                    minimumDate={false}
                     handleConfirm={handlerStartDateConfirm}
                     hideDatePicker={hideStartDatePicker}
                   />
@@ -391,6 +405,7 @@ export default function ServiceFilterScreen({route, navigation}) {
                   />
                   <CustomDatePicker
                     isVisible={endDateVisible}
+                    minimumDate={false}
                     handleConfirm={handlerEndDateConfirm}
                     hideDatePicker={hideEndDatePicker}
                   />

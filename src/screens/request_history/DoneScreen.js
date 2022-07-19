@@ -17,11 +17,11 @@ const DoneScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);
-  useEffect(() => {
-    (async () => {
-      await dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     await dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
+  //   })();
+  // }, []);
 
   const handleGetInvoiceButton = async service => {
     navigation.push('InvoiceScreen', {
@@ -33,6 +33,8 @@ const DoneScreen = ({navigation}) => {
   const handleNavigationToDetailRequest = async requestCode => {
     navigation.push('RequestDetailScreen', {
       requestCode,
+      isFetchFixedService: true,
+      isShowSubmitButton: false,
     });
   };
 

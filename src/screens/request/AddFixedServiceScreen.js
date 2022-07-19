@@ -1,5 +1,5 @@
 import {View, Text, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Checkbox, NativeBaseProvider} from 'native-base';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -20,14 +20,18 @@ import Toast from 'react-native-toast-message';
 import {removeCommas, formatCurrency} from '../../utils/FormattingCurrency';
 
 function AddFixedServiceScreen({route, navigation}) {
-  const {requestCode, serviceId} = route.params;
+  const {requestCode, serviceId, loadData, fixedService} = route.params;
   const isLoading = useSelector(selectIsLoading);
-  const [extraServices, setExtraServices] = useState([]);
-  const [extraService, setExtraService] = useState([]);
-  const [subServiceIds, setSubServiceIds] = useState([]);
-  const [subServiceId, setSubServiceId] = useState([]);
-  const [accessoryIds, setAccessoryIds] = useState([]);
-  const [accessoryId, setAccessoryId] = useState([]);
+  const [extraServices, setExtraServices] = useState(
+    fixedService.extraServices,
+  );
+  const [extraService, setExtraService] = useState(fixedService.extraService);
+  const [subServiceIds, setSubServiceIds] = useState(
+    fixedService.subServiceIds,
+  );
+  const [subServiceId, setSubServiceId] = useState(fixedService.subServiceId);
+  const [accessoryIds, setAccessoryIds] = useState(fixedService.accessoryIds);
+  const [accessoryId, setAccessoryId] = useState(fixedService.accessoryId);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
 
@@ -40,6 +44,7 @@ function AddFixedServiceScreen({route, navigation}) {
       setAccessoryId,
     });
   };
+
   const handlerAddExtraServiceButtonClick = async () => {
     navigation.push('AddExtraServiceScreen', {
       extraService,
@@ -62,33 +67,33 @@ function AddFixedServiceScreen({route, navigation}) {
   const getExtraServices = () => extraServices;
 
   const handleSubmitButton = async () => {
-    let subServiceIds =
-      getSubServiceIds() &&
-      getSubServiceIds().map((item, index) => {
-        let [id, name, price] = item.split('[SPACE]');
-        return +id;
-      });
-    let accessoryIds =
-      getAccessoryIds() &&
-      getAccessoryIds().map((item, index) => {
-        let [id, name, price] = item.split('[SPACE]');
-        return +id;
-      });
-    let extraServices =
-      getExtraServices() &&
-      getExtraServices().map((item, index) => {
-        let [name, price, description, insuranceTime] = item.split('[SPACE]');
-        return {
-          name,
-          description,
-          price: +removeCommas(price),
-          insuranceTime: +insuranceTime,
-        };
-      });
     try {
       await dispatch(setIsLoading());
+      let subServiceIds =
+        getSubServiceIds() &&
+        getSubServiceIds().map((item, index) => {
+          let [id, name, price] = item.split('[SPACE]');
+          return +id;
+        });
+      let accessoryIds =
+        getAccessoryIds() &&
+        getAccessoryIds().map((item, index) => {
+          let [id, name, price] = item.split('[SPACE]');
+          return +id;
+        });
+      let extraServices =
+        getExtraServices() &&
+        getExtraServices().map((item, index) => {
+          let [name, price, description, insuranceTime] = item.split('[SPACE]');
+          return {
+            name,
+            description,
+            price: +removeCommas(price),
+            insuranceTime: +insuranceTime,
+          };
+        });
+
       console.log('DATA SENT: ', {
-        repairerAPI,
         requestCode,
         subServiceIds,
         accessoryIds,
@@ -107,6 +112,7 @@ function AddFixedServiceScreen({route, navigation}) {
         type: 'customToast',
         text1: 'Cập nhật thành công',
       });
+      loadData();
       navigation.goBack();
     } catch (err) {
       Toast.show({
@@ -115,13 +121,6 @@ function AddFixedServiceScreen({route, navigation}) {
       });
     }
   };
-
-  // const {loading, data, isError} = useFetchData(
-  //   ApiConstants.GET_REQUEST_DETAIL_API,
-  //   {
-  //     params: {requestCode},
-  //   },
-  // );
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -171,7 +170,7 @@ function AddFixedServiceScreen({route, navigation}) {
                             {item.name}
                           </Text>
                           <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                            {`${formatCurrency(item.price)} vnđ`}
+                            {`${formatCurrency(item.price.toString())} vnđ`}
                           </Text>
                         </View>
                       </View>
@@ -214,7 +213,7 @@ function AddFixedServiceScreen({route, navigation}) {
                             {item.name}
                           </Text>
                           <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                            {`${formatCurrency(item.price)} vnđ`}
+                            {`${formatCurrency(item.price.toString())} vnđ`}
                           </Text>
                         </View>
                       </View>
@@ -265,7 +264,7 @@ function AddFixedServiceScreen({route, navigation}) {
                             {item.name}
                           </Text>
                           <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                            {`${item.price} vnđ`}
+                            {`${formatCurrency(item.price.toString())} vnđ`}
                           </Text>
                         </TouchableOpacity>
                       </View>

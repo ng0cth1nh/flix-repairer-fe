@@ -13,7 +13,7 @@ class MainComponentsRegistry
  public:
   // Adapt it to the package you used for your Java class.
   constexpr static auto kJavaDescriptor =
-      "Lcom/flixmobileui/newarchitecture/components/MainComponentsRegistry;";
+      "Lcom/repairer/newarchitecture/components/MainComponentsRegistry;";
 
   static void registerNatives();
 
