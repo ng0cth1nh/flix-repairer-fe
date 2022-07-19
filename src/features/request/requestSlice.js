@@ -279,11 +279,9 @@ export const requestSlice = createSlice({
     });
 
     builder.addCase(fetchFixedService.fulfilled, (state, action) => {
-      state.isLoading = false;
       state.errorMessage = null;
     });
     builder.addCase(fetchFixedService.rejected, (state, action) => {
-      state.isLoading = false;
       state.errorMessage = action.payload;
     });
 
