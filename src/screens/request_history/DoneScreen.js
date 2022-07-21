@@ -8,6 +8,7 @@ import {
   fetchRequests,
   selectRequests,
   selectIsLoading,
+  setIsLoading,
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
 
@@ -17,11 +18,6 @@ const DoneScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);
-  // useEffect(() => {
-  //   (async () => {
-  //     await dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
-  //   })();
-  // }, []);
 
   const handleGetInvoiceButton = async service => {
     navigation.push('InvoiceScreen', {
@@ -67,11 +63,42 @@ const DoneScreen = ({navigation}) => {
             <RefreshControl
               refreshing={refreshControl}
               onRefresh={async () => {
-                setRefreshControl(true);
-                await dispatch(
-                  fetchRequests({repairerAPI, status: RequestStatus.DONE}),
-                );
-                setRefreshControl(false);
+                try {
+                  setRefreshControl(true);
+                  await dispatch(
+                    fetchRequests({repairerAPI, status: RequestStatus.DONE}),
+                  );
+                  await setIsLoading(true);
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.PAYMENT_WAITING,
+                    }),
+                  );
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.APPROVED,
+                    }),
+                  );
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.FIXING,
+                    }),
+                  );
+
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.CANCELLED,
+                    }),
+                  );
+                } catch (err) {
+                  console.log(err);
+                } finally {
+                  setRefreshControl(false);
+                }
               }}
               colors={['#FEC54B']}
             />

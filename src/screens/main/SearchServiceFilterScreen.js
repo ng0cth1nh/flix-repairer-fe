@@ -18,11 +18,6 @@ import SearchForm from '../../components/SearchForm';
 import useAxios from '../../hooks/useAxios';
 import ApiConstants from '../../constants/Api';
 import NotFound from '../../components/NotFound';
-import {LogBox} from 'react-native';
-
-LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
-]);
 
 export default function SearchServiceFilterScreen({route, navigation}) {
   const [search, setSearch] = useState('');

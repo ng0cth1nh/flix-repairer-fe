@@ -18,6 +18,7 @@ import TopHeaderComponent from '../../components/TopHeaderComponent';
 import Button from '../../components/SubmitButton';
 import SearchForm from '../../components/SearchForm';
 import NotFound from '../../components/NotFound';
+import {numberWithCommas} from '../../utils/util';
 
 export default function AddSubServiceScreen({route, navigation}) {
   const [search, setSearch] = useState('');
@@ -96,8 +97,6 @@ export default function AddSubServiceScreen({route, navigation}) {
           style={{
             flex: 1,
             paddingVertical: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: '#CACACA',
           }}>
           <ScrollView>
             {addedSubServiceIds.length !== 0 ? (
@@ -115,13 +114,19 @@ export default function AddSubServiceScreen({route, navigation}) {
                         {
                           paddingHorizontal: 20,
                           width: '98%',
+                          color: 'black',
                           marginVertical: 6,
                           paddingVertical: 6,
+                          flexWrap: 'wrap',
                         },
                       ]}>
-                      <Text>{name}</Text>
-                      <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                        {price} vnđ
+                      <Text style={{flex: 8, color: 'black'}}>{name}</Text>
+                      <Text
+                        style={[
+                          styles.textBold,
+                          {flex: 3, textAlign: 'right'},
+                        ]}>
+                        {`${numberWithCommas(price)} vnđ`}
                       </Text>
                       <TouchableOpacity
                         onPress={() => handleDeleteAddedService(index)}
@@ -161,17 +166,38 @@ export default function AddSubServiceScreen({route, navigation}) {
                         {searchedSubServiceId.map((item, index) => (
                           <View
                             key={index.toString()}
-                            style={[styles.serviceRow, {marginVertical: 6}]}>
+                            style={[
+                              styles.serviceRow,
+                              {
+                                marginVertical: 6,
+                                flexWrap: 'wrap',
+                                paddingVertical: 6,
+                              },
+                            ]}>
                             <Checkbox
                               accessibilityLabel={item.name}
                               value={`${item.id}[SPACE]${item.name}[SPACE]${item.price}`}
                               colorScheme="yellow"
-                              _icon={{color: 'black'}}>
-                              {item.name}
-                            </Checkbox>
+                              style={{flex: 1}}
+                              _icon={{color: 'black'}}
+                            />
                             <Text
-                              style={[styles.textBold, {marginLeft: 'auto'}]}>
-                              {item.price} vnđ
+                              style={{
+                                color: 'black',
+                                marginHorizontal: 6,
+                                flex: 6,
+                              }}>
+                              {item.name}
+                            </Text>
+                            <Text
+                              style={[
+                                styles.textBold,
+                                {
+                                  flex: 3,
+                                  textAlign: 'right',
+                                },
+                              ]}>
+                              {`${numberWithCommas(item.price)} vnđ`}
                             </Text>
                           </View>
                         ))}
@@ -213,8 +239,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#CACACA',
     paddingRight: 20,
     marginBottom: 10,
   },

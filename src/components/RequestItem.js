@@ -126,17 +126,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   viewServiceButton: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    paddingVertical: 4,
+    width: 'auto',
     borderRadius: 10,
     backgroundColor: '#FEC54B',
-    marginLeft: 'auto',
+    paddingHorizontal: 6,
   },
   textBold: {
     fontWeight: '600',
     color: 'black',
-    fontSize: 14,
-    marginRight: 8,
+    fontSize: 12,
   },
   serviceRow: {
     flexDirection: 'row',

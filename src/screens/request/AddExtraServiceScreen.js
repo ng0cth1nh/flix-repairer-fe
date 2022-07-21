@@ -21,14 +21,17 @@ import {formatCurrency, removeCommas} from '../../utils/FormattingCurrency';
 export default function AddExtraServiceScreen({route, navigation}) {
   const {item, index, extraService, setExtraServices, setExtraService} =
     route.params;
+  console.log(item);
   const [modalVisible, setModalVisible] = useState(false);
-  const [price, setPrice] = useState(item ? item.price : null);
+  const [price, setPrice] = useState(
+    item ? formatCurrency(item.price.toString()) : null,
+  );
   const [name, setName] = useState(item ? item.name : null);
   const [description, setDescription] = useState(
-    item ? item.description : null,
+    item && item.description !== 'null' ? item.description : null,
   );
   const [insuranceTime, setInsuranceTime] = useState(
-    item ? item.insuranceTime : null,
+    item ? item.insuranceTime + '' : null,
   );
 
   const handlerSubmitButtonClick = () => {
@@ -275,7 +278,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
     width: '100%',
-    marginTop: 10,
   },
   boxHeader: {flexDirection: 'row', height: 40, alignItems: 'flex-end'},
   tittleText: {

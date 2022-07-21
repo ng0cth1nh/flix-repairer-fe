@@ -204,6 +204,20 @@ export const fetchFixedService = createAsyncThunk(
   },
 );
 
+export const fetchInvoice = createAsyncThunk(
+  'request/fetchInvoice',
+  async ({repairerAPI, requestCode}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.get(ApiConstants.GET_INVOICE_API, {
+        params: {requestCode},
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
 export const requestSlice = createSlice({
   name: 'request',
   initialState,
@@ -275,6 +289,13 @@ export const requestSlice = createSlice({
     });
     builder.addCase(approveRequest.rejected, (state, action) => {
       state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(fetchInvoice.fulfilled, (state, action) => {
+      state.errorMessage = null;
+    });
+    builder.addCase(fetchInvoice.rejected, (state, action) => {
       state.errorMessage = action.payload;
     });
 

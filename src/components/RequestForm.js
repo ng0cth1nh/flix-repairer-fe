@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Text,
   View,
@@ -13,23 +13,21 @@ import {RadioButton} from 'react-native-paper';
 import SubmitButton from '../components/SubmitButton';
 import {numberWithCommas} from '../utils/util';
 const {height} = Dimensions.get('window');
-import CustomDatePicker from './CustomDatePicker';
-import Button from './SubmitButton';
 import moment from 'moment';
 import Clipboard from '@react-native-community/clipboard';
 import Toast from 'react-native-toast-message';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {removeCommas, formatCurrency} from '../utils/FormattingCurrency';
+import {formatCurrency} from '../utils/FormattingCurrency';
 
 const RequestForm = function ({
   submitButtonText,
   data,
   fixedService,
   isShowCancelButton,
-  handlerCancel,
+  handleCancel,
   isAddableDetailService,
-  handlerSubmitButtonClick,
-  handlerAddDetailServiceButtonClick,
+  handleSubmitButtonClick,
+  handleAddDetailServiceButtonClick,
   isRequestIdVisible = false,
   isShowSubmitButton,
 }) {
@@ -80,7 +78,7 @@ const RequestForm = function ({
                 <TouchableOpacity
                   style={[styles.viewServiceButton, {width: '60%'}]}>
                   <Text style={[styles.textBold, {textAlign: 'center'}]}>
-                    Nhắn tin với khách
+                    Nhắn tin
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -100,7 +98,7 @@ const RequestForm = function ({
             {isAddableDetailService && (
               <TouchableOpacity
                 style={styles.editTouch}
-                onPress={() => handlerAddDetailServiceButtonClick()}>
+                onPress={() => handleAddDetailServiceButtonClick()}>
                 <Text style={styles.editText}>Thêm</Text>
               </TouchableOpacity>
             )}
@@ -161,16 +159,25 @@ const RequestForm = function ({
                         key={index.toString()}
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
+                          justifyContent: 'space-around',
                           width: '90%',
                           alignSelf: 'center',
                           marginVertical: 6,
+                          alignItems: 'center',
                         }}>
-                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text
+                          style={{
+                            color: 'black',
+                            flex: 12,
+                          }}>
+                          {item.name}
+                        </Text>
                         <Text
                           style={{
                             color: 'black',
                             fontWeight: 'bold',
+                            flex: 5,
+                            textAlign: 'right',
                           }}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
@@ -189,16 +196,25 @@ const RequestForm = function ({
                         key={index.toString()}
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
+                          justifyContent: 'space-around',
                           width: '90%',
                           alignSelf: 'center',
                           marginVertical: 6,
+                          alignItems: 'center',
                         }}>
-                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text
+                          style={{
+                            color: 'black',
+                            flex: 12,
+                          }}>
+                          {item.name}
+                        </Text>
                         <Text
                           style={{
                             color: 'black',
                             fontWeight: 'bold',
+                            flex: 5,
+                            textAlign: 'right',
                           }}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
@@ -224,11 +240,15 @@ const RequestForm = function ({
                           alignSelf: 'center',
                           marginVertical: 6,
                         }}>
-                        <Text style={{color: 'black'}}>{item.name}</Text>
+                        <Text style={{color: 'black', flex: 12}}>
+                          {item.name}
+                        </Text>
                         <Text
                           style={{
                             color: 'black',
                             fontWeight: 'bold',
+                            flex: 5,
+                            textAlign: 'right',
                           }}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
@@ -256,11 +276,11 @@ const RequestForm = function ({
             <Text style={styles.tittleText}>Ngày muốn sửa</Text>
           </View>
           <View style={{flex: 4, marginLeft: 40}}>
-            <TouchableOpacity style={styles.datePicker}>
+            <View style={styles.datePicker}>
               <Text style={styles.textBold}>
                 {moment(data.expectFixingTime).format('HH:mm - DD/MM/YYYY')}
               </Text>
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
         <View
@@ -286,6 +306,7 @@ const RequestForm = function ({
                 borderRadius: 10,
                 height: '80%',
                 color: 'black',
+                paddingLeft: 16,
               }}
               editable={false}
             />
@@ -360,16 +381,19 @@ const RequestForm = function ({
               <Image
                 source={require('../../assets/images/type/info.png')}
                 style={{
-                  height: 22,
-                  width: 22,
+                  height: 20,
+                  width: 20,
                 }}
               />
               <Text style={styles.tittleText}>Mã yêu cầu</Text>
               <TouchableOpacity
-                style={{marginLeft: 'auto', marginBottom: 3}}
+                style={[
+                  {marginLeft: 'auto', marginBottom: 3},
+                  styles.viewServiceButton,
+                ]}
                 onPress={copyToClipboard}>
                 <Text
-                  style={{color: '#FEC54B', fontSize: 16, fontWeight: 'bold'}}>
+                  style={{color: 'black', fontSize: 14, fontWeight: 'bold'}}>
                   {data.requestCode}
                 </Text>
               </TouchableOpacity>
@@ -380,10 +404,10 @@ const RequestForm = function ({
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
-                Thời gian
+              <Text style={{color: 'black', fontSize: 14, marginLeft: 20}}>
+                Thời gian tạo
               </Text>
-              <Text style={{marginLeft: 'auto'}}>
+              <Text style={{marginLeft: 'auto', fontSize: 12}}>
                 {moment(data.date).format('HH:mm - DD/MM/YYYY')}
               </Text>
             </View>
@@ -473,9 +497,9 @@ const RequestForm = function ({
           </View>
         </View>
         {isShowCancelButton ? (
-          <Button
+          <SubmitButton
             style={{marginVertical: 10, height: 40}}
-            onPress={handlerCancel}
+            onPress={handleCancel}
             buttonText="Hủy yêu cầu"
           />
         ) : null}
@@ -487,7 +511,7 @@ const RequestForm = function ({
             width: '100%',
             alignSelf: 'center',
           }}
-          onPress={handlerSubmitButtonClick}
+          onPress={handleSubmitButtonClick}
           buttonText={submitButtonText}
         />
       ) : null}
@@ -538,39 +562,42 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   viewServiceButton: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    paddingVertical: 4,
+    width: 'auto',
     borderRadius: 10,
     backgroundColor: '#FEC54B',
+    paddingHorizontal: 6,
   },
   textBold: {
-    fontWeight: '700',
+    fontWeight: '600',
     color: 'black',
     fontSize: 14,
-    marginRight: 8,
   },
   datePicker: {
     flexDirection: 'row',
-    width: '80%',
+    width: '60%',
     height: 40,
     borderRadius: 10,
     marginTop: 10,
     alignItems: 'center',
     textAlign: 'center',
     backgroundColor: 'white',
-    paddingHorizontal: 15,
+    paddingHorizontal: 16,
   },
   serviceRow: {
     flexDirection: 'row',
     marginTop: 8,
+    alignItems: 'center',
   },
   serviceName: {
     color: 'black',
+    flex: 12,
   },
   servicePrice: {
-    marginLeft: 'auto',
-    color: '#E67F1E',
+    color: 'black',
     fontWeight: '600',
+    flex: 5,
+    textAlign: 'right',
   },
 });
 export default RequestForm;

@@ -10,6 +10,12 @@ const TopHeaderComponent = ({
   isBackButton,
   statusBarColor,
 }) => {
+  const handleGoBack = () => {
+    navigation.canGoBack()
+      ? navigation.goBack()
+      : navigation.navigate('HomeScreen');
+  };
+
   return (
     <View
       style={{
@@ -19,7 +25,7 @@ const TopHeaderComponent = ({
       }}>
       <StatusBar barStyle="dark-content" backgroundColor={statusBarColor} />
       {isBackButton ? (
-        <BackButton onPressHandler={navigation.goBack} color="black" />
+        <BackButton onPressHandler={handleGoBack} color="black" size={18} />
       ) : null}
       <Text style={styles.headerText}>{title}</Text>
     </View>
@@ -29,9 +35,10 @@ const TopHeaderComponent = ({
 const styles = StyleSheet.create({
   headerText: {
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
     color: 'black',
+    alignSelf: 'center',
     marginTop: getStatusBarHeight(),
     width: '100%',
   },
