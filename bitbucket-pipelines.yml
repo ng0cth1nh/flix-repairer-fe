@@ -9,6 +9,6 @@ pipelines:
             caches:
               - gradle
             script:
-              - . ./android/deploy_to_firebase_app_distribution.sh
+              - ./deploy_to_firebase_app_distribution.sh
             artifacts:
               - app/build/outputs/**
