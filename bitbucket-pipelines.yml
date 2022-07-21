@@ -9,8 +9,9 @@ pipelines:
            caches:
              - gradle
            script:
-             - export FIREBASE_TOKEN=$FIREBASE_REFRESH_TOKEN
-
+             - export FIREBASE_TOKEN=$FIREBASE_REFRESH_TOKEN             
+             - cd ./android
+             - chmod +x gradlew
                # Needed for env variable changes
              - ./gradlew --stop
 
