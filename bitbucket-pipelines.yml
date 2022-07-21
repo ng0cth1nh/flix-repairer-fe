@@ -27,6 +27,6 @@ pipelines:
              - ./gradlew --stop
 
                # Build and deploy apk to Firebase App Distribution
-             - ./gradlew assembleRelease appDistributionUploadRelease
+             - ./gradlew assembleRelease --no-daemon appDistributionUploadRelease
            artifacts:
              - app/build/outputs/**
