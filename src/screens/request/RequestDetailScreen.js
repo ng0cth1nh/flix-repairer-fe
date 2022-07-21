@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
-import moment from 'moment';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import RequestForm from '../../components/RequestForm';
 import NotFound from '../../components/NotFound';
@@ -53,13 +52,12 @@ const RequestDetailScreen = ({route, navigation}) => {
     isFetchFixedService,
     isShowSubmitButton,
   } = route.params;
-  const [date, setDate] = useState(moment());
+
   const isLoading = useSelector(selectIsLoading);
   const [reason, setReason] = useState({index: 0, reason: CancelReasons[0]});
   const [modalVisible, setModalVisible] = useState(false);
   const [invoiceModalVisible, setInvoiceModalVisible] = useState(false);
   const [warningModalVisible, setWarningModalVisible] = useState(false);
-  const [description, setDiscription] = useState('');
   const [contentOtherReason, setContentOtherReason] = useState('');
   const [fixedService, setFixedService] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -115,7 +113,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     })();
   }, []);
 
-  const handlerCancelButtonClick = async () => {
+  const handleCancelButtonClick = async () => {
     try {
       setModalVisible(false);
       await dispatch(setIsLoading());
@@ -148,7 +146,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
-  const handlerConfirmFixingButtonClick = async () => {
+  const handleConfirmFixingButtonClick = async () => {
     try {
       await dispatch(setIsLoading());
       await dispatch(
@@ -157,17 +155,20 @@ const RequestDetailScreen = ({route, navigation}) => {
           body: {requestCode},
         }),
       ).unwrap();
+
+      await dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
+      ).unwrap();
+      navigation.navigate('RequestHistoryScreen', {
+        screen: 'FixingScreen',
+      });
       Toast.show({
         type: 'customToast',
         text1: 'Xác nhận đang sửa thành công',
       });
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-      ).unwrap();
-      await dispatch(
+      dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
       ).unwrap();
-      navigation.goBack();
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -176,7 +177,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
-  const handlerApproveRequestButtonClick = async () => {
+  const handleApproveRequestButtonClick = async () => {
     try {
       await dispatch(setIsLoading());
       await dispatch(
@@ -218,7 +219,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       });
     }
   };
-  const handlerCreateInvoiceButtonClick = async () => {
+  const handleCreateInvoiceButtonClick = async () => {
     try {
       await setInvoiceModalVisible(false);
       await dispatch(setIsLoading());
@@ -228,16 +229,18 @@ const RequestDetailScreen = ({route, navigation}) => {
           body: {requestCode},
         }),
       ).unwrap();
+      await dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+      ).unwrap();
+      navigation.navigate('RequestHistoryScreen', {
+        screen: 'PaymentWaitingScreen',
+      });
       Toast.show({
         type: 'customToast',
         text1: 'Tạo hóa đơn thành công',
       });
-      await dispatch(
+      dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-      ).unwrap();
-
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
       ).unwrap();
       navigation.goBack();
     } catch (err) {
@@ -248,7 +251,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
-  const handlerAddDetailServiceButtonClick = async () => {
+  const handleAddDetailServiceButtonClick = async () => {
     let subServiceIds = [],
       extraServices = [],
       subServiceId = [],
@@ -340,27 +343,23 @@ const RequestDetailScreen = ({route, navigation}) => {
           <RequestForm
             submitButtonText={submitButtonText}
             isShowSubmitButton={isShowSubmitButton}
-            date={date}
-            setDate={setDate}
             data={data}
             fixedService={fixedService}
-            description={description}
-            handlerSubmitButtonClick={
+            handleSubmitButtonClick={
               typeSubmitButtonClick === 'CONFIRM_FIXING'
-                ? handlerConfirmFixingButtonClick
+                ? handleConfirmFixingButtonClick
                 : typeSubmitButtonClick === 'APPROVE_REQUEST'
-                ? handlerApproveRequestButtonClick
+                ? handleApproveRequestButtonClick
                 : typeSubmitButtonClick === 'CREATE_INVOICE'
                 ? showInvoiceModal
                 : null
             }
             isShowCancelButton={isShowCancelButton}
             isAddableDetailService={isAddableDetailService}
-            handlerAddDetailServiceButtonClick={
-              handlerAddDetailServiceButtonClick
+            handleAddDetailServiceButtonClick={
+              handleAddDetailServiceButtonClick
             }
-            handlerCancel={showModal}
-            setDiscription={setDiscription}
+            handleCancel={showModal}
             editable={false}
             isRequestIdVisible={true}
           />
@@ -434,13 +433,13 @@ const RequestDetailScreen = ({route, navigation}) => {
             }}>
             <TouchableOpacity
               style={[styles.button, styles.buttonOpen]}
-              onPress={handlerCancelButtonClick}>
+              onPress={handleCancelButtonClick}>
               <Text style={styles.textStyle}>ĐỒNG Ý</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>THOÁT</Text>
+              <Text style={styles.textStyle}>ĐÓNG</Text>
             </TouchableOpacity>
           </View>
         </CustomModal>
@@ -465,12 +464,12 @@ const RequestDetailScreen = ({route, navigation}) => {
                 setWarningModalVisible(false);
                 setModalVisible(true);
               }}>
-              <Text style={styles.textStyle}>CÓ</Text>
+              <Text style={styles.textStyle}>ĐỒNG Ý</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={() => setWarningModalVisible(!warningModalVisible)}>
-              <Text style={styles.textStyle}>THOÁT</Text>
+              <Text style={styles.textStyle}>ĐÓNG</Text>
             </TouchableOpacity>
           </View>
         </CustomModal>
@@ -490,13 +489,13 @@ const RequestDetailScreen = ({route, navigation}) => {
             }}>
             <TouchableOpacity
               style={[styles.button, styles.buttonOpen]}
-              onPress={handlerCreateInvoiceButtonClick}>
+              onPress={handleCreateInvoiceButtonClick}>
               <Text style={styles.textStyle}>ĐỒNG Ý</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={() => setInvoiceModalVisible(!invoiceModalVisible)}>
-              <Text style={styles.textStyle}>THOÁT</Text>
+              <Text style={styles.textStyle}>ĐÓNG</Text>
             </TouchableOpacity>
           </View>
         </CustomModal>

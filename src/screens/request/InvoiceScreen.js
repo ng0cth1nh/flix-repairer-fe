@@ -22,6 +22,7 @@ import {
   setIsLoading,
   selectIsLoading,
   fetchFixedService,
+  fetchInvoice,
   confirmPayment,
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
@@ -39,16 +40,38 @@ const InvoiceScreen = ({route, navigation}) => {
   const {service, isShowConfirm} = route.params;
   const isLoading = useSelector(selectIsLoading);
   const [isLoad, setIsLoad] = useState(false);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const repairerAPI = useAxios();
   const [fixedService, setFixedService] = useState(null);
   const dispatch = useDispatch();
-  const renderServiceItem = ({item}) => {
+  const renderServiceItem = ({item, index}) => {
     return (
-      <View style={[styles.serviceRow, {paddingHorizontal: 10}]}>
-        <Text style={styles.serviceName}>{item.name}</Text>
-        <Text style={[styles.textBold, {marginLeft: 'auto', fontSize: 12}]}>
-          {`${formatCurrency(item.price.toString())} vnđ`}
+      <View
+        key={index.toString()}
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          width: '96%',
+          alignSelf: 'center',
+          marginVertical: 6,
+          alignItems: 'center',
+        }}>
+        <Text
+          style={{
+            color: 'black',
+            flex: 12,
+          }}>
+          {item.name}
         </Text>
+        <Text
+          style={{
+            color: 'black',
+            fontWeight: 'bold',
+            flex: 5,
+            textAlign: 'right',
+          }}>{`${formatCurrency(item.price.toString())} vnđ`}</Text>
       </View>
     );
   };
@@ -60,25 +83,6 @@ const InvoiceScreen = ({route, navigation}) => {
     });
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await setIsLoad(true);
-        let data = await dispatch(
-          fetchFixedService({
-            repairerAPI,
-            requestCode: service.requestCode,
-          }),
-        ).unwrap();
-        setFixedService(data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        await setIsLoad(false);
-      }
-    })();
-  }, []);
-
   const handleConfirmPayment = async () => {
     try {
       await dispatch(setIsLoading());
@@ -88,16 +92,22 @@ const InvoiceScreen = ({route, navigation}) => {
           body: {requestCode: service.requestCode},
         }),
       ).unwrap();
+      navigation.goBack();
+      await dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.DONE}),
+      ).unwrap();
+      navigation.navigate('RequestHistoryScreen', {
+        screen: 'DoneScreen',
+      });
       Toast.show({
         type: 'customToast',
         text1: 'Xác nhận thanh toán thành công',
       });
       dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
-      ).unwrap();
-      navigation.goBack();
-      dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.DONE}),
+        fetchRequests({
+          repairerAPI,
+          status: RequestStatus.PAYMENT_WAITING,
+        }),
       ).unwrap();
     } catch (err) {
       Toast.show({
@@ -107,9 +117,35 @@ const InvoiceScreen = ({route, navigation}) => {
     }
   };
 
-  const {loading, data, isError} = useFetchData(ApiConstants.GET_INVOICE_API, {
-    params: {requestCode: service.requestCode},
-  });
+  const loadData = async () => {
+    try {
+      await setLoading(true);
+      let fixedService = await dispatch(
+        fetchFixedService({
+          repairerAPI,
+          requestCode: service.requestCode,
+        }),
+      ).unwrap();
+      setFixedService(fixedService);
+      let data = await dispatch(
+        fetchInvoice({
+          repairerAPI,
+          requestCode: service.requestCode,
+        }),
+      ).unwrap();
+      setData(data);
+    } catch (err) {
+      setIsError(true);
+    } finally {
+      await setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await loadData();
+    })();
+  }, []);
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -152,6 +188,56 @@ const InvoiceScreen = ({route, navigation}) => {
                   borderBottomColor: '#CACACA',
                   paddingBottom: 10,
                 }}>
+                <View style={styles.boxHeader}>
+                  <Image
+                    source={require('../../../assets/images/type/info.png')}
+                    style={{
+                      height: 20,
+                      width: 20,
+                    }}
+                  />
+                  <Text style={styles.tittleText}>Mã yêu cầu</Text>
+                  <TouchableOpacity
+                    style={[
+                      {marginLeft: 'auto', marginBottom: 3},
+                      styles.viewServiceButton,
+                    ]}
+                    onPress={copyToClipboard}>
+                    <Text
+                      style={{
+                        color: 'black',
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                      }}>
+                      {data.requestCode}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: 5,
+                  }}>
+                  <Text style={{color: 'black', fontSize: 14, marginLeft: 20}}>
+                    Thời gian tạo
+                  </Text>
+                  <Text style={{marginLeft: 'auto', fontSize: 12}}>
+                    {moment(data.createdAt).format('HH:mm - DD/MM/YYYY')}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={{color: 'black', fontSize: 14, marginLeft: 20}}>
+                    Thời gian xác nhận
+                  </Text>
+                  <Text style={{marginLeft: 'auto', fontSize: 12}}>
+                    {moment(data.approvedTime).format('HH:mm - DD/MM/YYYY')}
+                  </Text>
+                </View>
                 <View style={styles.boxHeader}>
                   <Image
                     source={require('../../../assets/images/type/user.png')}
@@ -265,7 +351,7 @@ const InvoiceScreen = ({route, navigation}) => {
                 <>
                   {fixedService.subServices !== null &&
                   fixedService.subServices.length !== 0 ? (
-                    <View style={{marginTop: 15}}>
+                    <View style={{marginTop: 16}}>
                       <Text style={[styles.textBold, {fontSize: 18}]}>
                         Dịch vụ đã sửa chi tiết
                       </Text>
@@ -274,7 +360,15 @@ const InvoiceScreen = ({route, navigation}) => {
                         renderItem={renderServiceItem}
                         keyExtractor={item => item.id}
                       />
-                      <View style={[styles.serviceRow, {marginLeft: 10}]}>
+                      <View
+                        style={[
+                          styles.serviceRow,
+                          {
+                            width: '96%',
+                            alignSelf: 'center',
+                            justifyContent: 'space-around',
+                          },
+                        ]}>
                         <Text style={styles.textBold}>Tổng</Text>
                         <Text style={styles.servicePrice}>{`${formatCurrency(
                           data.totalSubServicePrice.toString(),
@@ -293,7 +387,15 @@ const InvoiceScreen = ({route, navigation}) => {
                         renderItem={renderServiceItem}
                         keyExtractor={item => item.id}
                       />
-                      <View style={[styles.serviceRow, {marginLeft: 10}]}>
+                      <View
+                        style={[
+                          styles.serviceRow,
+                          {
+                            width: '96%',
+                            alignSelf: 'center',
+                            justifyContent: 'space-around',
+                          },
+                        ]}>
                         <Text style={styles.textBold}>Tổng</Text>
                         <Text style={styles.servicePrice}>{`${formatCurrency(
                           data.totalAccessoryPrice.toString(),
@@ -303,7 +405,7 @@ const InvoiceScreen = ({route, navigation}) => {
                   ) : null}
                   {fixedService.extraServices !== null &&
                   fixedService.extraServices.length !== 0 ? (
-                    <View style={{marginTop: 15}}>
+                    <View style={{marginTop: 16}}>
                       <Text style={[styles.textBold, {fontSize: 18}]}>
                         Dịch vụ bên ngoài
                       </Text>
@@ -312,7 +414,15 @@ const InvoiceScreen = ({route, navigation}) => {
                         renderItem={renderServiceItem}
                         keyExtractor={item => item.id}
                       />
-                      <View style={[styles.serviceRow, {marginLeft: 10}]}>
+                      <View
+                        style={[
+                          styles.serviceRow,
+                          {
+                            width: '96%',
+                            alignSelf: 'center',
+                            justifyContent: 'space-around',
+                          },
+                        ]}>
                         <Text style={styles.textBold}>Tổng</Text>
                         <Text style={styles.servicePrice}>{`${formatCurrency(
                           data.totalExtraServicePrice.toString(),
@@ -395,59 +505,16 @@ const InvoiceScreen = ({route, navigation}) => {
                   status="checked"
                   color="#FFBC00"
                 />
-                <Text style={{color: 'black', fontSize: 16}}>Tiền mặt</Text>
-              </View>
-              <View style={styles.boxHeader}>
-                <Image
-                  source={require('../../../assets/images/type/info.png')}
-                  style={{
-                    height: 20,
-                    width: 20,
-                  }}
-                />
-                <Text style={styles.tittleText}>Mã yêu cầu</Text>
-                <TouchableOpacity
-                  style={{marginLeft: 'auto', marginBottom: 3}}
-                  onPress={copyToClipboard}>
-                  <Text
-                    style={{
-                      color: '#FEC54B',
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                    }}>
-                    {data.requestCode}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: 5,
-                }}>
-                <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
-                  Thời gian tạo
-                </Text>
-                <Text style={{marginLeft: 'auto'}}>
-                  {moment(data.createdAt).format('HH:mm - DD/MM/YYYY')}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text style={{color: 'black', fontSize: 16, marginLeft: 40}}>
-                  Thời gian xác nhận
-                </Text>
-                <Text style={{marginLeft: 'auto'}}>
-                  {moment(data.approvedTime).format('HH:mm - DD/MM/YYYY')}
+                <Text style={{color: 'black', fontSize: 16}}>
+                  {data.paymentMethod === 'CASH'
+                    ? 'Tiền mặt'
+                    : data.paymentMethod}
                 </Text>
               </View>
             </View>
             <View
               style={{
-                paddingHorizontal: 10,
+                marginHorizontal: 10,
                 paddingBottom: 10,
                 borderBottomWidth: 1,
                 borderBottomColor: '#CACACA',
@@ -581,18 +648,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   viewServiceButton: {
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    paddingVertical: 4,
+    width: 'auto',
     borderRadius: 10,
     backgroundColor: '#FEC54B',
+    paddingHorizontal: 6,
   },
   textBold: {
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: 'black',
+    fontSize: 14,
   },
   datePicker: {
     flexDirection: 'row',
-    width: '80%',
+    width: '60%',
     height: 40,
     borderRadius: 10,
     alignItems: 'center',
@@ -609,7 +678,7 @@ const styles = StyleSheet.create({
   },
   servicePrice: {
     marginLeft: 'auto',
-    color: '#E67F1E',
+    color: 'black',
     fontWeight: '600',
   },
 });

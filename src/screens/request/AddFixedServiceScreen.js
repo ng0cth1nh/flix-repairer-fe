@@ -160,19 +160,22 @@ function AddFixedServiceScreen({route, navigation}) {
                           colorScheme="yellow"
                           _icon={{color: 'black'}}
                         />
-                        <View
+                        <Text
                           style={{
-                            width: '100%',
-                            flexDirection: 'row',
-                            paddingHorizontal: 20,
+                            fontSize: 16,
+                            color: 'black',
+                            flex: 9,
+                            marginLeft: 10,
                           }}>
-                          <Text style={{fontSize: 16, color: 'black'}}>
-                            {item.name}
-                          </Text>
-                          <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                            {`${formatCurrency(item.price.toString())} vnđ`}
-                          </Text>
-                        </View>
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.textBold,
+                            {flex: 5, textAlign: 'right'},
+                          ]}>
+                          {`${formatCurrency(item.price.toString())} vnđ`}
+                        </Text>
                       </View>
                     ))}
                   </Checkbox.Group>
@@ -203,19 +206,22 @@ function AddFixedServiceScreen({route, navigation}) {
                           colorScheme="yellow"
                           _icon={{color: 'black'}}
                         />
-                        <View
+                        <Text
                           style={{
-                            width: '100%',
-                            flexDirection: 'row',
-                            paddingHorizontal: 20,
+                            fontSize: 16,
+                            color: 'black',
+                            flex: 9,
+                            marginLeft: 10,
                           }}>
-                          <Text style={{fontSize: 16, color: 'black'}}>
-                            {item.name}
-                          </Text>
-                          <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
-                            {`${formatCurrency(item.price.toString())} vnđ`}
-                          </Text>
-                        </View>
+                          {item.name}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.textBold,
+                            {flex: 5, textAlign: 'right'},
+                          ]}>
+                          {`${formatCurrency(item.price.toString())} vnđ`}
+                        </Text>
                       </View>
                     ))}
                   </Checkbox.Group>
@@ -238,18 +244,28 @@ function AddFixedServiceScreen({route, navigation}) {
                     value={extraServices}
                     accessibilityLabel="choose numbers">
                     {extraService.map((item, index) => (
-                      <View key={index.toString()} style={styles.serviceRow}>
+                      <View
+                        key={index.toString()}
+                        style={[
+                          styles.serviceRow,
+                          {
+                            marginVertical: 6,
+                            flexWrap: 'wrap',
+                            paddingVertical: 6,
+                          },
+                        ]}>
                         <Checkbox
                           accessibilityLabel={item.name}
                           value={`${item.name}[SPACE]${item.price}[SPACE]${item.description}[SPACE]${item.insuranceTime}`}
                           colorScheme="yellow"
                           _icon={{color: 'black'}}
                         />
-                        <TouchableOpacity
+                        <Text
                           style={{
-                            width: '100%',
-                            flexDirection: 'row',
-                            paddingHorizontal: 20,
+                            fontSize: 16,
+                            color: 'black',
+                            flex: 9,
+                            marginLeft: 10,
                           }}
                           onPress={() => {
                             navigation.push('AddExtraServiceScreen', {
@@ -260,13 +276,28 @@ function AddFixedServiceScreen({route, navigation}) {
                               setExtraService,
                             });
                           }}>
-                          <Text style={{fontSize: 16, color: 'black'}}>
+                          <Text style={{color: 'black', width: '100%'}}>
                             {item.name}
                           </Text>
-                          <Text style={[styles.textBold, {marginLeft: 'auto'}]}>
+                        </Text>
+                        <Text
+                          onPress={() => {
+                            navigation.push('AddExtraServiceScreen', {
+                              item,
+                              index,
+                              extraService,
+                              setExtraServices,
+                              setExtraService,
+                            });
+                          }}
+                          style={[
+                            styles.textBold,
+                            {flex: 5, textAlign: 'right'},
+                          ]}>
+                          <Text style={{color: 'black', width: '100%'}}>
                             {`${formatCurrency(item.price.toString())} vnđ`}
                           </Text>
-                        </TouchableOpacity>
+                        </Text>
                       </View>
                     ))}
                   </Checkbox.Group>
@@ -275,22 +306,22 @@ function AddFixedServiceScreen({route, navigation}) {
             </View>
           </ScrollView>
         </View>
-        <Button
-          style={{
-            width: '80%',
-            alignSelf: 'center',
-            marginTop: 10,
-            marginBottom: 20,
-          }}
-          onPress={handleSubmitButton}
-          buttonText="THÊM"
-        />
+
         <ProgressLoader
           visible={isLoading}
           isModal={true}
           isHUD={true}
           hudColor={'#FEC54B'}
           color={'#000000'}
+        />
+        <Button
+          style={{
+            marginVertical: 8,
+            width: '92%',
+            alignSelf: 'center',
+          }}
+          onPress={handleSubmitButton}
+          buttonText="THÊM"
         />
       </SafeAreaView>
     </View>
@@ -330,8 +361,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 6,
-    paddingHorizontal: 20,
-    height: 40,
+    paddingHorizontal: 16,
+    height: 'auto',
     borderRadius: 10,
     backgroundColor: '#D3D3D3',
     marginVertical: 6,

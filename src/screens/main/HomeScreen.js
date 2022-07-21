@@ -20,7 +20,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
   fetchSuggestRequests,
   selectRequests,
-  selectErrorMessage,
   fetchFilteredRequests,
   setIsLoading,
   selectIsLoading,
@@ -160,20 +159,6 @@ const HomeScreen = ({navigation}) => {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     console.log('HOME FOCUS: buttonIndex = ' + buttonIndex);
-  //     console.log('HOME FOCUS: requests.filtered = ' + requests.filtered);
-  //     buttonIndex === 0
-  //       ? setRenderList(requests.suggested)
-  //       : buttonIndex === 1
-  //       ? setRenderList(requests.interested)
-  //       : setRenderList(requests.filtered);
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -190,6 +175,7 @@ const HomeScreen = ({navigation}) => {
           <TouchableOpacity
             style={[
               styles.suggestButton,
+              {width: '32%'},
               buttonIndex === 0 ? {backgroundColor: '#FEC54B'} : {},
             ]}
             onPress={handleSuggestButton}>
@@ -198,6 +184,7 @@ const HomeScreen = ({navigation}) => {
           <TouchableOpacity
             style={[
               styles.suggestButton,
+              {width: '48%'},
               buttonIndex === 1 ? {backgroundColor: '#FEC54B'} : {},
             ]}
             onPress={handleInterestButton}>

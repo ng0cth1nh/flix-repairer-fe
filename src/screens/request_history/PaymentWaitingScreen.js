@@ -8,6 +8,7 @@ import {
   fetchRequests,
   selectRequests,
   selectIsLoading,
+  setIsLoading,
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
 
@@ -17,14 +18,6 @@ const PaymentWaitingScreen = ({navigation}) => {
   const [refreshControl, setRefreshControl] = useState(false);
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await dispatch(
-  //       fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
-  //     );
-  //   })();
-  // }, []);
 
   const handleGetInvoiceButton = async service => {
     navigation.push('InvoiceScreen', {
@@ -70,14 +63,41 @@ const PaymentWaitingScreen = ({navigation}) => {
             <RefreshControl
               refreshing={refreshControl}
               onRefresh={async () => {
-                setRefreshControl(true);
-                await dispatch(
-                  fetchRequests({
-                    repairerAPI,
-                    status: RequestStatus.PAYMENT_WAITING,
-                  }),
-                );
-                setRefreshControl(false);
+                try {
+                  setRefreshControl(true);
+                  await dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.PAYMENT_WAITING,
+                    }),
+                  );
+                  await setIsLoading(true);
+                  dispatch(
+                    fetchRequests({repairerAPI, status: RequestStatus.DONE}),
+                  );
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.APPROVED,
+                    }),
+                  );
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.FIXING,
+                    }),
+                  );
+                  dispatch(
+                    fetchRequests({
+                      repairerAPI,
+                      status: RequestStatus.CANCELLED,
+                    }),
+                  );
+                } catch (err) {
+                  console.log(err);
+                } finally {
+                  setRefreshControl(false);
+                }
               }}
               colors={['#FEC54B']}
             />
