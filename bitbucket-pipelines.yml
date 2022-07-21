@@ -1,14 +1,20 @@
 
-image: bitbucketpipelines/android-ci-image
+image: mingc/android-build-box:latest
 
 pipelines:
-  branches:
-    master:
-        - step:
-            name: Deploy To Firbase App Distribution
-            caches:
-              - gradle
-            script:
-              - ./deploy_to_firebase_app_distribution.sh
-            artifacts:
-              - app/build/outputs/**
+ branches:
+   master:
+       - step:
+           name: Deploy To Firebase App Distribution
+           caches:
+             - gradle
+           script:
+             - export FIREBASE_TOKEN=$FIREBASE_REFRESH_TOKEN
+
+               # Needed for env variable changes
+             - ./gradlew --stop
+
+               # Build and deploy apk to Firebase App Distribution
+             - ./gradlew assembleRelease appDistributionUploadRelease
+           artifacts:
+             - app/build/outputs/**
