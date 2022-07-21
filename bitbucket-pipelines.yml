@@ -18,6 +18,8 @@ pipelines:
            caches:
              - node
            script:
+             - export PATH=/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:$PATH
+             - export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64/
              - export FIREBASE_TOKEN=$FIREBASE_REFRESH_TOKEN             
              - cd ./android
              - chmod +x gradlew
