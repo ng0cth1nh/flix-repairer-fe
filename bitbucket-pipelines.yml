@@ -1,13 +1,22 @@
 
-image: mingc/android-build-box:latest
+image: node:10.15.3
 
 pipelines:
  branches:
    master:
        - step:
-           name: Deploy To Firebase App Distribution
+           image: node:10.15.3
            caches:
+             - node
              - gradle
+           script: # Modify the commands below to build your repository.
+            #env preperation
+             - npm install
+       - step:
+           name: Deploy To Firebase App Distribution
+           image: mingc/android-build-box:latest
+           caches:
+             - node
            script:
              - export FIREBASE_TOKEN=$FIREBASE_REFRESH_TOKEN             
              - cd ./android
