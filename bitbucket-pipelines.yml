@@ -1,0 +1,14 @@
+
+image: bitbucketpipelines/android-ci-image
+
+pipelines:
+  branches:
+    master:
+        - step:
+            name: Deploy To Firbase App Distribution
+            caches:
+              - gradle
+            script:
+              - . ./deploy_to_firebase_app_distribution.sh
+            artifacts:
+              - app/build/outputs/**
