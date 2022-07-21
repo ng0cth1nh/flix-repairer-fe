@@ -210,8 +210,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#CACACA',
     paddingRight: 20,
     marginBottom: 10,
   },

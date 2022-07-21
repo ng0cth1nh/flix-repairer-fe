@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     flexDirection: 'row',
-    width: '60%',
+    width: '68%',
     height: 40,
     borderRadius: 10,
     alignItems: 'center',
