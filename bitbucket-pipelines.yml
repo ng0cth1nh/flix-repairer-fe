@@ -1,5 +1,5 @@
 
-image: node:10.15.3
+image: gradle:6.3.0-jdk11
 
 pipelines:
  branches:
