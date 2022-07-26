@@ -173,16 +173,16 @@ android {
         }
     }
 
-    // signingConfigs {
-    //     release {
-    //         if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-    //             storeFile file(MYAPP_UPLOAD_STORE_FILE)
-    //             storePassword MYAPP_UPLOAD_STORE_PASSWORD
-    //             keyAlias MYAPP_UPLOAD_KEY_ALIAS
-    //             keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-    //         }
-    //     }
-    // }
+    signingConfigs {
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
 
     if (isNewArchitectureEnabled()) {
         // We configure the NDK build only if you decide to opt-in for the New Architecture.
@@ -203,15 +203,9 @@ android {
             into("$buildDir/react-ndk/exported")
         }
         afterEvaluate {
-            // If you wish to add a custom TurboModule or component locally,
-            // you should uncomment this line.
-            // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
             preDebugBuild.dependsOn(packageReactNdkDebugLibs)
             preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
 
-            // Due to a bug inside AGP, we have to explicitly set a dependency
-            // between configureNdkBuild* tasks and the preBuild tasks.
-            // This can be removed once this is solved: https://issuetracker.google.com/issues/207403732
             configureNdkBuildRelease.dependsOn(preReleaseBuild)
             configureNdkBuildDebug.dependsOn(preDebugBuild)
             reactNativeArchitectures().each { architecture ->
@@ -243,28 +237,19 @@ android {
     }
     buildTypes {
         debug {
-            //signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            //signingConfig signingConfigs.release
-            firebaseAppDistribution {
-                releaseNotesFile="../releasenotes.txt"
-                testersFile="../testers.txt"
-            }
+            signingConfig signingConfigs.release
         }
     }
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
@@ -279,12 +264,12 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    //firebase
+    // firebase
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
     implementation 'com.google.firebase:firebase-analytics'
+    
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
@@ -309,9 +294,6 @@ dependencies {
 }
 
 if (isNewArchitectureEnabled()) {
-    // If new architecture is enabled, we let you build RN from source
-    // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
-    // This will be applied to all the imported transtitive dependency.
     configurations.all {
         resolutionStrategy.dependencySubstitution {
             substitute(module("com.facebook.react:react-native"))
@@ -320,8 +302,6 @@ if (isNewArchitectureEnabled()) {
     }
 }
 
-// Run this once to be able to run the application with BUCK
-// puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.implementation
     into 'libs'
@@ -330,9 +310,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 def isNewArchitectureEnabled() {
-    // To opt-in for the New Architecture, you can either:
-    // - Set `newArchEnabled` to true inside the `gradle.properties` file
-    // - Invoke gradle with `-newArchEnabled=true`
-    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
     return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
