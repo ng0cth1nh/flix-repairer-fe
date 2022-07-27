@@ -13,7 +13,7 @@ import Button from '../../components/SubmitButton';
 export default function TermsOfUseScreen({navigation}) {
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="black" />
+      <StatusBar barStyle="light-content" backgroundColor="white" />
       <BackButton onPressHandler={navigation.goBack} color="#FEC54B" />
       <SafeAreaView style={styles.container}>
         <View style={styles.logoArea}>
@@ -58,18 +58,22 @@ export default function TermsOfUseScreen({navigation}) {
               undoubtable source.
             </Text>
           </View>
-          <Button
-            style={{marginTop: 30, marginBottom: 40}}
-            onPress={navigation.goBack}
-            buttonText="ĐỒNG Ý"
-          />
         </ScrollView>
+        <Button
+          style={{
+            marginVertical: 8,
+            width: '100%',
+            alignSelf: 'center',
+          }}
+          onPress={navigation.goBack}
+          buttonText="ĐỒNG Ý"
+        />
       </SafeAreaView>
     </>
   );
 }
 const styles = StyleSheet.create({
-  container: {flex: 1, paddingLeft: 30, paddingRight: 30},
+  container: {flex: 1, paddingHorizontal: '4%', backgroundColor: 'white'},
   logoArea: {
     height: '30%',
     alignItems: 'center',

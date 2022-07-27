@@ -227,9 +227,9 @@ function App() {
             <Stack.Navigator
               screenOptions={{
                 headerShown: false,
-                gestureEnabled: true,
-                gestureDirection: 'horizontal',
-                cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                // gestureEnabled: true,
+                // gestureDirection: 'horizontal',
+                // cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
               }}>
               <Stack.Screen
                 name="LoginScreen"

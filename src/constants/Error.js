@@ -7,6 +7,8 @@ export default {
   INVALID_CITY: 'Địa chỉ thành phố không tồn tại!',
   INVALID_DISTRICT: 'Địa chỉ Quận/Huyện không tồn tại!',
   INVALID_COMMUNE: 'Địa chỉ Phường/Xã không tồn tại!',
+  FRONT_IMAGE_MUST_BE_IMAGE_OR_PDF:
+    'Ảnh mặt trước chứng minh nhân dân không hợp lệ',
   CAN_NOT_CONFIRM_FIXING_WHEN_ON_ANOTHER_FIXING:
     'Không thể xác nhận khi yêu cầu khác đang trong quá trình sửa!',
   CAN_NOT_ACCEPT_REQUEST_WHEN_ON_ANOTHER_FIXING:

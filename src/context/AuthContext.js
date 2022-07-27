@@ -73,26 +73,64 @@ const confirmOTP = dispatch => async params => {
         }
       : params.avatar,
   );
+  formData.append(
+    'frontImage',
+    params.frontImage
+      ? {
+          uri: params.frontImage.path,
+          type: params.frontImage.mime,
+          name: params.frontImage.path.split('\\').pop().split('/').pop(),
+        }
+      : params.frontImage,
+  );
+  formData.append(
+    'backSideImage',
+    params.backSideImage
+      ? {
+          uri: params.backSideImage.path,
+          type: params.backSideImage.mime,
+          name: params.backSideImage.path.split('\\').pop().split('/').pop(),
+        }
+      : params.backSideImage,
+  );
+  formData.append(
+    'certificates[]',
+    params.certificates && params.certificates.length !== 0
+      ? {
+          uri: params.certificates.path,
+          type: params.certificates.mime,
+          name: params.certificates.path.split('\\').pop().split('/').pop(),
+        }
+      : params.certificates,
+  );
   formData.append('fullName', params.fullName);
   formData.append('password', params.password);
-  formData.append('cityId', params.cityId);
-  formData.append('districtId', params.districtId);
   formData.append('communeId', params.communeId);
   formData.append('streetAddress', params.streetAddress);
-  formData.append('roleType', 'ROLE_CUSTOMER');
+  formData.append('identityCardNumber', params.identityCardNumber);
+  formData.append('identityCardType', params.identityCardType);
+  // formData.append('frontImage', params.frontImage);
+  // formData.append('backSideImage', params.backSideImage);
+  formData.append('experienceYear', params.experienceYear);
+  formData.append('experienceDescription', params.experienceDescription);
+  //formData.append('certificates', params.certificates);
+  formData.append('gender', params.gender);
+  formData.append('dateOfBirth', params.dateOfBirth);
   try {
     const res = await axios.post(constants.CONFIRM_OTP_API, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log('res.data: ', res.data);
     await AsyncStorage.setItem('token', res.data.accessToken);
     await AsyncStorage.setItem('refreshToken', res.data.refreshToken);
     dispatch({type: 'login', payload: res.data.accessToken});
   } catch (err) {
+    console.log('err: ', JSON.stringify(err));
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: err.toString(),
     });
   }
 };

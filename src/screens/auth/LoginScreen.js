@@ -59,7 +59,7 @@ export default function LoginScreen({navigation}) {
     const isValidForm = phoneValid && passwordValid;
     if (isValidForm) {
       showLoader();
-      login({username: phoneNumber, password});
+      login({username: phoneNumber, password, roleType: 'REPAIRER'});
     }
   };
 
@@ -67,7 +67,7 @@ export default function LoginScreen({navigation}) {
     <>
       <HeaderComponent height={0.55 * height} />
       <SafeAreaView>
-        <Card cornerRadius={20} elevation={10} style={styles.loginForm}>
+        <View style={styles.loginForm}>
           <Text style={styles.headerText}>Đăng nhập</Text>
           <View
             style={[
@@ -134,7 +134,10 @@ export default function LoginScreen({navigation}) {
           />
 
           <View style={styles.registerView}>
-            <Text style={styles.registerText}>Bạn chưa có tài khoản? </Text>
+            <Text
+              style={[styles.registerText, {color: 'black', marginRight: 2}]}>
+              Bạn chưa có tài khoản?
+            </Text>
             <TouchableOpacity onPress={() => navigation.push('RegisterScreen')}>
               <Text
                 style={[
@@ -145,7 +148,7 @@ export default function LoginScreen({navigation}) {
               </Text>
             </TouchableOpacity>
           </View>
-        </Card>
+        </View>
       </SafeAreaView>
       <ProgressLoader
         visible={state.loading ? state.loading : false}
@@ -164,11 +167,11 @@ const styles = StyleSheet.create({
     height: 0.55 * height,
     position: 'absolute',
     paddingTop: 15,
-    shadowOffset: {width: 5, height: 5},
     paddingLeft: 40,
     paddingRight: 40,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    backgroundColor: 'white',
   },
   headerText: {
     fontSize: 22,
