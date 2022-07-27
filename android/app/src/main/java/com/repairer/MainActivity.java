@@ -1,4 +1,4 @@
-package com.repairer;
+package com.flixmobileui;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

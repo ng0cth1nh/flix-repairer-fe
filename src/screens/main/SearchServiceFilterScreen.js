@@ -18,6 +18,7 @@ import SearchForm from '../../components/SearchForm';
 import useAxios from '../../hooks/useAxios';
 import ApiConstants from '../../constants/Api';
 import NotFound from '../../components/NotFound';
+import Loading from '../../components/Loading';
 
 export default function SearchServiceFilterScreen({route, navigation}) {
   const [search, setSearch] = useState('');
@@ -123,15 +124,7 @@ export default function SearchServiceFilterScreen({route, navigation}) {
               </View>
             ) : null}
             {loading ? (
-              <ActivityIndicator
-                size="small"
-                color="#FEC54B"
-                style={{
-                  marginTop: 30,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              />
+              <Loading />
             ) : (
               <View>
                 {searchedService !== null ? (

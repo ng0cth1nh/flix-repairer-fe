@@ -1802,19 +1802,34 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.11.tgz#2f4c6e10bee0786abff4604e39a37ded6f3980ce"
   integrity sha512-rQfMIGSR/1r/SyN87+VD8xHHzDYeHaJq6elOSCAD+0iLagXkSI2pfA0LmSXP21uw5i3em7GkkRjfJ8wpqWXZNw==
 
-"@react-native-firebase/app@^14.9.4":
-  version "14.11.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.11.1.tgz#5d3587bda0a8877863e59384a4d38f7ebc321835"
-  integrity sha512-fkvOK8c7e8MxIbfb2076kO3GtGUc3ZXNEkPyfamRKBnPgANpmnjQaTVIraXpeuIIOfjj5uDK4uw32znWiDusGA==
+"@react-native-firebase/app@^15.2.0":
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-15.2.0.tgz#b45a5d737be7ad60da26806b7b2f0020b5a97173"
+  integrity sha512-vofl5Ixi+EsRbTJ7G9/S3JLeMXnXIvGoYX0I7dfxzDz9/hIonIzDN/rAttOwqgiJsldkWrbDyANJeAfIgF7McA==
   dependencies:
     "@expo/config-plugins" "^4.1.5"
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
-"@react-native-firebase/messaging@^14.9.4":
-  version "14.11.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-14.11.1.tgz#891b92f5606386e83ae377e72659d0836ac7bd6b"
-  integrity sha512-nJjmA+Oku/rWM//y0hpsXJAM8dqkucZKyu71bZ8f4XCOU0ueqO/Qlyv8ylQ/2G+4+FCoSxncffxDdUfr+3nExA==
+"@react-native-firebase/database@^15.2.0":
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-15.2.0.tgz#7c3250d5fae3e59696b49a56eae8c569635aba25"
+  integrity sha512-CBsTFwLiF13KC5w6SNkyn984xoBnXItKwBlE2YvZMqujdlqdT1Fm7tc/IIHj4cKCgUUUhseKw6bqpUbX2vVSzA==
+
+"@react-native-firebase/firestore@^15.2.0":
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-15.2.0.tgz#ef05d14865120907034f2b61177aa33d318ec6e9"
+  integrity sha512-hyGJeP82yLvhU17baH4TA3IUEr6HUg6QNFX2oluJTm2o8ZzWndOzZ+nM3bV3g62ttKV4g/m8lc/dmqepC0J/UA==
+
+"@react-native-firebase/messaging@^15.2.0":
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-15.2.0.tgz#25d5224806587f77a7ef55f4b1e724c07c517176"
+  integrity sha512-z8esKSlaHE+MMYmYTDpn6sgugOCAZpnTyD9M+eK95vG46G4N+qImB9oD5nJ7w39SyvZSuDPPJ2TItc0Qy6Gkxw==
+
+"@react-native-firebase/storage@^15.2.0":
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-15.2.0.tgz#48cb06d34b9485e8294ebe6178db45591a46986b"
+  integrity sha512-JhBzdeIdrJU0PTnrJhp6cUir6jnpNy4SkThawZZGk/hZO1QvDg60WtscuJt0z7qftQ3/6nDu24UHvu/2bsRnEA==
 
 "@react-native-picker/picker@^1.8.3":
   version "1.16.8"
@@ -7127,6 +7142,11 @@ react-native-picker-select@^8.0.4:
     "@react-native-picker/picker" "^1.8.3"
     lodash.isequal "^4.5.0"
 
+react-native-push-notification@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz#a41d20c70ea5a7709417e96261b225461f8dc73a"
+  integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
+
 react-native-reanimated@^2.8.0:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.9.1.tgz#d9a932e312c13c05b4f919e43ebbf76d996e0bc1"
@@ -7189,6 +7209,11 @@ react-native-toast-message@^2.1.5:
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-2.1.5.tgz#550acb9c6c0f1ee49c6b57b65a56d34e297eb723"
   integrity sha512-mk3rELtBEhrhWBCN6CTaw0gypgL9ZNauX3xx1LUs4uee9vc0pVsghrKxO57vroUCcNL2hDeZSLJWdQNMCkGeaQ==
+
+react-native-uuid@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
+  integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
 
 react-native-vector-icons@^9.1.0:
   version "9.2.0"

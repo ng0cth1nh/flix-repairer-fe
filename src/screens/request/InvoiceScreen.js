@@ -35,6 +35,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import {formatCurrency} from '../../utils/FormattingCurrency';
+import Loading from '../../components/Loading';
 
 const InvoiceScreen = ({route, navigation}) => {
   const {service, isShowConfirm} = route.params;
@@ -156,21 +157,7 @@ const InvoiceScreen = ({route, navigation}) => {
         statusBarColor="white"
       />
       {isError ? <NotFound /> : null}
-      {loading || isLoad ? (
-        <ActivityIndicator
-          size="small"
-          color="#FEC54B"
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-      ) : null}
+      {loading || isLoad ? <Loading /> : null}
       <ProgressLoader
         visible={isLoading}
         isModal={true}

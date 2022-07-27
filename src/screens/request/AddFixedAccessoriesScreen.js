@@ -19,6 +19,7 @@ import Button from '../../components/SubmitButton';
 import SearchForm from '../../components/SearchForm';
 import NotFound from '../../components/NotFound';
 import {numberWithCommas} from '../../utils/util';
+import Loading from '../../components/Loading';
 
 export default function AddFixedAccessoriesScreen({route, navigation}) {
   const [search, setSearch] = useState('');
@@ -135,15 +136,7 @@ export default function AddFixedAccessoriesScreen({route, navigation}) {
             ) : null}
 
             {loading ? (
-              <ActivityIndicator
-                size="small"
-                color="#FEC54B"
-                style={{
-                  marginTop: 30,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              />
+              <Loading />
             ) : (
               <View>
                 {searchedAccessoryId !== null ? (

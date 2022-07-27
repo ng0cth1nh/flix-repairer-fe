@@ -12,7 +12,7 @@ const ApiConstants = {
     'https://flix-lj7prqscta-as.a.run.app/api/v1/address/commune',
   GET_SERVICES_BY_CATEGORY_API: '/category/services',
   GET_SERVICE_DETAIL_API: '/service/detail',
-  PROFILE_INFO_API: '/repairer/profile',
+  PROFILE_INFO_API: '/commonRepairer/profile',
   UPDATE_PROFILE_AVATAR_API: '/user/avatar',
   CHANGE_PASSWORD_API: '/user/changePassword',
   GET_ADDRESS_LIST_API: '/repairer/address/list',
@@ -35,6 +35,7 @@ const ApiConstants = {
   PUT_FIXED_ACCESSORY_OF_REQUEST_API: '/repairer/request/fixedAccessory',
   POST_INVOICE_API: '/repairer/invoice',
   GET_INVOICE_API: '/confirmedUser/request/invoice',
+  GET_USER_INFORMATION: '/user/information',
   CONFIRM_PAYMENT_API: '/repairer/invoice/confirm/paid',
 };
 

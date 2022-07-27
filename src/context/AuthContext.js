@@ -14,13 +14,18 @@ const authReducer = (state, action) => {
     case 'add_error':
       return {...state, errorMessage: action.payload, loading: false};
     case 'login':
-      return {errorMessage: '', token: action.payload, loading: false};
+      return {
+        errorMessage: '',
+        token: action.payload.token,
+        userId: action.payload.userId,
+        loading: false,
+      };
     case 'clear_error_message':
       return {...state, errorMessage: '', loading: false};
     case 'show_loader':
       return {...state, loading: true};
     case 'logout':
-      return {token: null, errorMessage: '', loading: false};
+      return {token: null, userId: null, errorMessage: '', loading: false};
     default:
       return state;
   }
@@ -36,11 +41,10 @@ const TryLocalLogin = dispatch =>
   useCallback(async () => {
     const token = await AsyncStorage.getItem('token');
     if (token) {
-      // dispatch({type: 'login', payload: token});
       const user = jwt_decode(token);
       const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
       if (!isExpired) {
-        dispatch({type: 'login', payload: token});
+        dispatch({type: 'login', payload: {token, userId: user.userId}});
       } else {
         await refreshToken();
       }
@@ -125,7 +129,13 @@ const confirmOTP = dispatch => async params => {
     console.log('res.data: ', res.data);
     await AsyncStorage.setItem('token', res.data.accessToken);
     await AsyncStorage.setItem('refreshToken', res.data.refreshToken);
-    dispatch({type: 'login', payload: res.data.accessToken});
+    dispatch({
+      type: 'login',
+      payload: {
+        token: res.data.accessToken,
+        userId: jwt_decode(res.data.accessToken).userId,
+      },
+    });
   } catch (err) {
     console.log('err: ', JSON.stringify(err));
     dispatch({
@@ -150,7 +160,13 @@ const refreshToken = dispatch => async () => {
     console.log('response refresh token: \n' + response);
     await AsyncStorage.setItem('token', response.data.accessToken);
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-    dispatch({type: 'login', payload: response.data.accessToken});
+    dispatch({
+      type: 'login',
+      payload: {
+        token: response.data.accessToken,
+        userId: jwt_decode(response.data.accessToken).userId,
+      },
+    });
   } catch (err) {
     console.log(err.toString());
     await AsyncStorage.removeItem('token');
@@ -172,7 +188,13 @@ const login = dispatch => async params => {
     );
     await AsyncStorage.setItem('token', response.data.accessToken);
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
-    dispatch({type: 'login', payload: response.data.accessToken});
+    dispatch({
+      type: 'login',
+      payload: {
+        token: response.data.accessToken,
+        userId: jwt_decode(response.data.accessToken).userId,
+      },
+    });
   } catch (err) {
     dispatch({
       type: 'add_error',
@@ -199,5 +221,5 @@ export const {Provider, Context} = createDataContext(
     refreshToken,
     confirmOTP,
   },
-  {token: null, errorMessage: ''},
+  {token: null, errorMessage: '', userId: null, loading: false},
 );

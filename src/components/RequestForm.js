@@ -30,6 +30,7 @@ const RequestForm = function ({
   handleAddDetailServiceButtonClick,
   isRequestIdVisible = false,
   isShowSubmitButton,
+  chatHandler,
 }) {
   const copyToClipboard = () => {
     Clipboard.setString(data.requestCode);
@@ -76,6 +77,7 @@ const RequestForm = function ({
                   {data.customerAddress}
                 </Text>
                 <TouchableOpacity
+                  onPress={chatHandler}
                   style={[styles.viewServiceButton, {width: '60%'}]}>
                   <Text style={[styles.textBold, {textAlign: 'center'}]}>
                     Nhắn tin

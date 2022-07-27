@@ -4,7 +4,7 @@ import getErrorMessage from '../../utils/getErrorMessage';
 
 const initialState = {
   user: {
-    avatarUrl: null,
+    avatar: null,
     fullName: null,
     email: null,
     phone: null,

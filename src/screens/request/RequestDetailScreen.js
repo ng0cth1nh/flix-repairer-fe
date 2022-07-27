@@ -37,6 +37,7 @@ import {
 import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
+import Loading from '../../components/Loading';
 
 const RequestDetailScreen = ({route, navigation}) => {
   const {
@@ -317,21 +318,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       />
       <SafeAreaView style={{flex: 1}}>
         {isError ? <NotFound /> : null}
-        {loading ? (
-          <ActivityIndicator
-            size="small"
-            color="#FEC54B"
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        ) : null}
+        {loading ? <Loading /> : null}
         <ProgressLoader
           visible={isLoading}
           isModal={true}
@@ -353,6 +340,13 @@ const RequestDetailScreen = ({route, navigation}) => {
                 : typeSubmitButtonClick === 'CREATE_INVOICE'
                 ? showInvoiceModal
                 : null
+            }
+            chatHandler={() =>
+              navigation.push('ChatScreen', {
+                targetUserId: data.customerId,
+                targetUserAvatar: data.avatar,
+                targetUsername: data.customerName,
+              })
             }
             isShowCancelButton={isShowCancelButton}
             isAddableDetailService={isAddableDetailService}
