@@ -310,33 +310,35 @@ const HomeScreen = ({navigation}) => {
                       )}
                     </Text>
                   </View>
-                  <View style={styles.bodyRow}>
-                    <View style={styles.rowIcon}>
-                      <Image
-                        source={require('../../../assets/images/type/writing.png')}
+                  {item.description ? (
+                    <View style={styles.bodyRow}>
+                      <View style={styles.rowIcon}>
+                        <Image
+                          source={require('../../../assets/images/type/writing.png')}
+                          style={{
+                            height: 20,
+                            width: 20,
+                          }}
+                        />
+                      </View>
+                      <ScrollView
                         style={{
-                          height: 20,
-                          width: 20,
-                        }}
-                      />
-                    </View>
-                    <ScrollView
-                      style={{
-                        width: '60%',
-                        height: 40,
-                        backgroundColor: 'white',
-                        borderRadius: 10,
-                      }}>
-                      <Text
-                        style={{
-                          color: 'black',
-                          paddingHorizontal: 10,
-                          paddingVertical: 3,
+                          width: '60%',
+                          height: 40,
+                          backgroundColor: 'white',
+                          borderRadius: 10,
                         }}>
-                        {item.description}
-                      </Text>
-                    </ScrollView>
-                  </View>
+                        <Text
+                          style={{
+                            color: 'black',
+                            paddingHorizontal: 10,
+                            paddingVertical: 3,
+                          }}>
+                          {item.description}
+                        </Text>
+                      </ScrollView>
+                    </View>
+                  ) : null}
                   <View style={styles.bodyRow}>
                     <View style={styles.rowIcon}>
                       <Image

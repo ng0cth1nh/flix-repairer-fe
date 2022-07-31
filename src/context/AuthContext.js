@@ -24,6 +24,16 @@ const authReducer = (state, action) => {
       return {...state, errorMessage: '', loading: false};
     case 'show_loader':
       return {...state, loading: true};
+    case 'hide_loader':
+      return {...state, loading: false};
+    case 'add_is_change_pass_success':
+      return {...state, isChangePassSuccess: true};
+    case 'clear_is_change_pass_success':
+      return {...state, isChangePassSuccess: false};
+    case 'add_temp_access_token':
+      return {...state, tempAccessToken: action.payload};
+    case 'clear_temp_access_token':
+      return {...state, tempAccessToken: null};
     case 'logout':
       return {token: null, userId: null, errorMessage: '', loading: false};
     default:
@@ -35,6 +45,10 @@ const clearErrorMessage = dispatch => {
 };
 const showLoader = dispatch => {
   return () => dispatch({type: 'show_loader'});
+};
+
+const clearIsChangePassSuccess = dispatch => {
+  return () => dispatch({type: 'clear_is_change_pass_success'});
 };
 
 const TryLocalLogin = dispatch =>
@@ -51,6 +65,92 @@ const TryLocalLogin = dispatch =>
     }
   }, [dispatch]);
 
+const sendOTPForgotPassword = dispatch => async params => {
+  try {
+    await axios.post(constants.SEND_OTP_FORGOT_PASSWORD_API, {
+      phone: params.phone,
+    });
+    RootNavigation.push('ConfirmOTPScreen', params);
+  } catch (err) {
+    dispatch({
+      type: 'add_error',
+      payload: getErrorMessage(err),
+    });
+  } finally {
+    dispatch({type: 'hide_loader'});
+  }
+};
+
+const reSendOTPForgotPassword = dispatch => async params => {
+  try {
+    await axios.post(constants.SEND_OTP_FORGOT_PASSWORD_API, {
+      phone: params.phone,
+    });
+  } catch (err) {
+    dispatch({
+      type: 'add_error',
+      payload: getErrorMessage(err),
+    });
+  } finally {
+    dispatch({type: 'hide_loader'});
+  }
+};
+
+const confirmOTPForgotPassword = dispatch => async params => {
+  try {
+    const response = await axios.post(
+      constants.CONFIRM_OTP_FORGOT_PASSWORD_API,
+      JSON.stringify({phone: params.phone, otp: params.otp}),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    console.log(response.data);
+    await dispatch({
+      type: 'add_temp_access_token',
+      payload: response.data.accessToken,
+    });
+    RootNavigation.push('ForgotPassScreen');
+  } catch (err) {
+    dispatch({
+      type: 'add_error',
+      payload: getErrorMessage(err),
+    });
+  } finally {
+    dispatch({type: 'hide_loader'});
+  }
+};
+
+const resetPassword = dispatch => async params => {
+  try {
+    const response = await axios.put(
+      constants.RESET_PASSWORD_API,
+      JSON.stringify({newPassword: params.newPassword}),
+      {
+        headers: {
+          Authorization: `Bearer ${params.tempAccessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    console.log(response.data);
+    await dispatch({
+      type: 'clear_temp_access_token',
+    });
+    await dispatch({type: 'add_is_change_pass_success'});
+    RootNavigation.push('LoginScreen');
+  } catch (err) {
+    dispatch({
+      type: 'add_error',
+      payload: getErrorMessage(err),
+    });
+  } finally {
+    dispatch({type: 'hide_loader'});
+  }
+};
+
 const register = dispatch => async params => {
   try {
     await axios.post(constants.SEND_OTP_API, {phone: params.phone});
@@ -60,6 +160,21 @@ const register = dispatch => async params => {
       type: 'add_error',
       payload: getErrorMessage(err),
     });
+  } finally {
+    dispatch({type: 'hide_loader'});
+  }
+};
+
+const reRegister = dispatch => async params => {
+  try {
+    await axios.post(constants.SEND_OTP_API, {phone: params.phone});
+  } catch (err) {
+    dispatch({
+      type: 'add_error',
+      payload: getErrorMessage(err),
+    });
+  } finally {
+    dispatch({type: 'hide_loader'});
   }
 };
 const confirmOTP = dispatch => async params => {
@@ -77,19 +192,48 @@ const confirmOTP = dispatch => async params => {
         }
       : params.avatar,
   );
+  formData.append(
+    'frontImage',
+    params.frontImage
+      ? {
+          uri: params.frontImage.path,
+          type: params.frontImage.mime,
+          name: params.frontImage.path.split('\\').pop().split('/').pop(),
+        }
+      : params.frontImage,
+  );
+  formData.append(
+    'backSideImage',
+    params.backSideImage
+      ? {
+          uri: params.backSideImage.path,
+          type: params.backSideImage.mime,
+          name: params.backSideImage.path.split('\\').pop().split('/').pop(),
+        }
+      : params.backSideImage,
+  );
+  if (params.certificates) {
+    for (let file of params.certificates) {
+      formData.append('certificates[]', file);
+    }
+  }
   formData.append('fullName', params.fullName);
   formData.append('password', params.password);
-  formData.append('cityId', params.cityId);
-  formData.append('districtId', params.districtId);
   formData.append('communeId', params.communeId);
   formData.append('streetAddress', params.streetAddress);
-  formData.append('roleType', 'ROLE_CUSTOMER');
+  formData.append('identityCardNumber', params.identityCardNumber);
+  formData.append('identityCardType', params.identityCardType);
+  formData.append('experienceYear', params.experienceYear);
+  formData.append('experienceDescription', params.experienceDescription);
+  formData.append('gender', params.gender);
+  formData.append('dateOfBirth', params.dateOfBirth);
   try {
     const res = await axios.post(constants.CONFIRM_OTP_API, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log('res.data: ', res.data);
     await AsyncStorage.setItem('token', res.data.accessToken);
     await AsyncStorage.setItem('refreshToken', res.data.refreshToken);
     dispatch({
@@ -100,10 +244,13 @@ const confirmOTP = dispatch => async params => {
       },
     });
   } catch (err) {
+    console.log('err: ', JSON.stringify(err));
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: err.toString(),
     });
+  } finally {
+    dispatch({type: 'hide_loader'});
   }
 };
 
@@ -182,6 +329,12 @@ export const {Provider, Context} = createDataContext(
     TryLocalLogin,
     refreshToken,
     confirmOTP,
+    reRegister,
+    sendOTPForgotPassword,
+    confirmOTPForgotPassword,
+    reSendOTPForgotPassword,
+    resetPassword,
+    clearIsChangePassSuccess,
   },
   {token: null, errorMessage: '', userId: null, loading: false},
 );

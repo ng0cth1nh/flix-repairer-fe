@@ -1,62 +1,24 @@
-import React, {useRef, useState, useEffect} from 'react';
-import Carousel, {ParallaxImage} from 'react-native-snap-carousel';
-import {View, Text, Dimensions, StyleSheet, Platform} from 'react-native';
-
+import React, {useRef, useState, useContext} from 'react';
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
+import {Context as AuthContext} from '../../context/AuthContext';
 const {width: screenWidth} = Dimensions.get('window');
 
-const ENTRIES1 = [
-  {
-    title: 'Ưu đãi hôm nay',
-    image:
-      'https://i.postimg.cc/QN2jQkDW/emmanuel-ikwuegbu-0-kl1-Bjv-Fc-unsplash.jpg',
-  },
-  {
-    title: 'Ưu đãi cho khách hàng mới',
-    image: 'https://i.imgur.com/UPrs1EWl.jpg',
-  },
-];
-
 const ProfileScreen = props => {
-  const [entries, setEntries] = useState([]);
-  const carouselRef = useRef(null);
-
-  const goForward = () => {
-    carouselRef.current.snapToNext();
-  };
-
-  useEffect(() => {
-    setEntries(ENTRIES1);
-  }, []);
-
-  const renderItem = ({item, index}, parallaxProps) => {
-    return (
-      <View style={styles.item}>
-        <ParallaxImage
-          source={{uri: item.illustration}}
-          containerStyle={styles.imageContainer}
-          style={styles.image}
-          parallaxFactor={0.4}
-          {...parallaxProps}
-        />
-        <Text style={styles.title} numberOfLines={2}>
-          {item.title}
-        </Text>
-      </View>
-    );
-  };
+  const {logout} = useContext(AuthContext);
 
   return (
-    <View style={styles.container}>
-      <Carousel
-        ref={carouselRef}
-        sliderWidth={screenWidth}
-        sliderHeight={screenWidth}
-        itemWidth={screenWidth - 60}
-        data={entries}
-        renderItem={renderItem}
-        hasParallaxImages={true}
-      />
-    </View>
+    <TouchableOpacity
+      style={{width: 50, height: 60, backgroundColor: 'yellow'}}
+      onPress={logout}>
+      <Text>Logout</Text>
+    </TouchableOpacity>
   );
 };
 
