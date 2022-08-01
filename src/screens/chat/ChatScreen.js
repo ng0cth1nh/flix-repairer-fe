@@ -32,7 +32,8 @@ const {height, width} = Dimensions.get('window');
 import {getFileNameFromPath} from '../../utils/util';
 import Loading from '../../components/Loading';
 import {firebase} from '@react-native-firebase/database';
-
+import {default as ImageResize} from 'react-native-scalable-image';
+import ImageView from 'react-native-image-viewing';
 import {Context as AuthContext} from '../../context/AuthContext';
 
 import BackButton from '../../components/BackButton';
@@ -54,6 +55,9 @@ const ChatScreen = ({route, navigation}) => {
     route.params.conversationId,
   );
   const [isloading, setIsLoading] = useState(true);
+  const [visible, setIsVisible] = useState(false);
+  const [images, setImages] = useState([]);
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('chats')
@@ -248,7 +252,7 @@ const ChatScreen = ({route, navigation}) => {
       });
   }, [targetUserId, thisUserId]);
   const handleSendMessage = async () => {
-    if (!fileSelect && !textMessage) {
+    if (!fileSelect && (!textMessage || textMessage.trim().length === 0)) {
       return;
     }
 
@@ -278,9 +282,7 @@ const ChatScreen = ({route, navigation}) => {
   };
   const selectFile = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
+      cropping: false,
     })
       .then(file => {
         setFileSelect(file);
@@ -335,10 +337,27 @@ const ChatScreen = ({route, navigation}) => {
               {item.content}
             </Text>
           ) : (
-            <Image
-              source={{uri: item.content}}
-              style={{width: 0.4 * width, aspectRatio: 1}}
-            />
+            <>
+              <ImageResize
+                source={{uri: item.content}}
+                width={width * 0.4}
+                style={{borderRadius: 10}}
+                onPress={() => {
+                  setImages([
+                    {
+                      uri: item.content,
+                    },
+                  ]);
+                  setIsVisible(true);
+                }}
+              />
+              <ImageView
+                images={images}
+                imageIndex={0}
+                visible={visible}
+                onRequestClose={() => setIsVisible(false)}
+              />
+            </>
           )}
           <Text
             style={{
@@ -375,10 +394,27 @@ const ChatScreen = ({route, navigation}) => {
               {item.content}
             </Text>
           ) : (
-            <Image
-              source={{uri: item.content}}
-              style={{width: 0.4 * width, aspectRatio: 1}}
-            />
+            <>
+              <ImageResize
+                source={{uri: item.content}}
+                width={width * 0.4}
+                style={{borderRadius: 10}}
+                onPress={() => {
+                  setImages([
+                    {
+                      uri: item.content,
+                    },
+                  ]);
+                  setIsVisible(true);
+                }}
+              />
+              <ImageView
+                images={images}
+                imageIndex={0}
+                visible={visible}
+                onRequestClose={() => setIsVisible(false)}
+              />
+            </>
           )}
           <Text style={{fontSize: 12, color: '#8D8D8D', marginTop: 3}}>
             {messDateFormater.format('H:mm')}
@@ -499,7 +535,7 @@ const ChatScreen = ({route, navigation}) => {
               <View
                 style={{
                   paddingHorizontal: 10,
-                  width: '80%',
+                  width: '82%',
                   backgroundColor: '#F0F0F0',
                   justifyContent: 'space-between',
                   borderRadius: 10,
@@ -541,15 +577,17 @@ const ChatScreen = ({route, navigation}) => {
                   <View style={{width: '20%'}}>
                     <TouchableOpacity
                       style={{
-                        width: '70%',
+                        width: '50%',
                         marginLeft: 'auto',
                       }}
                       disabled={fileSelect}
                       onPress={selectFile}>
-                      <Icon
-                        name="file-image-o"
-                        size={24}
-                        style={{marginLeft: 'auto', color: 'black'}}
+                      <Image
+                        source={require('../../../assets/images/type/image.png')}
+                        style={{
+                          height: 20,
+                          width: 20,
+                        }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -557,16 +595,29 @@ const ChatScreen = ({route, navigation}) => {
               </View>
               <TouchableOpacity
                 style={{
-                  height: 50,
+                  height: 48,
                   width: '15%',
                   borderRadius: 10,
-                  backgroundColor: '#FEC54B',
+                  backgroundColor:
+                    textMessage.trim() !== '' || fileSelect
+                      ? '#FEC54B'
+                      : '#F0F0F0',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginLeft: 'auto',
                 }}
                 onPress={handleSendMessage}>
-                <Icon name="send-o" size={24} style={{color: 'black'}} />
+                <Image
+                  source={
+                    textMessage.trim() !== '' || fileSelect
+                      ? require('../../../assets/images/type/send-active.png')
+                      : require('../../../assets/images/type/send.png')
+                  }
+                  style={{
+                    height: 20,
+                    width: 20,
+                  }}
+                />
               </TouchableOpacity>
             </View>
           </View>
