@@ -47,6 +47,7 @@ const ApiConstants = {
   GET_INVOICE_API: '/confirmedUser/request/invoice',
   GET_USER_INFORMATION: '/user/information',
   CONFIRM_PAYMENT_API: '/repairer/invoice/confirm/paid',
+  SAVE_FCM_TOKEN: '/user/saveFCMToken',
 };
 export const NUMBER_RECORD_PER_PAGE = 10;
 export default ApiConstants;
