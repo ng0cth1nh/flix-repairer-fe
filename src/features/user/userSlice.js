@@ -102,27 +102,40 @@ export const updateProfile = createAsyncThunk(
   },
 );
 
-export const updateAvatar = createAsyncThunk(
-  'user/updateAvatar',
-  async ({repairerAPI, avatar}, {rejectWithValue}) => {
+export const depositMoney = createAsyncThunk(
+  'user/depositMoney',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
     try {
-      console.log('avatar:' + avatar);
-      const formData = new FormData();
-      formData.append(
-        'avatar',
-        avatar
-          ? {
-              uri: avatar.path,
-              type: avatar.mime,
-              name: avatar.path.split('\\').pop().split('/').pop(),
-            }
-          : avatar,
-      );
-      await repairerAPI.put(ApiConstants.UPDATE_PROFILE_AVATAR_API, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await repairerAPI.post(
+        ApiConstants.DEPOSIT_MONEY_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
+export const withdrawMoney = createAsyncThunk(
+  'user/withdrawMoney',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.post(
+        ApiConstants.WITHDRAW_MONEY_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      return response.data;
     } catch (err) {
       return rejectWithValue(getErrorMessage(err));
     }
@@ -178,23 +191,29 @@ export const userSlice = createSlice({
       state.errorMessage = action.payload;
     });
 
+    builder.addCase(depositMoney.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(depositMoney.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
+    builder.addCase(withdrawMoney.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(withdrawMoney.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+
     builder.addCase(fetchTransactionHistories.fulfilled, (state, action) => {
       state.isLoading = false;
       state.errorMessage = null;
     });
     builder.addCase(fetchTransactionHistories.rejected, (state, action) => {
-      state.isLoading = false;
-      state.errorMessage = action.payload;
-    });
-
-    builder.addCase(updateAvatar.pending, state => {
-      state.isLoading = true;
-    });
-    builder.addCase(updateAvatar.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.errorMessage = null;
-    });
-    builder.addCase(updateAvatar.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });

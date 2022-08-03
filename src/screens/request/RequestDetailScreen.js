@@ -114,6 +114,13 @@ const RequestDetailScreen = ({route, navigation}) => {
     })();
   }, []);
 
+  const handleClickGetSubServices = () => {
+    navigation.push('ServicePriceScreen', {
+      serviceId: data.serviceId,
+      serviceName: data.serviceName,
+    });
+  };
+
   const handleCancelButtonClick = async () => {
     try {
       setModalVisible(false);
@@ -330,6 +337,7 @@ const RequestDetailScreen = ({route, navigation}) => {
           <RequestForm
             submitButtonText={submitButtonText}
             isShowSubmitButton={isShowSubmitButton}
+            handleClickGetSubServices={handleClickGetSubServices}
             data={data}
             fixedService={fixedService}
             handleSubmitButtonClick={

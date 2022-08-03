@@ -24,9 +24,10 @@ export default function CustomModal(props) {
         width: '100%',
         height: '100%',
         backgroundColor: 'white',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        borderTopLeftRadius: 18,
+        borderTopRightRadius: 18,
         padding: 30,
+        paddingHorizontal: 20,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {

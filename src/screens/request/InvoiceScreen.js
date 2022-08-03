@@ -67,12 +67,13 @@ const InvoiceScreen = ({route, navigation}) => {
           {item.name}
         </Text>
         <Text
-          style={{
-            color: 'black',
-            fontWeight: 'bold',
-            flex: 5,
-            textAlign: 'right',
-          }}>{`${formatCurrency(item.price.toString())} vnđ`}</Text>
+          style={[
+            styles.servicePrice,
+            {
+              flex: 5,
+              textAlign: 'right',
+            },
+          ]}>{`${formatCurrency(item.price.toString())} vnđ`}</Text>
       </View>
     );
   };
@@ -147,6 +148,13 @@ const InvoiceScreen = ({route, navigation}) => {
       await loadData();
     })();
   }, []);
+
+  const handleClickGetSubServices = () => {
+    navigation.push('ServicePriceScreen', {
+      serviceId: data.serviceId,
+      serviceName: data.serviceName,
+    });
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -311,7 +319,10 @@ const InvoiceScreen = ({route, navigation}) => {
                     }}
                   />
                   <View style={styles.boxBodyContent}>
-                    <Text style={[styles.textBold, {fontSize: 24}]}>
+                    <Text
+                      style={[styles.textBold, {fontSize: 24}]}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
                       {service.serviceName}
                     </Text>
                     <Text
@@ -327,7 +338,9 @@ const InvoiceScreen = ({route, navigation}) => {
                       <Text style={styles.textBold}>{`${formatCurrency(
                         data.inspectionPrice.toString(),
                       )} vnđ`}</Text>
-                      <TouchableOpacity style={styles.viewServiceButton}>
+                      <TouchableOpacity
+                        style={styles.viewServiceButton}
+                        onPress={handleClickGetSubServices}>
                         <Text style={styles.textBold}>Xem giá dịch vụ</Text>
                       </TouchableOpacity>
                     </View>
@@ -356,8 +369,11 @@ const InvoiceScreen = ({route, navigation}) => {
                             justifyContent: 'space-around',
                           },
                         ]}>
-                        <Text style={styles.textBold}>Tổng</Text>
-                        <Text style={styles.servicePrice}>{`${formatCurrency(
+                        <Text style={[styles.textBold, {fontSize: 16}]}>
+                          Tổng
+                        </Text>
+                        <Text
+                          style={styles.servicePriceBold}>{`${formatCurrency(
                           data.totalSubServicePrice.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -383,8 +399,11 @@ const InvoiceScreen = ({route, navigation}) => {
                             justifyContent: 'space-around',
                           },
                         ]}>
-                        <Text style={styles.textBold}>Tổng</Text>
-                        <Text style={styles.servicePrice}>{`${formatCurrency(
+                        <Text style={[styles.textBold, {fontSize: 16}]}>
+                          Tổng
+                        </Text>
+                        <Text
+                          style={styles.servicePriceBold}>{`${formatCurrency(
                           data.totalAccessoryPrice.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -410,8 +429,11 @@ const InvoiceScreen = ({route, navigation}) => {
                             justifyContent: 'space-around',
                           },
                         ]}>
-                        <Text style={styles.textBold}>Tổng</Text>
-                        <Text style={styles.servicePrice}>{`${formatCurrency(
+                        <Text style={[styles.textBold, {fontSize: 16}]}>
+                          Tổng
+                        </Text>
+                        <Text
+                          style={styles.servicePriceBold}>{`${formatCurrency(
                           data.totalExtraServicePrice.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -559,7 +581,7 @@ const InvoiceScreen = ({route, navigation}) => {
               ) : null}
               <View style={[styles.serviceRow, {marginBottom: 16}]}>
                 <Text style={styles.textBold}>TỔNG THANH TOÁN</Text>
-                <Text style={styles.servicePrice}>{`${formatCurrency(
+                <Text style={styles.servicePriceBold}>{`${formatCurrency(
                   data.actualPrice.toString(),
                 )} vnđ`}</Text>
               </View>
@@ -664,9 +686,17 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   servicePrice: {
-    marginLeft: 'auto',
     color: 'black',
-    fontWeight: '600',
+    flex: 5,
+    textAlign: 'right',
+    fontSize: 12,
+  },
+  servicePriceBold: {
+    color: 'black',
+    fontWeight: 'bold',
+    flex: 5,
+    textAlign: 'right',
+    fontSize: 14,
   },
 });
 

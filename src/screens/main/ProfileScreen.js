@@ -29,7 +29,7 @@ const ProfileScreen = ({navigation}) => {
   const [showExtra, setShowExtra] = useState(false);
   const [coverBalance, setCoverBalance] = useState(false);
   const dispatch = useDispatch();
-  const customerAPI = useAxios();
+  const repairerAPI = useAxios();
 
   const showModal = () => {
     setModalVisible(true);
@@ -40,7 +40,7 @@ const ProfileScreen = ({navigation}) => {
 
   useEffect(() => {
     (async () => {
-      await dispatch(fetchProfile(customerAPI));
+      await dispatch(fetchProfile(repairerAPI));
       if (errorMessage) {
         Toast.show({
           type: 'customErrorToast',
@@ -237,7 +237,12 @@ const ProfileScreen = ({navigation}) => {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.push('DepositScreen')}
+                onPress={() =>
+                  navigation.push('DepositScreen', {
+                    vnp_TxnRef: null,
+                    vnp_ResponseCode: null,
+                  })
+                }
                 style={styles.wrapper}>
                 <View style={[styles.container, {marginHorizontal: '6%'}]}>
                   <View
@@ -255,7 +260,7 @@ const ProfileScreen = ({navigation}) => {
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.push('AddressListScreen')}
+                onPress={() => navigation.push('WithdrawScreen')}
                 style={styles.wrapper}>
                 <View style={[styles.container, {marginHorizontal: '6%'}]}>
                   <View
