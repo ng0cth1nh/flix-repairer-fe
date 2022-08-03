@@ -22,17 +22,16 @@ import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ConfirmOTPScreen from './src/screens/auth/ConfirmOTPScreen';
 import TermsOfUseScreen from './src/screens/auth/TermsOfUseScreen';
 import ForgotPassScreen from './src/screens/auth/ForgotPassScreen';
-import AddRequestScreen from './src/screens/request/AddRequestScreen';
+import ChangePasswordScreen from './src/screens/profile/ChangePasswordScreen';
 import RequestDetailScreen from './src/screens/request/RequestDetailScreen';
-import ChoosePaymentMethodScreen from './src/screens/request/ChoosePaymentMethodScreen';
+import EditProfileInfoScreen from './src/screens/profile/EditProfileInfoScreen';
+import ProfileInfoScreen from './src/screens/profile/ProfileInfoScreen';
 import RequestHistoryScreen from './src/screens/request/RequestHistoryScreen';
 import AddFixedServiceScreen from './src/screens/request/AddFixedServiceScreen';
 import AddExtraServiceScreen from './src/screens/request/AddExtraServiceScreen';
 import AddSubServiceScreen from './src/screens/request/AddSubServiceScreen';
 import AddFixedAccessoriesScreen from './src/screens/request/AddFixedAccessoriesScreen';
-import AddAddressScreen from './src/screens/address/AddAddressScreen';
-import AddressListScreen from './src/screens/address/AddressListScreen';
-import EditAddressScreen from './src/screens/address/EditAddressScreen';
+import FeedbackScreen from './src/screens/feedback/FeedbackScreen';
 import InvoiceScreen from './src/screens/request/InvoiceScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import ServiceFilterScreen from './src/screens/main/ServiceFilterScreen';
@@ -42,6 +41,8 @@ import ChatListScreen from './src/screens/chat/ChatListScreen';
 import ChatScreen from './src/screens/chat/ChatScreen';
 import ProfileScreen from './src/screens/main/ProfileScreen';
 import Toast from 'react-native-toast-message';
+import BalanceChangeScreen from './src/screens/transaction/BalanceChangeScreen';
+import DepositScreen from './src/screens/transaction/DepositScreen';
 import {
   requestUserPermission,
   notificationListener,
@@ -233,6 +234,39 @@ function App() {
     );
   }
 
+  function ProfileStackScreen() {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="ProfileInfoScreen" component={ProfileInfoScreen} />
+        <Stack.Screen
+          name="EditProfileInfoScreen"
+          component={EditProfileInfoScreen}
+        />
+        <Stack.Screen
+          name="SearchServiceFilterScreen"
+          component={SearchServiceFilterScreen}
+        />
+        <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
+        <Stack.Screen
+          name="ChangePasswordScreen"
+          component={ChangePasswordScreen}
+        />
+        <Stack.Screen
+          name="BalanceChangeScreen"
+          component={BalanceChangeScreen}
+        />
+        <Stack.Screen name="DepositScreen" component={DepositScreen} />
+      </Stack.Navigator>
+    );
+  }
+
   return (
     <>
       <NavigationContainer ref={navigationRef}>
@@ -265,7 +299,7 @@ function App() {
                   icon = focused
                     ? require('./assets/images/type/bell-ring-active.png')
                     : require('./assets/images/type/bell-ring.png');
-                } else if (route.name === 'Profile') {
+                } else if (route.name === 'ProfileStackScreen') {
                   icon = focused
                     ? require('./assets/images/type/user-profile-active.png')
                     : require('./assets/images/type/user-profile.png');
@@ -284,7 +318,10 @@ function App() {
             />
             <Tab.Screen name="Notification" component={NotificationScreen} />
             <Tab.Screen name="ChatStackScreen" component={ChatStackScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
+            <Tab.Screen
+              name="ProfileStackScreen"
+              component={ProfileStackScreen}
+            />
           </Tab.Navigator>
         ) : (
           <Stack.Navigator

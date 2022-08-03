@@ -49,3 +49,12 @@ export const RequestStatus = {
   FIXING: 'FIXING',
   PAYMENT_WAITING: 'PAYMENT_WAITING',
 };
+
+export const FeedbackType = [
+  {label: 'Vấn đề về yêu cầu sửa chữa', value: 'REQUEST'},
+  {label: 'Vấn đề về voucher', value: 'VOUCHER'},
+  {label: 'Vấn đề về bảo hành', value: 'INSURANCE'},
+  {label: 'Vấn đề về hóa đơn', value: 'INVOICE'},
+  {label: 'Vấn đề về đánh giá thợ', value: 'COMMENT'},
+  {label: 'Vấn đề về tài khoản', value: 'ACCOUNT'},
+];

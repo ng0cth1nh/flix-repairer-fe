@@ -24,7 +24,9 @@ const ApiConstants = {
   GET_ADDRESS_LIST_API: '/repairer/address/list',
   GET_MAIN_ADDRESS_API: '/repairer/address/main',
   POST_REQUEST_API: '/repairer/request/repair',
+  POST_FEEDBACK_API: '/user/feedback',
   GET_REQUEST_HISTORY_LIST_API: '/repairer/request/histories',
+  GET_TRANSACTION_HISTORIES_API: '/repairer/transactions',
   GET_REQUEST_DETAIL_API: '/repairer/request/detail',
   CANCEL_REQUEST_API: '/repairer/request/cancel',
   CONFIRM_FIXING_REQUEST_API: '/repairer/request/confirmFixing',
@@ -44,5 +46,5 @@ const ApiConstants = {
   GET_USER_INFORMATION: '/user/information',
   CONFIRM_PAYMENT_API: '/repairer/invoice/confirm/paid',
 };
-
+export const NUMBER_RECORD_PER_PAGE = 10;
 export default ApiConstants;

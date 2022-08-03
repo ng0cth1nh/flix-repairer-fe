@@ -253,10 +253,13 @@ const HomeScreen = ({navigation}) => {
                 colors={['#FEC54B']}
               />
             }
-            renderItem={({item}) => (
+            renderItem={({item, index}) => (
               <TouchableOpacity
                 onPress={() => handleOnPressItem(item.requestCode)}
-                style={styles.box}>
+                style={[
+                  styles.box,
+                  {marginBottom: index === renderList.length - 1 ? 10 : 0},
+                ]}>
                 <View style={styles.headerBox}>
                   <Image
                     source={{uri: item.avatar}}

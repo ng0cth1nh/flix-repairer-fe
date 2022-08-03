@@ -3,7 +3,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  ActivityIndicator,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -83,8 +82,6 @@ export default function SearchServiceFilterScreen({route, navigation}) {
           style={{
             flex: 1,
             paddingVertical: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: '#CACACA',
           }}>
           <ScrollView>
             {addService.length !== 0 ? (
@@ -124,7 +121,13 @@ export default function SearchServiceFilterScreen({route, navigation}) {
               </View>
             ) : null}
             {loading ? (
-              <Loading />
+              <Loading
+                style={{
+                  marginTop: 20,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              />
             ) : (
               <View>
                 {searchedService !== null ? (

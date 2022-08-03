@@ -160,7 +160,7 @@ const NotificationScreen = () => {
     <View
       style={[
         {backgroundColor: 'white', flex: 1},
-        modalVisible ? {opacity: 0.3} : {},
+        modalVisible ? {opacity: 0.9} : {},
       ]}>
       <TopHeaderComponent
         navigation={null}
