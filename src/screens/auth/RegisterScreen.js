@@ -215,9 +215,9 @@ export default function RegisterScreen({navigation}) {
     if (!username || username.trim() === '') {
       setUsernameInputError('Vui lòng nhập tên của bạn');
       return false;
-    } else if (!/^[a-zA-Z\s]{3,}$/.test(removeAscent(username.slice()))) {
+    } else if (!/^[a-zA-Z\s]{3,150}$/.test(removeAscent(username.slice()))) {
       setUsernameInputError(
-        'Họ và Tên từ 3 ký tự trở lên không bao gồm số và kí tự đặc biệt',
+        'Họ và Tên từ 3 ký tự đến 150 kí tự không bao gồm số và kí tự đặc biệt',
       );
       return false;
     }
