@@ -9,6 +9,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {firebase} from '@react-native-firebase/database';
 import {navigationRef} from './src/RootNavigation';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -50,6 +51,7 @@ import {
 import {store} from './src/features/store';
 import {Provider} from 'react-redux';
 import useAxios from './src/hooks/useAxios';
+import ApiConstants from './src/constants/Api';
 
 const toastConfig = {
   customToast: ({text1}) => (
@@ -124,6 +126,18 @@ function App() {
           });
         }
       };
+      const saveFCMToken = async () => {
+        let fcmToken = await AsyncStorage.getItem('fcmtoken');
+        try {
+          await customerAPI.post(ApiConstants.SAVE_FCM_TOKEN, {
+            token: fcmToken,
+          });
+          console.log('save token success');
+        } catch (err) {
+          console.log('save token error: ', err.toJSON());
+        }
+      };
+      saveFCMToken();
       getUserProfile();
     }
   }, [state.token]);
@@ -354,11 +368,6 @@ function App() {
                 },
               }}
             />
-            <Stack.Screen
-              name="ChoosePaymentMethodScreen"
-              component={ChoosePaymentMethodScreen}
-            />
-
             <Stack.Screen
               name="ForgotPassScreen"
               component={ForgotPassScreen}
