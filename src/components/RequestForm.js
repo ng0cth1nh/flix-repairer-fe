@@ -31,6 +31,7 @@ const RequestForm = function ({
   isRequestIdVisible = false,
   isShowSubmitButton,
   chatHandler,
+  handleClickGetSubServices,
 }) {
   const copyToClipboard = () => {
     Clipboard.setString(data.requestCode);
@@ -76,13 +77,15 @@ const RequestForm = function ({
                 <Text style={{color: 'black', marginBottom: 5}}>
                   {data.customerAddress}
                 </Text>
-                <TouchableOpacity
-                  onPress={chatHandler}
-                  style={[styles.viewServiceButton, {width: '60%'}]}>
-                  <Text style={[styles.textBold, {textAlign: 'center'}]}>
-                    Nhắn tin
-                  </Text>
-                </TouchableOpacity>
+                {data.status !== 'PENDING' ? (
+                  <TouchableOpacity
+                    onPress={chatHandler}
+                    style={[styles.viewServiceButton, {width: '60%'}]}>
+                    <Text style={[styles.textBold, {textAlign: 'center'}]}>
+                      Nhắn tin
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
               </View>
             </View>
           </View>
@@ -117,7 +120,10 @@ const RequestForm = function ({
               }}
             />
             <View style={styles.boxBodyContent}>
-              <Text style={[styles.textBold, {fontSize: 24}]}>
+              <Text
+                numberOfLines={2}
+                ellipsizeMode="tail"
+                style={[styles.textBold, {fontSize: 24}]}>
                 {data.serviceName}
               </Text>
               <Text style={{fontSize: 16, color: 'black', marginVertical: 6}}>
@@ -132,7 +138,9 @@ const RequestForm = function ({
                 <Text style={styles.textBold}>{`${numberWithCommas(
                   data.inspectionPrice,
                 )} vnđ`}</Text>
-                <TouchableOpacity style={styles.viewServiceButton}>
+                <TouchableOpacity
+                  style={styles.viewServiceButton}
+                  onPress={handleClickGetSubServices}>
                   <Text style={styles.textBold}>Xem giá dịch vụ</Text>
                 </TouchableOpacity>
               </View>
@@ -175,12 +183,13 @@ const RequestForm = function ({
                           {item.name}
                         </Text>
                         <Text
-                          style={{
-                            color: 'black',
-                            fontWeight: 'bold',
-                            flex: 5,
-                            textAlign: 'right',
-                          }}>{`${formatCurrency(
+                          style={[
+                            styles.servicePrice,
+                            {
+                              flex: 5,
+                              textAlign: 'right',
+                            },
+                          ]}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -212,12 +221,13 @@ const RequestForm = function ({
                           {item.name}
                         </Text>
                         <Text
-                          style={{
-                            color: 'black',
-                            fontWeight: 'bold',
-                            flex: 5,
-                            textAlign: 'right',
-                          }}>{`${formatCurrency(
+                          style={[
+                            styles.servicePrice,
+                            {
+                              flex: 5,
+                              textAlign: 'right',
+                            },
+                          ]}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -246,12 +256,13 @@ const RequestForm = function ({
                           {item.name}
                         </Text>
                         <Text
-                          style={{
-                            color: 'black',
-                            fontWeight: 'bold',
-                            flex: 5,
-                            textAlign: 'right',
-                          }}>{`${formatCurrency(
+                          style={[
+                            styles.servicePrice,
+                            {
+                              flex: 5,
+                              textAlign: 'right',
+                            },
+                          ]}>{`${formatCurrency(
                           item.price.toString(),
                         )} vnđ`}</Text>
                       </View>
@@ -285,35 +296,41 @@ const RequestForm = function ({
             </View>
           </View>
         </View>
-        <View
-          style={[styles.box, {height: 0.2 * height, flexDirection: 'column'}]}>
-          <View style={styles.boxHeader}>
-            <Image
-              source={require('../../assets/images/type/writing.png')}
-              style={{
-                height: 20,
-                width: 20,
-              }}
-            />
-            <Text style={styles.tittleText}>Tình trạng</Text>
+        {data.requestDescription ? (
+          <View
+            style={[
+              styles.box,
+              {height: 0.2 * height, flexDirection: 'column'},
+            ]}>
+            <View style={styles.boxHeader}>
+              <Image
+                source={require('../../assets/images/type/writing.png')}
+                style={{
+                  height: 20,
+                  width: 20,
+                }}
+              />
+              <Text style={styles.tittleText}>Tình trạng</Text>
+            </View>
+            <View style={{flex: 4, marginLeft: 40, marginTop: 10}}>
+              <TextInput
+                multiline
+                numberOfLines={2}
+                value={data.requestDescription}
+                style={{
+                  padding: 5,
+                  backgroundColor: 'white',
+                  borderRadius: 10,
+                  height: '80%',
+                  color: 'black',
+                  paddingLeft: 16,
+                }}
+                editable={false}
+              />
+            </View>
           </View>
-          <View style={{flex: 4, marginLeft: 40, marginTop: 10}}>
-            <TextInput
-              multiline
-              numberOfLines={2}
-              value={data.requestDescription}
-              style={{
-                padding: 5,
-                backgroundColor: 'white',
-                borderRadius: 10,
-                height: '80%',
-                color: 'black',
-                paddingLeft: 16,
-              }}
-              editable={false}
-            />
-          </View>
-        </View>
+        ) : null}
+
         {data.voucherDiscount ? (
           <View style={[styles.box]}>
             <View style={styles.boxHeader}>
@@ -387,7 +404,7 @@ const RequestForm = function ({
                   width: 20,
                 }}
               />
-              <Text style={styles.tittleText}>Mã yêu cầu</Text>
+              <Text style={styles.tittleText}>{data.requestCode}</Text>
               <TouchableOpacity
                 style={[
                   {marginLeft: 'auto', marginBottom: 3},
@@ -396,7 +413,7 @@ const RequestForm = function ({
                 onPress={copyToClipboard}>
                 <Text
                   style={{color: 'black', fontSize: 14, fontWeight: 'bold'}}>
-                  {data.requestCode}
+                  Sao chép
                 </Text>
               </TouchableOpacity>
             </View>
@@ -481,19 +498,11 @@ const RequestForm = function ({
               {`${numberWithCommas(data.vatPrice)} vnđ`}
             </Text>
           </View>
-          {/* {service.actualPrice !== null ? (
-          <View style={styles.serviceRow}>
-            <Text style={styles.serviceName}>TỔNG THANH TOÁN(dự kiến)</Text>
-            <Text style={styles.servicePrice}>{`${numberWithCommas(
-              service.actualPrice,
-            )} vnđ`}</Text>
-          </View>
-        ) : null} */}
           <View style={styles.serviceRow}>
             <Text style={styles.textBold}>
               TỔNG THANH TOÁN {fixedService ? '' : '(dự kiến)'}
             </Text>
-            <Text style={styles.servicePrice}>
+            <Text style={styles.servicePriceBold}>
               {`${numberWithCommas(data.actualPrice)} vnđ`}
             </Text>
           </View>
@@ -597,9 +606,16 @@ const styles = StyleSheet.create({
   },
   servicePrice: {
     color: 'black',
-    fontWeight: '600',
     flex: 5,
     textAlign: 'right',
+    fontSize: 12,
+  },
+  servicePriceBold: {
+    color: 'black',
+    fontWeight: 'bold',
+    flex: 5,
+    textAlign: 'right',
+    fontSize: 14,
   },
 });
 export default RequestForm;

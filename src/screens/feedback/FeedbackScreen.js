@@ -179,6 +179,7 @@ const FeedbackScreen = ({navigation}) => {
                   <Ionicons
                     name="chevron-down-sharp"
                     size={20}
+                    color="black"
                     style={{marginTop: (0.075 * height) / 4}}
                   />
                 )}

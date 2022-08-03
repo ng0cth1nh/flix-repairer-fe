@@ -58,3 +58,13 @@ export const FeedbackType = [
   {label: 'Vấn đề về đánh giá thợ', value: 'COMMENT'},
   {label: 'Vấn đề về tài khoản', value: 'ACCOUNT'},
 ];
+
+export const BankType = [
+  {
+    label: '(BIDV) Ngân hàng Thương mại Cổ phần Đầu tư và Phát triển Việt Nam',
+    value: 'BIDV',
+  },
+  {label: '(MBBANK) Ngân hàng Quân đội', value: 'MBBANK'},
+  {label: '(NCB) Ngân Hàng Quốc Dân', value: 'NCB'},
+  {label: '(TPBANK) Ngân hàng Thương mại Cổ phần Tiên Phong', value: 'TPBANK'},
+];

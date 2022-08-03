@@ -36,6 +36,7 @@ import InvoiceScreen from './src/screens/request/InvoiceScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
 import ServiceFilterScreen from './src/screens/main/ServiceFilterScreen';
 import SearchServiceFilterScreen from './src/screens/main/SearchServiceFilterScreen';
+import ServicePriceScreen from './src/screens/main/ServicePriceScreen';
 import NotificationScreen from './src/screens/main/NotificationScreen';
 import ChatListScreen from './src/screens/chat/ChatListScreen';
 import ChatScreen from './src/screens/chat/ChatScreen';
@@ -43,6 +44,7 @@ import ProfileScreen from './src/screens/main/ProfileScreen';
 import Toast from 'react-native-toast-message';
 import BalanceChangeScreen from './src/screens/transaction/BalanceChangeScreen';
 import DepositScreen from './src/screens/transaction/DepositScreen';
+import WithdrawScreen from './src/screens/transaction/WithdrawScreen';
 import {
   requestUserPermission,
   notificationListener,
@@ -50,6 +52,7 @@ import {
 import {store} from './src/features/store';
 import {Provider} from 'react-redux';
 import useAxios from './src/hooks/useAxios';
+import linking from './global/Linking';
 
 const toastConfig = {
   customToast: ({text1}) => (
@@ -177,6 +180,10 @@ function App() {
           name="RequestDetailScreen"
           component={RequestDetailScreen}
         />
+        <Stack.Screen
+          name="ServicePriceScreen"
+          component={ServicePriceScreen}
+        />
       </Stack.Navigator>
     );
   }
@@ -230,6 +237,10 @@ function App() {
         />
         <Stack.Screen name="InvoiceScreen" component={InvoiceScreen} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        <Stack.Screen
+          name="ServicePriceScreen"
+          component={ServicePriceScreen}
+        />
       </Stack.Navigator>
     );
   }
@@ -263,13 +274,14 @@ function App() {
           component={BalanceChangeScreen}
         />
         <Stack.Screen name="DepositScreen" component={DepositScreen} />
+        <Stack.Screen name="WithdrawScreen" component={WithdrawScreen} />
       </Stack.Navigator>
     );
   }
 
   return (
     <>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} linking={linking}>
         {state.token ? (
           <Tab.Navigator
             tabBarOptions={{
@@ -354,11 +366,6 @@ function App() {
                 },
               }}
             />
-            <Stack.Screen
-              name="ChoosePaymentMethodScreen"
-              component={ChoosePaymentMethodScreen}
-            />
-
             <Stack.Screen
               name="ForgotPassScreen"
               component={ForgotPassScreen}

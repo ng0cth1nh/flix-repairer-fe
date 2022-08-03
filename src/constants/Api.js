@@ -17,8 +17,10 @@ const ApiConstants = {
   GET_COMMUNE_BY_DISTRICT_API:
     'https://flix-lj7prqscta-as.a.run.app/api/v1/address/commune',
   GET_SERVICES_BY_CATEGORY_API: '/category/services',
-  GET_SERVICE_DETAIL_API: '/service/detail',
+  GET_SERVICE_DETAIL_API: '/category/services/subServices',
   PROFILE_INFO_API: '/commonRepairer/profile',
+  DEPOSIT_MONEY_API: '/repairer/vnpay/deposit/url',
+  WITHDRAW_MONEY_API: '/repairer/withdraw',
   UPDATE_PROFILE_AVATAR_API: '/user/avatar',
   CHANGE_PASSWORD_API: '/user/changePassword',
   GET_ADDRESS_LIST_API: '/repairer/address/list',

@@ -39,7 +39,7 @@ const RequestHistoryScreen = ({navigation}) => {
           <TopTabs.Screen
             name="FixingScreen"
             component={FixingScreen}
-            options={{tabBarLabel: 'Đang sửa'}}
+            options={{tabBarLabel: 'Đang thực hiện'}}
           />
           <TopTabs.Screen
             name="PaymentWaitingScreen"

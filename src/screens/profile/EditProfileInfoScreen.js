@@ -296,6 +296,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                     onChangeText={text => setEmail(text)}
                     value={email}
                     placeholder="Nhập email"
+                    onFocus={() => setEmailInputError(null)}
                     placeholderTextColor="#DFDFDF"
                   />
                 </View>
@@ -322,6 +323,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                     multiline={true}
                     onChangeText={text => setExperienceDescription(text)}
                     placeholder="Nhập mô tả kinh nghiệm"
+                    onFocus={() => setExperienceDescriptionInputError(null)}
                     value={experienceDescription}
                   />
                 </View>
