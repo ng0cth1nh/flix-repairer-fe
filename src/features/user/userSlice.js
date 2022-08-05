@@ -57,12 +57,9 @@ export const deleteNotification = createAsyncThunk(
   'user/deleteNotification',
   async ({repairerAPI, id}, {rejectWithValue}) => {
     try {
-      const response = await repairerAPI.delete(
-        ApiConstants.DELETE_NOTIFICATION_API,
-        {
-          params: {id},
-        },
-      );
+      const response = await repairerAPI.delete(ApiConstants.NOTIFICATION_API, {
+        params: {id},
+      });
       return response.data;
     } catch (err) {
       return rejectWithValue(getErrorMessage(err));
@@ -175,6 +172,25 @@ export const withdrawMoney = createAsyncThunk(
     }
   },
 );
+export const markReadNotification = createAsyncThunk(
+  'user/markReadNotification',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.put(
+        ApiConstants.NOTIFICATION_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
 
 export const userSlice = createSlice({
   name: 'user',
@@ -264,6 +280,14 @@ export const userSlice = createSlice({
       state.errorMessage = null;
     });
     builder.addCase(deleteNotification.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(markReadNotification.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(markReadNotification.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });

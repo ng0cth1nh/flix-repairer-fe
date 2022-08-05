@@ -30,7 +30,7 @@ const ApiConstants = {
   GET_REQUEST_HISTORY_LIST_API: '/repairer/request/histories',
   GET_TRANSACTION_HISTORIES_API: '/repairer/transactions',
   GET_NOTIFICATIONS_API: '/user/notifications',
-  DELETE_NOTIFICATION_API: '/user/notification',
+  NOTIFICATION_API: '/user/notification',
   GET_REQUEST_DETAIL_API: '/repairer/request/detail',
   CANCEL_REQUEST_API: '/repairer/request/cancel',
   CONFIRM_FIXING_REQUEST_API: '/repairer/request/confirmFixing',
@@ -50,6 +50,7 @@ const ApiConstants = {
   GET_USER_INFORMATION: '/user/information',
   CONFIRM_PAYMENT_API: '/repairer/invoice/confirm/paid',
   SAVE_FCM_TOKEN: '/user/saveFCMToken',
+  CREATE_COMMENT_API: '/confirmedUser/comment',
 };
 export const NUMBER_RECORD_PER_PAGE = 10;
 export default ApiConstants;

@@ -3,7 +3,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  ActivityIndicator,
   StyleSheet,
   TextInput,
   ScrollView,
@@ -52,6 +51,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     isCancelFromApprovedStatus,
     isFetchFixedService,
     isShowSubmitButton,
+    isNavigateFromNotiScreen = false,
   } = route.params;
 
   const isLoading = useSelector(selectIsLoading);
@@ -322,6 +322,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         title="Yêu cầu sửa chữa"
         isBackButton={true}
         statusBarColor="white"
+        isNavigateFromNotiScreen={isNavigateFromNotiScreen}
       />
       <SafeAreaView style={{flex: 1}}>
         {isError ? <NotFound /> : null}

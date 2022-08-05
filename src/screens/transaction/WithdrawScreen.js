@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -8,7 +8,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Linking,
   Dimensions,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
@@ -19,6 +18,7 @@ import {
   setIsLoading,
 } from '../../features/user/userSlice';
 const {width, height} = Dimensions.get('window');
+import {RequestStatus} from '../../utils/util';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomModal from '../../components/CustomModal';
 import {RadioButton} from 'react-native-paper';
@@ -32,6 +32,10 @@ import Toast from 'react-native-toast-message';
 import ProgressLoader from 'rn-progress-loader';
 import {BankType} from '../../utils/util';
 import RNPickerSelect from 'react-native-picker-select';
+import {
+  fetchRequests,
+  selectRequests,
+} from '../../features/request/requestSlice';
 
 const WithdrawScreen = ({navigation}) => {
   const user = useSelector(selectUser);
@@ -48,6 +52,15 @@ const WithdrawScreen = ({navigation}) => {
   const [bankAccountNumberError, setBankAccountNumberError] = useState(null);
   const [bankAccountName, setBankAccountName] = useState(null);
   const [bankAccountNameError, setBankAccountNameError] = useState(null);
+  const requests = useSelector(selectRequests);
+
+  useEffect(() => {
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+    dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
+    dispatch(
+      fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+    );
+  }, []);
 
   const handleSubmitClick = async () => {
     try {
@@ -122,6 +135,20 @@ const WithdrawScreen = ({navigation}) => {
       setMoneyInputError('Vui lòng nhập số tiền cần rút');
     } else if (+removeCommas(money) > user.balance) {
       setMoneyInputError('Số tiền vượt quá số dư');
+    } else if (
+      user.balance - +removeCommas(money) > 0 &&
+      user.balance - +removeCommas(money) < 200000
+    ) {
+      setMoneyInputError('Số dư tối thiểu là 200,000 vnđ');
+    } else if (
+      user.balance - +removeCommas(money) === 0 &&
+      ((requests.approved && requests.approved.length !== 0) ||
+        (requests.fixing && requests.fixing.length !== 0) ||
+        (requests.paymentWaiting && requests.paymentWaiting.length !== 0))
+    ) {
+      setMoneyInputError(
+        'Bạn đang trong quá trình sửa yêu cầu khác nên không thể rút hết tiền',
+      );
     } else {
       setMoneyInputError(null);
       let isBankCodeValid = await checkBankCodeValid();
@@ -391,6 +418,17 @@ const WithdrawScreen = ({navigation}) => {
             Bạn có chắc chắn muốn rút {money} vnđ{' '}
             {checked === 'CASH' ? 'lấy tiền mặt' : 'về tài khoản ngân hàng'}{' '}
             không?
+          </Text>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: 14,
+              alignSelf: 'flex-start',
+              marginHorizontal: 10,
+              marginVertical: 6,
+              fontWeight: 'bold',
+            }}>
+            * Bạn đang rút tất cả tiền đồng nghĩa với việc đóng tài khoản
           </Text>
           <Text
             style={{

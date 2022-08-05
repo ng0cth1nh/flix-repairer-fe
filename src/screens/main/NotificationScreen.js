@@ -23,6 +23,7 @@ import {
   setIsLoading,
   fetchNotifications,
   deleteNotification,
+  markReadNotification,
 } from '../../features/user/userSlice';
 
 const NotificationScreen = ({navigation}) => {
@@ -48,6 +49,37 @@ const NotificationScreen = ({navigation}) => {
       }
     })();
   }, [refreshControl]);
+
+  useEffect(() => {
+    (async () => {
+      let temp = [];
+      notifications.forEach(async item => {
+        if (
+          (item.type === null ||
+            item.type.startsWith('DEPOSIT') ||
+            item.type.startsWith('REGISTER_SUCCESS') ||
+            item.type.startsWith('RESPONSE_FEEDBACK')) &&
+          !item.read
+        ) {
+          let body = {
+            id: item.id,
+          };
+          await dispatch(
+            markReadNotification({
+              repairerAPI,
+              body,
+            }),
+          ).unwrap();
+          temp.push({
+            ...item,
+            read: true,
+          });
+        } else {
+          temp.push(item);
+        }
+      });
+    })();
+  }, [notifications]);
 
   const loadNotifications = async () => {
     try {
@@ -127,22 +159,88 @@ const NotificationScreen = ({navigation}) => {
     }
   };
 
-  const handleNavigate = async (requestCode, type) => {
-    if (type.startsWith('REQUEST')) {
-      navigation.navigate('RequestHistoryStackScreen', {
-        screen: 'RequestDetailScreen',
-        params: {
-          requestCode,
-        },
-      });
-    } else {
-      navigation.navigate('RequestHistoryStackScreen', {
-        screen: 'InvoiceScreen',
-        params: {
-          requestCode,
-        },
-      });
-    }
+  const handleNavigate = async (requestCode, type, id, read) => {
+    try {
+      if (!read) {
+        let body = {
+          id,
+        };
+        await dispatch(
+          markReadNotification({
+            repairerAPI,
+            body,
+          }),
+        ).unwrap();
+        let temp = [];
+        notifications.forEach(element => {
+          if (element.id === id) {
+            temp.push({
+              ...element,
+              read: true,
+            });
+          } else {
+            temp.push(element);
+          }
+        });
+        setNotifications(temp);
+      }
+      let params = null;
+      if (type.startsWith('REQUEST')) {
+        if (type === 'REQUEST_APPROVED') {
+          params = {
+            requestCode,
+            isShowCancelButton: true,
+            submitButtonText: 'Xác nhận đang sửa',
+            isAddableDetailService: false,
+            typeSubmitButtonClick: 'CONFIRM_FIXING',
+            isCancelFromApprovedStatus: true,
+            isFetchFixedService: false,
+            isShowSubmitButton: true,
+            isNavigateFromNotiScreen: true,
+          };
+        }
+        if (type === 'REQUEST_CONFIRM_FIXING') {
+          params = {
+            requestCode,
+            isShowCancelButton: true,
+            submitButtonText: 'Tạo hóa đơn',
+            isAddableDetailService: true,
+            typeSubmitButtonClick: 'CREATE_INVOICE',
+            isCancelFromApprovedStatus: false,
+            isFetchFixedService: true,
+            isShowSubmitButton: true,
+            isNavigateFromNotiScreen: true,
+          };
+        }
+        if (type === 'REQUEST_DONE') {
+          params = {
+            requestCode,
+            isFetchFixedService: true,
+            isShowSubmitButton: false,
+            isNavigateFromNotiScreen: true,
+          };
+        }
+        if (type === 'REQUEST_CANCELED') {
+          params = {
+            requestCode,
+            isFetchFixedService: false,
+            isShowSubmitButton: false,
+            isNavigateFromNotiScreen: true,
+          };
+        }
+        navigation.navigate('RequestHistoryStackScreen', {
+          screen: 'RequestDetailScreen',
+          params,
+        });
+      } else {
+        navigation.navigate('RequestHistoryStackScreen', {
+          screen: 'InvoiceScreen',
+          params: {
+            service: {requestCode, isNavigateFromNotiScreen: true},
+          },
+        });
+      }
+    } catch (err) {}
   };
 
   const renderItem = ({item}) => {
@@ -235,7 +333,9 @@ const NotificationScreen = ({navigation}) => {
           borderBottomWidth: 1,
           paddingBottom: 10,
         }}
-        onPress={() => handleNavigate(item.requestCode, item.type)}>
+        onPress={() =>
+          handleNavigate(item.requestCode, item.type, item.id, item.read)
+        }>
         <TouchableOpacity
           onPress={() => {
             setIdDelete(item.id);

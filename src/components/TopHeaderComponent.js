@@ -1,8 +1,7 @@
 import React from 'react';
-import {Text, View, StatusBar, Dimensions, StyleSheet} from 'react-native';
+import {Text, View, StatusBar, StyleSheet} from 'react-native';
 import BackButton from './BackButton';
 import EditButton from './EditButton';
-const {height} = Dimensions.get('window');
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const TopHeaderComponent = ({
@@ -13,11 +12,18 @@ const TopHeaderComponent = ({
   isEditButton = false,
   onPressEdit = null,
   style = null,
+  isNavigateFromNotiScreen = false,
 }) => {
   const handleGoBack = () => {
-    navigation.canGoBack()
-      ? navigation.goBack()
-      : navigation.navigate('HomeScreen');
+    if (navigation.canGoBack()) {
+      if (isNavigateFromNotiScreen) {
+        navigation.navigate('RequestHistoryScreen');
+      } else {
+        navigation.goBack();
+      }
+    } else {
+      navigation.navigate('HomeScreen');
+    }
   };
 
   return (

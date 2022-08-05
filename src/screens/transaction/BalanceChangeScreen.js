@@ -24,10 +24,9 @@ import {NUMBER_RECORD_PER_PAGE} from '../../constants/Api';
 const BalanceChangeScreen = ({navigation}) => {
   const [transactions, setTransactions] = useState([]);
   const [refreshControl, setRefreshControl] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [pageNumber, setPageNumber] = useState(0);
   const [totalPage, setTotalPage] = useState(null);
-  const [stopFetchMore, setStopFetchMore] = useState(true);
+  const [stopFetchMore, setStopFetchMore] = useState(false);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
@@ -54,7 +53,7 @@ const BalanceChangeScreen = ({navigation}) => {
       setTransactions(res.transactions);
       if (refreshControl) {
         setRefreshControl(false);
-        setStopFetchMore(true);
+        setStopFetchMore(false);
         setPageNumber(0);
       }
       setTotalPage(Math.ceil(res.totalRecord / NUMBER_RECORD_PER_PAGE));
@@ -68,7 +67,7 @@ const BalanceChangeScreen = ({navigation}) => {
 
   const handleOnEndReached = async () => {
     try {
-      if (stopFetchMore) {
+      if (!stopFetchMore) {
         if (totalPage <= pageNumber + 1) {
           setStopFetchMore(false);
           return;
@@ -222,7 +221,7 @@ const BalanceChangeScreen = ({navigation}) => {
               }}>
               <Text
                 style={{
-                  fontSize: 8,
+                  fontSize: 10,
                   color: '#7C7C7C',
                 }}>
                 {moment(item.createdAt).format('HH:mm - DD/MM/YYYY')}
@@ -242,11 +241,7 @@ const BalanceChangeScreen = ({navigation}) => {
   };
 
   return (
-    <View
-      style={[
-        {backgroundColor: 'white', flex: 1},
-        modalVisible ? {opacity: 0.9} : {},
-      ]}>
+    <View style={[{backgroundColor: 'white', flex: 1}]}>
       <TopHeaderComponent
         navigation={navigation}
         title="Biến động số dư"
