@@ -27,9 +27,7 @@ import {
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
 import Toast from 'react-native-toast-message';
-import ApiConstants from '../../constants/Api';
 import NotFound from '../../components/NotFound';
-import useFetchData from '../../hooks/useFetchData';
 import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
@@ -44,6 +42,7 @@ const InvoiceScreen = ({route, navigation}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [showComment, setShowComment] = useState(false);
   const repairerAPI = useAxios();
   const [fixedService, setFixedService] = useState(null);
   const dispatch = useDispatch();
@@ -105,6 +104,7 @@ const InvoiceScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Xác nhận thanh toán thành công',
       });
+      setShowComment(true);
       dispatch(
         fetchRequests({
           repairerAPI,
@@ -156,6 +156,12 @@ const InvoiceScreen = ({route, navigation}) => {
     });
   };
 
+  const handleRatingCustomer = async () => {
+    navigation.push('CommentScreen', {
+      data,
+    });
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopHeaderComponent
@@ -163,6 +169,7 @@ const InvoiceScreen = ({route, navigation}) => {
         title="Xem hóa đơn"
         isBackButton={true}
         statusBarColor="white"
+        isNavigateFromNotiScreen={service.isNavigateFromNotiScreen}
       />
       {isError ? <NotFound /> : null}
       {loading || isLoad ? <Loading /> : null}
@@ -309,7 +316,7 @@ const InvoiceScreen = ({route, navigation}) => {
                 </View>
                 <View style={styles.boxBody}>
                   <Image
-                    source={{uri: service.image}}
+                    source={{uri: data.serviceImage}}
                     style={{
                       height: height * 0.12,
                       width: height * 0.111,
@@ -323,7 +330,7 @@ const InvoiceScreen = ({route, navigation}) => {
                       style={[styles.textBold, {fontSize: 24}]}
                       numberOfLines={2}
                       ellipsizeMode="tail">
-                      {service.serviceName}
+                      {data.serviceName}
                     </Text>
                     <Text
                       style={{fontSize: 16, color: 'black', marginVertical: 6}}>
@@ -596,6 +603,18 @@ const InvoiceScreen = ({route, navigation}) => {
               }}
               onPress={handleConfirmPayment}
               buttonText="Xác nhận đã thanh toán"
+            />
+          ) : null}
+          {(data.status === 'DONE' && !data.isRepairerCommented) ||
+          showComment ? (
+            <Button
+              style={{
+                marginVertical: 8,
+                width: '100%',
+                alignSelf: 'center',
+              }}
+              onPress={handleRatingCustomer}
+              buttonText="Đánh giá khách hàng"
             />
           ) : null}
         </SafeAreaView>

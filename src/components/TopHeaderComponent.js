@@ -1,7 +1,7 @@
 import React from 'react';
-import {Text, View, StatusBar, Dimensions, StyleSheet} from 'react-native';
+import {Text, View, StatusBar, StyleSheet} from 'react-native';
 import BackButton from './BackButton';
-const {height} = Dimensions.get('window');
+import EditButton from './EditButton';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
 const TopHeaderComponent = ({
@@ -9,27 +9,41 @@ const TopHeaderComponent = ({
   title,
   isBackButton,
   statusBarColor,
+  isEditButton = false,
+  onPressEdit = null,
+  style = null,
+  isNavigateFromNotiScreen = false,
 }) => {
   const handleGoBack = () => {
-    navigation.canGoBack()
-      ? navigation.goBack()
-      : navigation.navigate('HomeScreen');
+    if (navigation.canGoBack()) {
+      if (isNavigateFromNotiScreen) {
+        navigation.navigate('RequestHistoryScreen');
+      } else {
+        navigation.goBack();
+      }
+    } else {
+      navigation.navigate('HomeScreen');
+    }
   };
 
   return (
     <View
-      style={{
-        height: 'auto',
-        borderBottomWidth: 1,
-        borderBottomColor: '#CACACA',
-        paddingBottom: 20,
-        paddingHorizontal: '12%',
-        flexDirection: 'row',
-      }}>
+      style={[
+        {
+          height: 'auto',
+          borderBottomWidth: 1,
+          borderBottomColor: '#CACACA',
+          paddingBottom: 20,
+          paddingHorizontal: '12%',
+          flexDirection: 'row',
+        },
+        style,
+      ]}>
       <StatusBar barStyle="dark-content" backgroundColor={statusBarColor} />
-      {isBackButton ? (
+      {isBackButton && (
         <BackButton onPressHandler={handleGoBack} color="black" size={18} />
-      ) : null}
+      )}
+      {isEditButton && <EditButton onPressHandler={onPressEdit} />}
       <Text style={styles.headerText}>{title}</Text>
     </View>
   );

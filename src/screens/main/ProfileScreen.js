@@ -39,15 +39,17 @@ const ProfileScreen = ({navigation}) => {
   const user = useSelector(selectUser);
 
   useEffect(() => {
-    (async () => {
-      await dispatch(fetchProfile(repairerAPI));
-      if (errorMessage) {
-        Toast.show({
-          type: 'customErrorToast',
-          text1: errorMessage,
-        });
-      }
-    })();
+    if (!user.role) {
+      (async () => {
+        await dispatch(fetchProfile(repairerAPI));
+        if (errorMessage) {
+          Toast.show({
+            type: 'customErrorToast',
+            text1: errorMessage,
+          });
+        }
+      })();
+    }
   }, []);
 
   return (

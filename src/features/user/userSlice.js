@@ -36,6 +36,37 @@ export const fetchProfile = createAsyncThunk(
   },
 );
 
+export const fetchNotifications = createAsyncThunk(
+  'user/fetchNotifications',
+  async ({repairerAPI, pageNumber, pageSize}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.get(
+        ApiConstants.GET_NOTIFICATIONS_API,
+        {
+          params: {pageNumber, pageSize},
+        },
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
+export const deleteNotification = createAsyncThunk(
+  'user/deleteNotification',
+  async ({repairerAPI, id}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.delete(ApiConstants.NOTIFICATION_API, {
+        params: {id},
+      });
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
+
 export const fetchTransactionHistories = createAsyncThunk(
   'user/fetchTransactionHistories',
   async ({repairerAPI, pageNumber, pageSize}, {rejectWithValue}) => {
@@ -141,6 +172,25 @@ export const withdrawMoney = createAsyncThunk(
     }
   },
 );
+export const markReadNotification = createAsyncThunk(
+  'user/markReadNotification',
+  async ({repairerAPI, body}, {rejectWithValue}) => {
+    try {
+      const response = await repairerAPI.put(
+        ApiConstants.NOTIFICATION_API,
+        JSON.stringify(body),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(getErrorMessage(err));
+    }
+  },
+);
 
 export const userSlice = createSlice({
   name: 'user',
@@ -214,6 +264,30 @@ export const userSlice = createSlice({
       state.errorMessage = null;
     });
     builder.addCase(fetchTransactionHistories.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(fetchNotifications.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(deleteNotification.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(deleteNotification.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = action.payload;
+    });
+    builder.addCase(markReadNotification.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+    });
+    builder.addCase(markReadNotification.rejected, (state, action) => {
       state.isLoading = false;
       state.errorMessage = action.payload;
     });

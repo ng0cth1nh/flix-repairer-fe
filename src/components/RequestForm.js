@@ -71,13 +71,20 @@ const RequestForm = function ({
                 <Text style={[styles.textBold, {fontSize: 16}]}>
                   {data.customerName}
                 </Text>
-                <Text style={[styles.textBold, {fontSize: 16}]}>
-                  {data.customerPhone}
-                </Text>
+                {data.status !== 'PENDING' && (
+                  <Text style={[styles.textBold, {fontSize: 16}]}>
+                    {data.customerPhone}
+                  </Text>
+                )}
                 <Text style={{color: 'black', marginBottom: 5}}>
-                  {data.customerAddress}
+                  {data.status !== 'PENDING'
+                    ? data.customerAddress
+                    : data.customerAddress.substr(
+                        data.customerAddress.indexOf(', ') + 2,
+                        data.customerAddress.length,
+                      )}
                 </Text>
-                {data.status !== 'PENDING' ? (
+                {data.status !== 'PENDING' && (
                   <TouchableOpacity
                     onPress={chatHandler}
                     style={[styles.viewServiceButton, {width: '60%'}]}>
@@ -85,7 +92,7 @@ const RequestForm = function ({
                       Nhắn tin
                     </Text>
                   </TouchableOpacity>
-                ) : null}
+                )}
               </View>
             </View>
           </View>
@@ -288,7 +295,7 @@ const RequestForm = function ({
             />
             <Text style={styles.tittleText}>Ngày muốn sửa</Text>
           </View>
-          <View style={{flex: 4, marginLeft: 40}}>
+          <View style={{flex: 4, marginLeft: '2%'}}>
             <View style={styles.datePicker}>
               <Text style={styles.textBold}>
                 {moment(data.expectFixingTime).format('HH:mm - DD/MM/YYYY')}
@@ -312,7 +319,7 @@ const RequestForm = function ({
               />
               <Text style={styles.tittleText}>Tình trạng</Text>
             </View>
-            <View style={{flex: 4, marginLeft: 40, marginTop: 10}}>
+            <View style={{flex: 4, marginLeft: '2%', marginTop: 10}}>
               <TextInput
                 multiline
                 numberOfLines={2}

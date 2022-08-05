@@ -18,6 +18,7 @@ import {
   Context as AuthContext,
 } from './src/context/AuthContext';
 import SplashScreen from './src/screens/SplashScreen';
+import CommentScreen from './src/screens/feedback/CommentScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
 import ConfirmOTPScreen from './src/screens/auth/ConfirmOTPScreen';
@@ -175,6 +176,7 @@ function App() {
   function HomeStackScreen() {
     return (
       <Stack.Navigator
+        initialRouteName="HomeScreen"
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
@@ -219,6 +221,7 @@ function App() {
   function RequestHistoryStackScreen() {
     return (
       <Stack.Navigator
+        initialRouteName="RequestHistoryScreen"
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
@@ -255,6 +258,7 @@ function App() {
           name="ServicePriceScreen"
           component={ServicePriceScreen}
         />
+        <Stack.Screen name="CommentScreen" component={CommentScreen} />
       </Stack.Navigator>
     );
   }
@@ -298,6 +302,7 @@ function App() {
       <NavigationContainer ref={navigationRef} linking={linking}>
         {state.token ? (
           <Tab.Navigator
+            initialRouteName="HomeStackScreen"
             tabBarOptions={{
               showLabel: false,
               keyboardHidesTabBar: true,

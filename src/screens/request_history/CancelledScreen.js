@@ -1,21 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {
-  ScrollView,
-  FlatList,
-  RefreshControl,
-  ActivityIndicator,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, RefreshControl, ActivityIndicator, View} from 'react-native';
 import RequestItem from '../../components/RequestItem';
-import ApiConstants from '../../constants/Api';
-import NotFound from '../../components/NotFound';
 import Empty from '../../components/Empty';
-import useFetchData from '../../hooks/useFetchData';
 import {RequestStatus} from '../../utils/util';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   fetchRequests,
-  selectErrorMessage,
   selectRequests,
   selectIsLoading,
   setIsLoading,
@@ -26,7 +16,6 @@ import useAxios from '../../hooks/useAxios';
 const CancelledScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const repairerAPI = useAxios();
-  const errorMessage = useSelector(selectErrorMessage);
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);

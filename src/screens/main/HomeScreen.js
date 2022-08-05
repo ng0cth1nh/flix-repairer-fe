@@ -24,10 +24,17 @@ import {
   setIsLoading,
   selectIsLoading,
 } from '../../features/home/homeSlice';
+import {
+  fetchProfile,
+  selectErrorMessage,
+  selectUser,
+} from '../../features/user/userSlice';
+import Toast from 'react-native-toast-message';
 import {fetchRequests} from '../../features/request/requestSlice';
 import {RequestStatus} from '../../utils/util';
 import useAxios from '../../hooks/useAxios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomModal from '../../components/CustomModal';
 
 const HomeScreen = ({navigation}) => {
   const [buttonIndex, setButtonIndex] = useState(0);
@@ -42,6 +49,9 @@ const HomeScreen = ({navigation}) => {
   const [cityIds, setCityIds] = useState(null);
   const [districtIds, setDistrictIds] = useState(null);
   const [communeIds, setCommuneIds] = useState(null);
+  const errorMessage = useSelector(selectErrorMessage);
+  const user = useSelector(selectUser);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
@@ -58,17 +68,21 @@ const HomeScreen = ({navigation}) => {
   };
 
   const handleOnPressItem = async requestCode => {
-    navigation.push('RequestDetailScreen', {
-      requestCode,
-      isShowCancelButton: false,
-      submitButtonText: 'Xác nhận yêu cầu',
-      isShowSubmitButton: true,
-      isAddableDetailService: false,
-      typeSubmitButtonClick: 'APPROVE_REQUEST',
-      filter,
-      buttonIndex,
-      setRenderList,
-    });
+    if (user.role && user.role === 'ROLE_REPAIRER') {
+      navigation.push('RequestDetailScreen', {
+        requestCode,
+        isShowCancelButton: false,
+        submitButtonText: 'Xác nhận yêu cầu',
+        isShowSubmitButton: true,
+        isAddableDetailService: false,
+        typeSubmitButtonClick: 'APPROVE_REQUEST',
+        filter,
+        buttonIndex,
+        setRenderList,
+      });
+    } else {
+      setModalVisible(true);
+    }
   };
 
   const handleFilterClicked = () => {
@@ -89,6 +103,18 @@ const HomeScreen = ({navigation}) => {
       setCommuneIds,
     });
   };
+
+  useEffect(() => {
+    (async () => {
+      await dispatch(fetchProfile(repairerAPI));
+      if (errorMessage) {
+        Toast.show({
+          type: 'customErrorToast',
+          text1: errorMessage,
+        });
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -359,7 +385,10 @@ const HomeScreen = ({navigation}) => {
                         color: 'black',
                         flex: 1,
                       }}>
-                      {item.address}
+                      {item.address.substr(
+                        item.address.indexOf(', ') + 2,
+                        item.address.length,
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -368,11 +397,54 @@ const HomeScreen = ({navigation}) => {
           />
         )}
       </SafeAreaView>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalRatio={0.28}>
+        <Text style={styles.modalText}>Lưu ý</Text>
+        <View style={{marginTop: 20, marginBottom: 20}}>
+          <Text>Tài khoản của bạn chưa được xác thực</Text>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonOpen]}
+            onPress={() => {
+              setModalVisible(false);
+            }}>
+            <Text style={styles.textStyle}>Đồng ý</Text>
+          </TouchableOpacity>
+        </View>
+      </CustomModal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  textStyle: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+    borderRadius: 20,
+    paddingVertical: 10,
+  },
+  buttonOpen: {
+    backgroundColor: '#FEC54B',
+  },
   container: {
     paddingHorizontal: '4%',
     paddingTop: 16,

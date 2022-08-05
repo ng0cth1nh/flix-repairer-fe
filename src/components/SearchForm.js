@@ -8,6 +8,7 @@ export default function SearchForm({
   setSearch,
   handleOnChangeSearch,
   placeholder = '',
+  onFocus = null,
 }) {
   return (
     <View style={styles.searchForm}>
@@ -16,6 +17,7 @@ export default function SearchForm({
         placeholder={placeholder}
         onChangeText={handleOnChangeSearch}
         defaultValue={search}
+        onFocus={onFocus}
       />
       {search ? (
         <TouchableOpacity
