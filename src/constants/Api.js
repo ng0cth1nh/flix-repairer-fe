@@ -29,6 +29,8 @@ const ApiConstants = {
   POST_FEEDBACK_API: '/user/feedback',
   GET_REQUEST_HISTORY_LIST_API: '/repairer/request/histories',
   GET_TRANSACTION_HISTORIES_API: '/repairer/transactions',
+  GET_NOTIFICATIONS_API: '/user/notifications',
+  DELETE_NOTIFICATION_API: '/user/notification',
   GET_REQUEST_DETAIL_API: '/repairer/request/detail',
   CANCEL_REQUEST_API: '/repairer/request/cancel',
   CONFIRM_FIXING_REQUEST_API: '/repairer/request/confirmFixing',

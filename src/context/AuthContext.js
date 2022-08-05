@@ -178,7 +178,6 @@ const reRegister = dispatch => async params => {
   }
 };
 const confirmOTP = dispatch => async params => {
-  console.log(params);
   const formData = new FormData();
   formData.append('phone', params.phone);
   formData.append('otp', params.otp);
@@ -217,6 +216,11 @@ const confirmOTP = dispatch => async params => {
       formData.append('certificates[]', file);
     }
   }
+  if (params.registerServices) {
+    for (let serviceId of params.registerServices) {
+      formData.append('registerServices', serviceId);
+    }
+  }
   formData.append('fullName', params.fullName);
   formData.append('password', params.password);
   formData.append('communeId', params.communeId);
@@ -227,6 +231,7 @@ const confirmOTP = dispatch => async params => {
   formData.append('experienceDescription', params.experienceDescription);
   formData.append('gender', params.gender);
   formData.append('dateOfBirth', params.dateOfBirth);
+  console.log('formData: ', formData);
   try {
     const res = await axios.post(constants.CONFIRM_OTP_API, formData, {
       headers: {

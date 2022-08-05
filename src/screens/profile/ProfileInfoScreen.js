@@ -3,50 +3,31 @@ import {
   Image,
   Text,
   Dimensions,
-  TouchableOpacity,
-  StatusBar,
   ScrollView,
   TextInput,
   StyleSheet,
 } from 'react-native';
 import React from 'react';
 const {height, width} = Dimensions.get('window');
-import BackButton from '../../components/BackButton';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {useSelector} from 'react-redux';
 import {selectUser} from '../../features/user/userSlice';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 
 const ProfileInfoScreen = ({navigation}) => {
   const user = useSelector(selectUser);
 
   return (
     <View style={{backgroundColor: '#FEC54B', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FEC54B" />
-      <View
-        style={{
-          flex: 1,
-          height: 60,
-          width: '100%',
-          zIndex: 1,
-          position: 'absolute',
-          backgroundColor: '#FEC54B',
-        }}>
-        <BackButton onPressHandler={navigation.goBack} color="black" />
-        <TouchableOpacity
-          onPress={() => navigation.push('EditProfileInfoScreen')}
-          style={{
-            position: 'absolute',
-            zIndex: 1,
-            top: getStatusBarHeight() + 8,
-            right: 20,
-          }}>
-          <Image
-            style={{width: 24, height: 24}}
-            source={require('../../../assets/images/type/edit.png')}
-          />
-        </TouchableOpacity>
-      </View>
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Thông tin tài khoản"
+        isBackButton={true}
+        isEditButton={true}
+        onPressEdit={() => navigation.push('EditProfileInfoScreen')}
+        statusBarColor="#FEC54B"
+        style={{borderBottomColor: '#FEC54B'}}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Image
           style={{
@@ -56,7 +37,7 @@ const ProfileInfoScreen = ({navigation}) => {
             borderColor: '#F0F0F0',
             borderWidth: 1,
             alignSelf: 'center',
-            marginTop: 80,
+            marginTop: 20,
             marginBottom: 10,
           }}
           source={{uri: user.avatar}}
@@ -67,7 +48,7 @@ const ProfileInfoScreen = ({navigation}) => {
             fontWeight: 'bold',
             alignSelf: 'center',
             color: 'black',
-            marginBottom: 50,
+            marginBottom: 20,
           }}>
           {user.fullName}
         </Text>
@@ -155,7 +136,7 @@ const ProfileInfoScreen = ({navigation}) => {
             </View>
             <View style={styles.inputField}>
               <Text style={styles.inputLabel}>Mô tả kinh nghiệm</Text>
-              <View style={[styles.valueSpace, {height: 100}]}>
+              <View style={[styles.valueSpace, {height: 'auto'}]}>
                 <TextInput
                   style={
                     user.experienceDescription
@@ -216,7 +197,6 @@ const ProfileInfoScreen = ({navigation}) => {
                       marginBottom: 5,
                     }}>
                     {user.registerServices.map((item, index) => {
-                      // const [serviceId, serviceName, icon] = item.split('[SPACE]');
                       return (
                         <View
                           style={styles.selectedService}
@@ -228,11 +208,6 @@ const ProfileInfoScreen = ({navigation}) => {
                           <Text style={{marginLeft: 5, color: 'black'}}>
                             {item.serviceName}
                           </Text>
-                          {/* <TouchableOpacity
-                            onPress={() => handleDeleteAddedService(index)}
-                            style={styles.closeIcon}>
-                            <Ionicons name="close" size={16} />
-                          </TouchableOpacity> */}
                         </View>
                       );
                     })}

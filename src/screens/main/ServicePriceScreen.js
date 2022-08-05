@@ -49,13 +49,13 @@ const ServicePriceScreen = ({route, navigation}) => {
             </Text>
             <Text
               style={{
-                flex: 2,
+                flex: 3,
                 color: 'black',
                 alignSelf: 'center',
                 fontSize: 16,
                 fontWeight: 'bold',
               }}>
-              Giá dịch vụ
+              Giá dịch vụ (vnđ)
             </Text>
           </View>
         ) : null}

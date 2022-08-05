@@ -28,6 +28,7 @@ import {
 import axios from 'axios';
 import constants from '../../constants/Api';
 import Loading from '../../components/Loading';
+import TopHeaderComponent from '../../components/TopHeaderComponent';
 
 const EditProfileInfoScreen = ({navigation}) => {
   const repairerAPI = useAxios();
@@ -219,18 +220,13 @@ const EditProfileInfoScreen = ({navigation}) => {
 
   return (
     <View style={{backgroundColor: '#FEC54B', flex: 1}}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FEC54B" />
-      <View
-        style={{
-          flex: 1,
-          height: 60,
-          width: '100%',
-          zIndex: 1,
-          position: 'absolute',
-          backgroundColor: '#FEC54B',
-        }}>
-        <BackButton onPressHandler={navigation.goBack} color="black" />
-      </View>
+      <TopHeaderComponent
+        navigation={navigation}
+        title="Cập nhật thông tin tài khoản"
+        isBackButton={true}
+        statusBarColor="#FEC54B"
+        style={{borderBottomColor: '#FEC54B'}}
+      />
       {loading ? (
         <Loading color="white" />
       ) : (
@@ -243,7 +239,7 @@ const EditProfileInfoScreen = ({navigation}) => {
               borderColor: '#F0F0F0',
               borderWidth: 1,
               alignSelf: 'center',
-              marginTop: 80,
+              marginTop: 20,
               marginBottom: 10,
             }}
             source={{uri: user.avatar}}
@@ -254,7 +250,7 @@ const EditProfileInfoScreen = ({navigation}) => {
               fontWeight: 'bold',
               alignSelf: 'center',
               color: 'black',
-              marginBottom: 50,
+              marginBottom: 20,
             }}>
             {user.fullName}
           </Text>
@@ -309,7 +305,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 <View
                   style={[
                     styles.valueSpace,
-                    {height: 100},
+                    {height: 'auto'},
                     experienceDescriptionInputError
                       ? {borderColor: '#FF6442', borderWidth: 1}
                       : null,

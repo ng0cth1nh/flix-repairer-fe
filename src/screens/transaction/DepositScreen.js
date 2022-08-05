@@ -47,7 +47,7 @@ const WithdrawScreen = ({route, navigation}) => {
       await dispatch(setIsLoading());
       let body = {
         amount: +removeCommas(money),
-        orderInfo: `${user.phone} nap ${money} vao vi`,
+        orderInfo: `${user.phone} nap ${+removeCommas(money)} vao vi`,
         bankCode: 'NCB',
       };
       console.log('Deposit body: ', body);

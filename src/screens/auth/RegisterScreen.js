@@ -1,4 +1,10 @@
-import React, {useState, useContext, useEffect, useCallback} from 'react';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   Text,
   View,
@@ -10,11 +16,13 @@ import {
   Image,
   ImageBackground,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import axios from 'axios';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NotFound from '../../components/NotFound';
 import {RadioButton} from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import moment from 'moment';
@@ -28,6 +36,11 @@ import constants from '../../constants/Api';
 import DocumentPicker from 'react-native-document-picker';
 import {removeAscent} from '../../utils/util';
 import ProgressLoader from 'rn-progress-loader';
+import Button from '../../components/SubmitButton';
+import SearchForm from '../../components/SearchForm';
+import useAxios from '../../hooks/useAxios';
+import Loading from '../../components/Loading';
+import {Checkbox, NativeBaseProvider} from 'native-base';
 
 export default function RegisterScreen({navigation}) {
   const {register, state, clearErrorMessage, showLoader} =
@@ -56,6 +69,7 @@ export default function RegisterScreen({navigation}) {
   const [passwordInputError, setPasswordInputError] = useState(null);
   const [rePasswordInputError, setRePasswordInputError] = useState(null);
   const [addressError, setAddressError] = useState(null);
+  const [addServiceError, setAddServiceError] = useState(null);
   const [IDCardError, setIDCardError] = useState(null);
   const [fileError, setFileError] = useState(null);
   const [avatarError, setAvatarError] = useState(null);
@@ -64,6 +78,14 @@ export default function RegisterScreen({navigation}) {
   const [listCommune, setListCommune] = useState([]);
   const [file, setFile] = useState([]);
   const [certi, setCerti] = useState([]);
+  const [currentTitle, setCurrentTitle] = useState('Thông tin cá nhân');
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const typingTimeoutRef = useRef(null);
+  const [searchedService, setSearchedService] = useState(null);
+  const [addService, setAddService] = useState([]);
+  const repairerAPI = useAxios();
+
   let slider = null;
 
   useEffect(() => {
@@ -76,6 +98,41 @@ export default function RegisterScreen({navigation}) {
       }
     })();
   }, []);
+
+  const handleOnChangeSearch = async text => {
+    try {
+      setSearch(text);
+      if (text === '') {
+        return;
+      }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      setLoading(true);
+
+      typingTimeoutRef.current = setTimeout(async () => {
+        let response = await repairerAPI.get(constants.SEARCH_SERVICE_API, {
+          params: {keyword: text},
+        });
+        console.log('search: ' + text);
+        setSearchedService(response.data.services);
+        console.log('res: ' + response.data.services);
+        setLoading(false);
+      }, 200);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteAddedService = async index => {
+    const temp = [];
+    for (let i = 0; i < addService.length; i++) {
+      if (i !== index) {
+        temp.push(addService[i]);
+      }
+    }
+    setAddService(temp);
+  };
 
   const renderItems = ({item}) => {
     return item.component;
@@ -252,6 +309,7 @@ export default function RegisterScreen({navigation}) {
       });
       let temp = [...file, ...images];
       setFile(temp.slice(0, 2));
+      setFileError(null);
     } catch (error) {
       console.log(error);
     }
@@ -295,55 +353,45 @@ export default function RegisterScreen({navigation}) {
     if (state.errorMessage !== '') {
       clearErrorMessage();
     }
-    let isUsernameValid = checkUsernameValid();
-    let isPhoneValid = checkPhoneNumberValid();
-    if (!isUsernameValid || !isPhoneValid) {
-      await slider.goToSlide(0);
-      // console.log('change slide: ', index);
-      return;
-    }
-    let isAddressValid = checkAddressValid();
-    if (!isAddressValid) {
-      await slider.goToSlide(2);
-      return;
-    }
-    let isIDNumber = checkIDNumberValid();
-    let isFile = checkFileValid();
-    if (!isFile || !isIDNumber) {
-      await slider.goToSlide(3);
-      return;
-    }
-    let isExpValid = checkExperienceValid();
-    let isExpDesValid = checkExperienceDesValid();
-    if (!isExpValid || !isExpDesValid) {
-      await slider.goToSlide(4);
-      return;
-    }
+    // let isUsernameValid = checkUsernameValid();
+    // let isPhoneValid = checkPhoneNumberValid();
+    // if (!isUsernameValid || !isPhoneValid) {
+    //   await slider.goToSlide(0);
+    //   // console.log('change slide: ', index);
+    //   return;
+    // }
+    // let isAddressValid = checkAddressValid();
+    // if (!isAddressValid) {
+    //   await slider.goToSlide(2);
+    //   return;
+    // }
+    // let isIDNumber = checkIDNumberValid();
+    // let isFile = checkFileValid();
+    // if (!isFile || !isIDNumber) {
+    //   await slider.goToSlide(3);
+    //   return;
+    // }
+    // let isExpValid = checkExperienceValid();
+    // let isExpDesValid = checkExperienceDesValid();
+    // if (!isExpValid || !isExpDesValid) {
+    //   await slider.goToSlide(4);
+    //   return;
+    // }
 
     let isPasswordValid = checkPasswordValid();
     let isRePasswordValid = checkRePasswordValid();
 
-    if (!isPasswordValid || !isRePasswordValid) {
-      await slider.goToSlide(6);
-      return;
-    }
+    // if (!isPasswordValid || !isRePasswordValid) {
+    //   await slider.goToSlide(6);
+    //   return;
+    // }
 
-    if (!avatar) {
-      setAvatarError('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
-      console.log('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
-      return;
-    }
-    if (
-      isUsernameValid &&
-      isAddressValid &&
-      isPasswordValid &&
-      isPhoneValid &&
-      isRePasswordValid &&
-      isIDNumber &&
-      isExpValid &&
-      isExpDesValid &&
-      isFile
-    ) {
+    // if (!avatar) {
+    //   setAvatarError('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
+    //   console.log('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
+    //   return;
+    // }
+    if (isPasswordValid && isRePasswordValid) {
       showLoader();
       register({
         avatar,
@@ -362,6 +410,10 @@ export default function RegisterScreen({navigation}) {
         gender: checked === 'male' ? 1 : 0,
         dateOfBirth: date.format('DD-MM-YYYY'),
         type: 'REGISTER',
+        registerServices: addService.map((item, index) => {
+          const [serviceId, serviceName, icon] = item.split('[SPACE]');
+          return +serviceId;
+        }),
       });
       console.log('VALID');
     }
@@ -386,8 +438,10 @@ export default function RegisterScreen({navigation}) {
     {
       key: '1',
       component: (
-        <View style={{marginHorizontal: '4%'}}>
-          <Text style={styles.inputTittle}>Họ và tên *</Text>
+        <ScrollView
+          style={{marginHorizontal: '4%'}}
+          showsVerticalScrollIndicator={false}>
+          <Text style={[styles.inputTittle, {marginTop: 10}]}>Họ và tên *</Text>
           <View
             style={[
               styles.inputView,
@@ -423,13 +477,6 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{phoneInputError}</Text>
             )}
           </View>
-        </View>
-      ),
-    },
-    {
-      key: '2',
-      component: (
-        <View style={{marginHorizontal: '4%'}}>
           <Text style={styles.inputTittle}>Giới tính *</Text>
           <View
             style={{
@@ -499,13 +546,6 @@ export default function RegisterScreen({navigation}) {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
-      ),
-    },
-    {
-      key: '3',
-      component: (
-        <View style={{marginHorizontal: '4%'}}>
           <Text style={styles.inputTittle}>Địa chỉ *</Text>
           <View style={styles.addressPicker}>
             <View style={styles.addressSelectItem}>
@@ -600,13 +640,6 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{addressError}</Text>
             )}
           </View>
-        </View>
-      ),
-    },
-    {
-      key: '4',
-      component: (
-        <View style={{marginHorizontal: '4%'}}>
           <Text style={styles.inputTittle}>Số CMND/CCCD *</Text>
           <View
             style={[
@@ -664,14 +697,45 @@ export default function RegisterScreen({navigation}) {
             ) : null}
             {fileError && <Text style={styles.errorMessage}>{fileError}</Text>}
           </View>
-        </View>
+          <Button
+            style={[styles.loginButton, {marginTop: 20, marginBottom: 30}]}
+            buttonText="TIẾP TỤC"
+            onPress={async () => {
+              let isUsernameValid = checkUsernameValid();
+              let isPhoneValid = checkPhoneNumberValid();
+              let isAddressValid = checkAddressValid();
+              let isIDNumber = checkIDNumberValid();
+              let isFile = checkFileValid();
+              if (
+                isUsernameValid &&
+                isPhoneValid &&
+                isAddressValid &&
+                isIDNumber &&
+                isFile
+              ) {
+                if (!avatar) {
+                  setAvatarError(
+                    'Vui lòng chọn ảnh đại diện có khuôn mặt của bạn',
+                  );
+                } else {
+                  await slider.goToSlide(1);
+                  setCurrentTitle('Kinh nghiệm làm việc');
+                }
+              }
+            }}
+          />
+        </ScrollView>
       ),
     },
     {
-      key: '5',
+      key: '2',
       component: (
-        <View style={{marginHorizontal: '4%'}}>
-          <Text style={styles.inputTittle}>Năm kinh nghiệm *</Text>
+        <ScrollView
+          style={{marginHorizontal: '4%'}}
+          showsVerticalScrollIndicator={false}>
+          <Text style={[styles.inputTittle, {marginTop: 10}]}>
+            Năm kinh nghiệm *
+          </Text>
           <View
             style={[
               styles.inputView,
@@ -710,77 +774,271 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{experienceDesInputError}</Text>
             )}
           </View>
-        </View>
-      ),
-    },
-    {
-      key: '6',
-      component: (
-        <View style={{marginHorizontal: '4%'}}>
           <Text style={[styles.inputTittle, {marginBottom: 10}]}>
             Chứng chỉ nghề (nếu có)
           </Text>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{
-              width: '100%',
-              height: 0.325 * height,
-            }}>
-            {certi.length !== 0
-              ? certi.map((item, index) => {
-                  return (
-                    <View
-                      key={index.toString()}
-                      style={{
-                        backgroundColor: '#F0F0F0',
-                        width: 'auto',
-                        paddingHorizontal: 10,
-                        paddingVertical: 4,
-                        borderRadius: 10,
-                        marginRight: 20,
-                        marginTop: 20,
-                      }}>
-                      <Text
-                        style={{fontSize: 16, color: 'black', width: 'auto'}}
-                        numberOfLines={1}
-                        ellipsizeMode={'middle'}>
-                        {item?.name}
-                      </Text>
-                      <TouchableOpacity
-                        style={[styles.closeButton, {right: -12, top: -12}]}
-                        onPress={async () => await handleClose(index, 'CERTI')}>
-                        <Image
-                          style={{
-                            width: 12,
-                            height: 12,
-                          }}
-                          source={require('../../../assets/images/type/close.png')}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })
-              : null}
-            <TouchableOpacity onPress={handleCertiSelection}>
-              <Image
+          <FlatList
+            data={certi}
+            renderItem={({item, index}) => (
+              <View
+                key={index.toString()}
                 style={{
-                  width: 40,
-                  height: 40,
-                  marginTop: 10,
-                  resizeMode: 'contain',
+                  backgroundColor: '#F0F0F0',
+                  width: 'auto',
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 10,
+                  marginRight: 20,
+                  marginTop: 20,
+                }}>
+                <Text
+                  style={{fontSize: 16, color: 'black', width: 'auto'}}
+                  numberOfLines={1}
+                  ellipsizeMode={'middle'}>
+                  {item?.name}
+                </Text>
+                <TouchableOpacity
+                  style={[styles.closeButton, {right: -12, top: -12}]}
+                  onPress={async () => await handleClose(index, 'CERTI')}>
+                  <Image
+                    style={{
+                      width: 12,
+                      height: 12,
+                    }}
+                    source={require('../../../assets/images/type/close.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            keyExtractor={item => item.id}
+          />
+          <TouchableOpacity onPress={handleCertiSelection}>
+            <Image
+              style={{
+                width: 40,
+                height: 40,
+                marginTop: 10,
+                resizeMode: 'contain',
+              }}
+              source={require('../../../assets/images/type/file.png')}
+            />
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+            }}>
+            <Button
+              style={[
+                styles.loginButton,
+                {
+                  marginTop: 20,
+                  marginBottom: 30,
+                  backgroundColor: '#F0F0F0',
+                  flex: 1,
+                  marginRight: 6,
+                },
+              ]}
+              buttonText="TRỞ LẠI"
+              onPress={async () => {
+                console.log(height);
+                await slider.goToSlide(0);
+                setCurrentTitle('Thông tin cá nhân');
+              }}
+            />
+            <Button
+              style={[
+                styles.loginButton,
+                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+              ]}
+              buttonText="TIẾP TỤC"
+              onPress={async () => {
+                let isExpValid = checkExperienceValid();
+                let isExpDesValid = checkExperienceDesValid();
+                if (isExpValid && isExpDesValid) {
+                  await slider.goToSlide(2);
+                  setCurrentTitle('Chọn dịch vụ sửa');
+                }
+              }}
+            />
+          </View>
+        </ScrollView>
+      ),
+    },
+    {
+      key: '3',
+      component: (
+        <View
+          style={{
+            marginHorizontal: '4%',
+            height: 0.542 * height,
+          }}>
+          <SearchForm
+            search={search}
+            setSearch={setSearch}
+            handleOnChangeSearch={handleOnChangeSearch}
+            onFocus={() => {
+              setAddServiceError(null);
+            }}
+            placeholder="Tìm kiếm dịch vụ"
+          />
+          {addServiceError && (
+            <Text
+              style={[
+                styles.errorMessage,
+                {position: 'relative', bottom: 0, left: '4%', marginTop: 4},
+              ]}>
+              {addServiceError}
+            </Text>
+          )}
+          <ScrollView style={{marginTop: 10, marginBottom: 0.15 * height}}>
+            {addService.length !== 0 ? (
+              <View>
+                <View style={styles.titleBox}>
+                  <Text style={[styles.textBold, {fontSize: 20}]}>Đã thêm</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginBottom: 5,
+                  }}>
+                  {addService.map((item, index) => {
+                    const [serviceId, serviceName, icon] =
+                      item.split('[SPACE]');
+                    return (
+                      <View
+                        style={styles.selectedService}
+                        key={index.toString()}>
+                        <Image
+                          source={{uri: icon}}
+                          style={{width: 24, height: 24}}
+                        />
+                        <Text style={{marginLeft: 5, color: 'black'}}>
+                          {serviceName}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => handleDeleteAddedService(index)}
+                          style={styles.closeIcon}>
+                          <Ionicons name="close" size={16} />
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
+            {loading ? (
+              <Loading
+                style={{
+                  marginTop: 20,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-                source={require('../../../assets/images/type/file.png')}
               />
-            </TouchableOpacity>
+            ) : (
+              <View>
+                {searchedService !== null ? (
+                  searchedService.length !== 0 ? (
+                    <NativeBaseProvider>
+                      <View style={styles.titleBox}>
+                        <Text style={[styles.textBold, {fontSize: 20}]}>
+                          Tất cả dịch vụ
+                        </Text>
+                      </View>
+                      <Checkbox.Group
+                        onChange={setAddService}
+                        value={addService}
+                        accessibilityLabel="choose numbers">
+                        {searchedService.map((item, index) => (
+                          <View
+                            style={styles.serviceRow}
+                            key={index.toString()}>
+                            <Image
+                              source={{uri: item.icon}}
+                              style={{width: 24, height: 24}}
+                            />
+                            <Text
+                              style={{
+                                color: 'black',
+                                fontSize: 16,
+                                marginLeft: 20,
+                              }}>
+                              {item.serviceName}
+                            </Text>
+                            <View style={{marginLeft: 'auto'}}>
+                              <Checkbox
+                                accessibilityLabel={item.serviceName}
+                                value={`${item.serviceId}[SPACE]${item.serviceName}[SPACE]${item.icon}`}
+                                colorScheme="yellow"
+                                _icon={{color: 'black'}}
+                              />
+                            </View>
+                          </View>
+                        ))}
+                      </Checkbox.Group>
+                    </NativeBaseProvider>
+                  ) : (
+                    <NotFound />
+                  )
+                ) : null}
+              </View>
+            )}
           </ScrollView>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              height: 'auto',
+              bottom: 0.018 * height,
+              left: 0,
+              position: 'absolute',
+            }}>
+            <Button
+              style={[
+                styles.loginButton,
+                {
+                  marginTop: 20,
+                  marginBottom: 30,
+                  backgroundColor: '#F0F0F0',
+                  flex: 1,
+                  marginRight: 6,
+                },
+              ]}
+              buttonText="TRỞ LẠI"
+              onPress={async () => {
+                await slider.goToSlide(1);
+                setCurrentTitle('Kinh nghiệm làm việc');
+              }}
+            />
+            <Button
+              style={[
+                styles.loginButton,
+                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+              ]}
+              buttonText="TIẾP TỤC"
+              onPress={async () => {
+                if (addService && addService.length !== 0) {
+                  await slider.goToSlide(3);
+                  setCurrentTitle('Tạo Mật Khẩu');
+                } else {
+                  setAddServiceError('Vui lòng chọn ít nhất 1 dịch vụ');
+                }
+              }}
+            />
+          </View>
         </View>
       ),
     },
     {
-      key: '7',
+      key: '4',
       component: (
-        <View style={{marginHorizontal: '4%'}}>
-          <Text style={styles.inputTittle}>Mật khẩu *</Text>
+        <View
+          style={{
+            marginHorizontal: '4%',
+            height: 0.542 * height,
+          }}>
+          <Text style={[styles.inputTittle, {marginTop: 10}]}>Mật khẩu *</Text>
           <View
             style={[
               styles.inputView,
@@ -861,6 +1119,42 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.termLink}>điều khoản sử dụng</Text>
             </TouchableOpacity>
           </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+
+              height: 'auto',
+              bottom: 0.018 * height,
+              left: 0,
+              position: 'absolute',
+            }}>
+            <Button
+              style={[
+                styles.loginButton,
+                {
+                  marginTop: 20,
+                  marginBottom: 30,
+                  backgroundColor: '#F0F0F0',
+                  flex: 1,
+                  marginRight: 6,
+                },
+              ]}
+              buttonText="TRỞ LẠI"
+              onPress={async () => {
+                await slider.goToSlide(2);
+                setCurrentTitle('Chọn dịch vụ sửa');
+              }}
+            />
+            <Button
+              style={[
+                styles.loginButton,
+                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+              ]}
+              buttonText="ĐĂNG KÝ"
+              onPress={handleRegisterClick}
+            />
+          </View>
         </View>
       ),
     },
@@ -898,12 +1192,12 @@ export default function RegisterScreen({navigation}) {
                 />
               </TouchableOpacity>
             </ImageBackground>
-            <Text style={styles.headerText}>Đăng Ký Tài Khoản</Text>
+            <Text style={styles.headerText}>{currentTitle}</Text>
             {avatarError && (
               <Text
                 style={{
                   alignSelf: 'center',
-                  bottom: 26,
+                  bottom: 30,
                   width: '60%',
                   position: 'absolute',
                   fontSize: 10,
@@ -919,10 +1213,11 @@ export default function RegisterScreen({navigation}) {
             data={slides}
             renderItem={renderItems}
             onDone={handleRegisterClick}
+            // scrollEnabled={false}
             bottomButton
-            activeDotStyle={{backgroundColor: '#FEC54B'}}
-            renderNextButton={renderNextButton}
-            renderDoneButton={renderDoneButton}
+            renderPagination={() => null}
+            // renderNextButton={renderNextButton}
+            // renderDoneButton={renderDoneButton}
             ref={ref => (slider = ref)}
           />
         </View>
@@ -996,6 +1291,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     marginLeft: '4%',
+    paddingBottom: 10,
   },
   inputTittle: {
     fontSize: 16,
@@ -1134,5 +1430,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderWidth: 1,
     borderColor: '#CACACA',
+  },
+  headerBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    paddingRight: 20,
+    marginBottom: 10,
+  },
+  textBold: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  titleBox: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  serviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#D3D3D3',
+    marginVertical: 6,
+    width: '100%',
+  },
+  selectedService: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 16,
+    marginBottom: 16,
+    borderRadius: 10,
+    backgroundColor: '#CACACA',
+  },
+
+  closeIcon: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#FEC54B',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: -10,
+    right: -10,
   },
 });

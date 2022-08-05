@@ -1,28 +1,19 @@
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   SafeAreaView,
-  TouchableOpacity,
   FlatList,
-  Dimensions,
-  StatusBar,
   RefreshControl,
   ActivityIndicator,
-  TouchableHighlight,
 } from 'react-native';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
 import React, {useState, useEffect} from 'react';
-const {width, height} = Dimensions.get('window');
-import CustomModal from '../../components/CustomModal';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import {useSelector, useDispatch} from 'react-redux';
 import useAxios from '../../hooks/useAxios';
 import {
   selectIsLoading,
   setIsLoading,
-  selectErrorMessage,
   fetchTransactionHistories,
 } from '../../features/user/userSlice';
 import Toast from 'react-native-toast-message';
@@ -32,7 +23,6 @@ import {NUMBER_RECORD_PER_PAGE} from '../../constants/Api';
 
 const BalanceChangeScreen = ({navigation}) => {
   const [transactions, setTransactions] = useState([]);
-  const [idDelete, setIdDelete] = useState(-1);
   const [refreshControl, setRefreshControl] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [pageNumber, setPageNumber] = useState(0);
@@ -110,28 +100,28 @@ const BalanceChangeScreen = ({navigation}) => {
         : item.type === 'DEPOSIT'
         ? 'Nạp tiền vào ví thành công'
         : item.type === 'PAY_COMMISSIONS'
-        ? 'Trả tiền hoa hồng thành công'
+        ? 'Trừ tiền hoa hồng thành công'
         : item.type === 'REFUNDS'
         ? 'Hoàn tiền thành công'
         : item.type === 'FINED'
         ? 'Trừ tiền phạt'
-        : item.type === 'CUSTOMER_PAYMENT'
-        ? 'Thanh toán hóa đơn thành công'
-        : 'Thanh toán hóa đơn thành công';
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? 'Nhận tiền thanh toán hóa đơn thành công'
+        : 'Khách hàng thanh toán hóa đơn thành công';
     } else {
       return item.type === 'WITHDRAW'
         ? 'Rút tiền về ví VNPAY thất bại'
         : item.type === 'DEPOSIT'
         ? 'Nạp tiền vào ví thất bại'
         : item.type === 'PAY_COMMISSIONS'
-        ? 'Trả tiền hoa hồng thất bại'
+        ? 'Trừ tiền hoa hồng thất bại'
         : item.type === 'REFUNDS'
         ? 'Hoàn tiền thất bại'
         : item.type === 'FINED'
         ? 'Trừ tiền phạt'
-        : item.type === 'CUSTOMER_PAYMENT'
-        ? 'Thanh toán hóa đơn thất bại'
-        : 'Thanh toán hóa đơn thất bại';
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? 'Nhận tiền thanh toán hóa đơn thất bại'
+        : 'Khách hàng thanh toán hóa đơn thất bại';
     }
   };
 
@@ -142,36 +132,44 @@ const BalanceChangeScreen = ({navigation}) => {
         : item.type === 'DEPOSIT'
         ? `Nạp +${numberWithCommas(item.amount)} vnđ thành công`
         : item.type === 'PAY_COMMISSIONS'
-        ? `Trả +${numberWithCommas(item.amount)} vnđ  tiền hoa hồng thành công`
+        ? `Trừ -${numberWithCommas(
+            item.amount,
+          )} vnđ  tiền hoa hồng thành công cho yêu cầu: ${item.requestCode}`
         : item.type === 'REFUNDS'
         ? `Hoàn +${numberWithCommas(item.amount)} vnđ thành công`
         : item.type === 'FINED'
-        ? `Trừ -${numberWithCommas(item.amount)} vnđ tiền phạt`
-        : item.type === 'CUSTOMER_PAYMENT'
-        ? `Thanh toán +${numberWithCommas(
+        ? `Trừ -${numberWithCommas(item.amount)} vnđ tiền phạt cho yêu cầu:${
+            item.requestCode
+          }`
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? `Nhận tiền thanh toán +${numberWithCommas(
             item.amount,
-          )} vnđ thành công cho đơn hàng ${item.transactionCode}`
-        : `Thanh toán +${numberWithCommas(
+          )} vnđ thành công qua VNPAY cho yêu cầu: ${item.requestCode}`
+        : `Khách hàng thanh toán +${numberWithCommas(
             item.amount,
-          )} vnđ thành công cho đơn hàng ${item.transactionCode}`;
+          )} vnđ thành công qua VNPAY cho yêu cầu: ${item.requestCode}`;
     } else {
       return item.type === 'WITHDRAW'
         ? `Rút -${numberWithCommas(item.amount)} vnđ về ví VNPAY thất bại`
         : item.type === 'DEPOSIT'
         ? `Nạp +${numberWithCommas(item.amount)} vnđ thất bại`
         : item.type === 'PAY_COMMISSIONS'
-        ? `Trả +${numberWithCommas(item.amount)} vnđ  tiền hoa hồng thất bại`
+        ? `Trừ -${numberWithCommas(
+            item.amount,
+          )} vnđ  tiền hoa hồng thất bại cho yêu cầu: ${item.requestCode}`
         : item.type === 'REFUNDS'
         ? `Hoàn +${numberWithCommas(item.amount)} vnđ thất bại`
         : item.type === 'FINED'
-        ? `Trừ -${numberWithCommas(item.amount)} vnđ tiền phạt`
-        : item.type === 'CUSTOMER_PAYMENT'
-        ? `Thanh toán +${numberWithCommas(
+        ? `Trừ -${numberWithCommas(item.amount)} vnđ tiền phạt cho yêu cầu:${
+            item.requestCode
+          }`
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? `Nhận tiền thanh toán +${numberWithCommas(
             item.amount,
-          )} vnđ thất bại cho đơn hàng ${item.transactionCode}`
-        : `Thanh toán +${numberWithCommas(
+          )} vnđ thất bại qua VNPAY cho yêu cầu: ${item.requestCode}`
+        : `Khách hàng thanh toán +${numberWithCommas(
             item.amount,
-          )} vnđ thất bại cho đơn hàng ${item.transactionCode}`;
+          )} vnđ thất bại qua VNPAY cho yêu cầu: ${item.requestCode}`;
     }
   };
 
@@ -195,7 +193,7 @@ const BalanceChangeScreen = ({navigation}) => {
               marginHorizontal: 14,
             }}
           />
-          <View style={{paddingRight: 60, alignSelf: 'center'}}>
+          <View style={{flex: 1, alignSelf: 'center', marginRight: 10}}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -215,13 +213,28 @@ const BalanceChangeScreen = ({navigation}) => {
               }}>
               {genContent(item)}
             </Text>
-            <Text
+            <View
               style={{
-                fontSize: 8,
-                color: '#7C7C7C',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                flex: 1,
+                alignItems: 'center',
               }}>
-              {moment(item.createdAt).format('HH:mm - DD/MM/YYYY')}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 8,
+                  color: '#7C7C7C',
+                }}>
+                {moment(item.createdAt).format('HH:mm - DD/MM/YYYY')}
+              </Text>
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 10,
+                }}>
+                MGD: {item.transactionCode}
+              </Text>
+            </View>
           </View>
         </View>
       </View>

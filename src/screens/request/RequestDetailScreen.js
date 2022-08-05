@@ -448,11 +448,16 @@ const RequestDetailScreen = ({route, navigation}) => {
         <CustomModal
           modalVisible={warningModalVisible}
           setModalVisible={setWarningModalVisible}
-          modalRatio={0.34}>
+          modalRatio={data && data.status === 'APPROVED' ? 0.32 : 0.28}>
           <Text style={styles.modalText}>
             Bạn có chắc chắn muốn hủy đơn sửa này không?
           </Text>
-          <Text>Khi hủy đơn sửa bạn sẽ bị trừ điểm và tín nhiệm</Text>
+          {data && data.status === 'APPROVED' ? (
+            <Text>
+              Bạn sẽ bị phạt tiền 20,000 vnđ nếu hủy trước thời hạn sửa chữa
+              trong vòng 1 tiếng
+            </Text>
+          ) : null}
           <View
             style={{
               width: '100%',

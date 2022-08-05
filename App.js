@@ -175,6 +175,7 @@ function App() {
   function HomeStackScreen() {
     return (
       <Stack.Navigator
+        initialRouteName="HomeScreen"
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
@@ -298,6 +299,7 @@ function App() {
       <NavigationContainer ref={navigationRef} linking={linking}>
         {state.token ? (
           <Tab.Navigator
+            initialRouteName="HomeStackScreen"
             tabBarOptions={{
               showLabel: false,
               keyboardHidesTabBar: true,
