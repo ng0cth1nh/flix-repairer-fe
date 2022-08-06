@@ -57,7 +57,7 @@ const NotificationScreen = ({navigation}) => {
         if (
           (item.type === null ||
             item.type.startsWith('DEPOSIT') ||
-            item.type.startsWith('REGISTER_SUCCESS') ||
+            item.type.startsWith('REGISTER_') ||
             item.type.startsWith('RESPONSE_FEEDBACK')) &&
           !item.read
         ) {
@@ -246,7 +246,7 @@ const NotificationScreen = ({navigation}) => {
   const renderItem = ({item}) => {
     return item.type === null ||
       item.type.startsWith('DEPOSIT') ||
-      item.type.startsWith('REGISTER_SUCCESS') ||
+      item.type.startsWith('REGISTER_') ||
       item.type.startsWith('RESPONSE_FEEDBACK') ? (
       <View
         style={{
@@ -285,6 +285,8 @@ const NotificationScreen = ({navigation}) => {
                 ? require('../../../assets/images/type/help-desk.png')
                 : item.type.startsWith('DEPOSIT')
                 ? require('../../../assets/images/type/deposit.png')
+                : item.type.startsWith('REGISTER_FAIL')
+                ? require('../../../assets/images/type/unCheck.png')
                 : require('../../../assets/images/type/check.png')
             }
             style={{

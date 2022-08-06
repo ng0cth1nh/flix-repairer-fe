@@ -85,19 +85,41 @@ export default function RegisterScreen({navigation}) {
   const [searchedService, setSearchedService] = useState(null);
   const [addService, setAddService] = useState([]);
   const repairerAPI = useAxios();
-
   let slider = null;
+  const infoScrollRef = useRef();
+  const exScrollRef = useRef();
 
   useEffect(() => {
     (async () => {
       try {
         let response = await axios.get(constants.GET_ALL_CITY_API);
         setListCity(response.data.cities);
+        response = await repairerAPI.get(constants.SEARCH_SERVICE_API, {
+          params: {keyword: null},
+        });
+        setSearchedService(response.data.services);
       } catch (err) {
         setAddressError(err.message);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (state.errorCode !== '') {
+      if (
+        state.errorCode === 'ACCOUNT_EXISTED' ||
+        state.errorCode === 'INVALID_PHONE_NUMBER' ||
+        state.errorCode === 'IDENTITY_CARD_NUMBER_EXISTED'
+      ) {
+        slider.goToSlide(0);
+        if (state.errorCode === 'IDENTITY_CARD_NUMBER_EXISTED') {
+          infoScrollRef.current?.scrollTo({x: 0, y: 600, animated: true});
+        } else {
+          infoScrollRef.current?.scrollTo({x: 0, y: 0, animated: true});
+        }
+      }
+    }
+  }, [state.errorCode]);
 
   const handleOnChangeSearch = async text => {
     try {
@@ -177,8 +199,11 @@ export default function RegisterScreen({navigation}) {
     if (!phoneNumber || phoneNumber.trim() === '') {
       setPhoneInputError('Vui lòng nhập số điện thoại');
       return false;
-    } else if (!/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber)) {
-      setPhoneInputError('Số điện thoại không đúng!');
+    } else if (
+      !/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber) ||
+      phoneNumber.length !== 10
+    ) {
+      setPhoneInputError('Số điện thoại không đúng');
       return false;
     }
     setPhoneInputError(null);
@@ -353,44 +378,8 @@ export default function RegisterScreen({navigation}) {
     if (state.errorMessage !== '') {
       clearErrorMessage();
     }
-    // let isUsernameValid = checkUsernameValid();
-    // let isPhoneValid = checkPhoneNumberValid();
-    // if (!isUsernameValid || !isPhoneValid) {
-    //   await slider.goToSlide(0);
-    //   // console.log('change slide: ', index);
-    //   return;
-    // }
-    // let isAddressValid = checkAddressValid();
-    // if (!isAddressValid) {
-    //   await slider.goToSlide(2);
-    //   return;
-    // }
-    // let isIDNumber = checkIDNumberValid();
-    // let isFile = checkFileValid();
-    // if (!isFile || !isIDNumber) {
-    //   await slider.goToSlide(3);
-    //   return;
-    // }
-    // let isExpValid = checkExperienceValid();
-    // let isExpDesValid = checkExperienceDesValid();
-    // if (!isExpValid || !isExpDesValid) {
-    //   await slider.goToSlide(4);
-    //   return;
-    // }
-
     let isPasswordValid = checkPasswordValid();
     let isRePasswordValid = checkRePasswordValid();
-
-    // if (!isPasswordValid || !isRePasswordValid) {
-    //   await slider.goToSlide(6);
-    //   return;
-    // }
-
-    // if (!avatar) {
-    //   setAvatarError('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
-    //   console.log('Vui lòng chọn ảnh đại diện có khuôn mặt của bạn');
-    //   return;
-    // }
     if (isPasswordValid && isRePasswordValid) {
       showLoader();
       register({
@@ -419,28 +408,14 @@ export default function RegisterScreen({navigation}) {
     }
   };
 
-  const renderNextButton = () => {
-    return (
-      <View style={[styles.loginButton, {marginBottom: 10}]}>
-        <Text style={styles.buttonText}>TIẾP TỤC</Text>
-      </View>
-    );
-  };
-  const renderDoneButton = () => {
-    return (
-      <View style={[styles.loginButton, {marginBottom: 10}]}>
-        <Text style={styles.buttonText}>ĐĂNG KÝ</Text>
-      </View>
-    );
-  };
-
   const slides = [
     {
       key: '1',
       component: (
         <ScrollView
           style={{marginHorizontal: '4%'}}
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          ref={infoScrollRef}>
           <Text style={[styles.inputTittle, {marginTop: 10}]}>Họ và tên *</Text>
           <View
             style={[
@@ -463,19 +438,35 @@ export default function RegisterScreen({navigation}) {
           <View
             style={[
               styles.inputView,
-              {borderColor: phoneInputError ? '#FF6442' : '#CACACA'},
+              {
+                borderColor:
+                  phoneInputError ||
+                  (state.errorMessage !== '' &&
+                    (state.errorCode === 'ACCOUNT_EXISTED' ||
+                      state.errorCode === 'INVALID_PHONE_NUMBER'))
+                    ? '#FF6442'
+                    : '#CACACA',
+              },
             ]}>
             <TextInput
               style={styles.input}
               placeholder="Nhập số điện thoại"
               onChangeText={text => setPhoneNumber(text)}
-              onFocus={() => setPhoneInputError(null)}
+              onFocus={() => {
+                setPhoneInputError(null);
+                clearErrorMessage();
+              }}
               value={phoneNumber}
               keyboardType="number-pad"
             />
             {phoneInputError && (
               <Text style={styles.errorMessage}>{phoneInputError}</Text>
             )}
+            {state.errorMessage !== '' &&
+              (state.errorCode === 'ACCOUNT_EXISTED' ||
+                state.errorCode === 'INVALID_PHONE_NUMBER') && (
+                <Text style={styles.errorMessage}>{state.errorMessage}</Text>
+              )}
           </View>
           <Text style={styles.inputTittle}>Giới tính *</Text>
           <View
@@ -644,19 +635,33 @@ export default function RegisterScreen({navigation}) {
           <View
             style={[
               styles.inputView,
-              {borderColor: IDCardError ? '#FF6442' : '#CACACA'},
+              {
+                borderColor:
+                  IDCardError ||
+                  (state.errorMessage !== '' &&
+                    state.errorCode === 'IDENTITY_CARD_NUMBER_EXISTED')
+                    ? '#FF6442'
+                    : '#CACACA',
+              },
             ]}>
             <TextInput
               style={styles.input}
               onChangeText={text => setIDCard(text)}
               value={IDCard}
               keyboardType="number-pad"
-              onFocus={() => setIDCardError(null)}
+              onFocus={() => {
+                setIDCardError(null);
+                clearErrorMessage();
+              }}
               placeholder="Nhập số cccd/cmnd"
             />
             {IDCardError && (
               <Text style={styles.errorMessage}>{IDCardError}</Text>
             )}
+            {state.errorMessage !== '' &&
+              state.errorCode === 'IDENTITY_CARD_NUMBER_EXISTED' && (
+                <Text style={styles.errorMessage}>{state.errorMessage}</Text>
+              )}
           </View>
           <Text style={styles.inputTittle}>Ảnh hai mặt CMND/CCCD *</Text>
           <View style={{width: '100%', flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -698,7 +703,7 @@ export default function RegisterScreen({navigation}) {
             {fileError && <Text style={styles.errorMessage}>{fileError}</Text>}
           </View>
           <Button
-            style={[styles.loginButton, {marginTop: 20, marginBottom: 30}]}
+            style={[styles.loginButton, {marginTop: 20, marginBottom: 20}]}
             buttonText="TIẾP TỤC"
             onPress={async () => {
               let isUsernameValid = checkUsernameValid();
@@ -706,6 +711,11 @@ export default function RegisterScreen({navigation}) {
               let isAddressValid = checkAddressValid();
               let isIDNumber = checkIDNumberValid();
               let isFile = checkFileValid();
+              if (!isUsernameValid || !isPhoneValid) {
+                infoScrollRef.current?.scrollTo({x: 0, y: 0, animated: true});
+              } else if (!isAddressValid) {
+                infoScrollRef.current?.scrollTo({x: 0, y: 400, animated: true});
+              }
               if (
                 isUsernameValid &&
                 isPhoneValid &&
@@ -732,7 +742,8 @@ export default function RegisterScreen({navigation}) {
       component: (
         <ScrollView
           style={{marginHorizontal: '4%'}}
-          showsVerticalScrollIndicator={false}>
+          showsVerticalScrollIndicator={false}
+          ref={exScrollRef}>
           <Text style={[styles.inputTittle, {marginTop: 10}]}>
             Năm kinh nghiệm *
           </Text>
@@ -833,7 +844,7 @@ export default function RegisterScreen({navigation}) {
                 styles.loginButton,
                 {
                   marginTop: 20,
-                  marginBottom: 30,
+                  marginBottom: 20,
                   backgroundColor: '#F0F0F0',
                   flex: 1,
                   marginRight: 6,
@@ -849,12 +860,20 @@ export default function RegisterScreen({navigation}) {
             <Button
               style={[
                 styles.loginButton,
-                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+                {marginTop: 20, marginBottom: 20, flex: 1, marginLeft: 6},
               ]}
               buttonText="TIẾP TỤC"
               onPress={async () => {
                 let isExpValid = checkExperienceValid();
                 let isExpDesValid = checkExperienceDesValid();
+                if (!isExpValid) {
+                  console.log('aaa');
+                  exScrollRef.current?.scrollTo({
+                    x: 0,
+                    y: 0,
+                    animated: true,
+                  });
+                }
                 if (isExpValid && isExpDesValid) {
                   await slider.goToSlide(2);
                   setCurrentTitle('Chọn dịch vụ sửa');
@@ -971,6 +990,7 @@ export default function RegisterScreen({navigation}) {
                                 accessibilityLabel={item.serviceName}
                                 value={`${item.serviceId}[SPACE]${item.serviceName}[SPACE]${item.icon}`}
                                 colorScheme="yellow"
+                                onChange={() => setAddServiceError(null)}
                                 _icon={{color: 'black'}}
                               />
                             </View>
@@ -999,7 +1019,7 @@ export default function RegisterScreen({navigation}) {
                 styles.loginButton,
                 {
                   marginTop: 20,
-                  marginBottom: 30,
+                  marginBottom: 20,
                   backgroundColor: '#F0F0F0',
                   flex: 1,
                   marginRight: 6,
@@ -1014,7 +1034,7 @@ export default function RegisterScreen({navigation}) {
             <Button
               style={[
                 styles.loginButton,
-                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+                {marginTop: 20, marginBottom: 20, flex: 1, marginLeft: 6},
               ]}
               buttonText="TIẾP TỤC"
               onPress={async () => {
@@ -1107,9 +1127,6 @@ export default function RegisterScreen({navigation}) {
               <Text style={styles.errorMessage}>{rePasswordInputError}</Text>
             )}
           </View>
-          {state.errorMessage !== '' && (
-            <Text style={styles.errorMessage}>{state.errorMessage}</Text>
-          )}
           <View style={styles.termContainer}>
             <Text>Bằng việc nhấn đăng ký là bạn đã chấp nhận</Text>
             <TouchableOpacity
@@ -1134,7 +1151,7 @@ export default function RegisterScreen({navigation}) {
                 styles.loginButton,
                 {
                   marginTop: 20,
-                  marginBottom: 30,
+                  marginBottom: 20,
                   backgroundColor: '#F0F0F0',
                   flex: 1,
                   marginRight: 6,
@@ -1149,7 +1166,7 @@ export default function RegisterScreen({navigation}) {
             <Button
               style={[
                 styles.loginButton,
-                {marginTop: 20, marginBottom: 30, flex: 1, marginLeft: 6},
+                {marginTop: 20, marginBottom: 20, flex: 1, marginLeft: 6},
               ]}
               buttonText="ĐĂNG KÝ"
               onPress={handleRegisterClick}
@@ -1213,11 +1230,9 @@ export default function RegisterScreen({navigation}) {
             data={slides}
             renderItem={renderItems}
             onDone={handleRegisterClick}
-            // scrollEnabled={false}
+            scrollEnabled={false}
             bottomButton
             renderPagination={() => null}
-            // renderNextButton={renderNextButton}
-            // renderDoneButton={renderDoneButton}
             ref={ref => (slider = ref)}
           />
         </View>
