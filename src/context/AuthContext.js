@@ -12,7 +12,12 @@ import dayjs from 'dayjs';
 const authReducer = (state, action) => {
   switch (action.type) {
     case 'add_error':
-      return {...state, errorMessage: action.payload, loading: false};
+      return {
+        ...state,
+        errorMessage: action.payload.message,
+        errorCode: action.payload.code,
+        loading: false,
+      };
     case 'login':
       return {
         errorMessage: '',
@@ -21,7 +26,7 @@ const authReducer = (state, action) => {
         loading: false,
       };
     case 'clear_error_message':
-      return {...state, errorMessage: '', loading: false};
+      return {...state, errorMessage: '', errorCode: '', loading: false};
     case 'show_loader':
       return {...state, loading: true};
     case 'hide_loader':
@@ -41,7 +46,10 @@ const authReducer = (state, action) => {
   }
 };
 const clearErrorMessage = dispatch => {
-  return () => dispatch({type: 'clear_error_message'});
+  return () => {
+    console.log('clear erro');
+    dispatch({type: 'clear_error_message'});
+  };
 };
 const showLoader = dispatch => {
   return () => dispatch({type: 'show_loader'});
@@ -69,12 +77,16 @@ const sendOTPForgotPassword = dispatch => async params => {
   try {
     await axios.post(constants.SEND_OTP_FORGOT_PASSWORD_API, {
       phone: params.phone,
+      roleType: params.roleType,
     });
     RootNavigation.push('ConfirmOTPScreen', params);
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -89,7 +101,10 @@ const reSendOTPForgotPassword = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -116,7 +131,10 @@ const confirmOTPForgotPassword = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -144,7 +162,10 @@ const resetPassword = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -158,7 +179,10 @@ const register = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -171,7 +195,10 @@ const reRegister = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -249,10 +276,15 @@ const confirmOTP = dispatch => async params => {
       },
     });
   } catch (err) {
-    console.log('err: ', JSON.stringify(err));
+    if (err.response.data.message !== 'INVALID_OTP') {
+      RootNavigation.goBack();
+    }
     dispatch({
       type: 'add_error',
-      payload: err.toString(),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
   } finally {
     dispatch({type: 'hide_loader'});
@@ -312,9 +344,12 @@ const login = dispatch => async params => {
   } catch (err) {
     dispatch({
       type: 'add_error',
-      payload: getErrorMessage(err),
+      payload: {
+        message: getErrorMessage(err),
+        code: err.response.data.message,
+      },
     });
-    console.log(err.toString());
+    console.log(err.response.data.message);
   }
 };
 const logout = dispatch => async () => {

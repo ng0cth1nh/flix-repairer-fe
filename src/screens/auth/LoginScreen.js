@@ -93,6 +93,7 @@ export default function LoginScreen({navigation}) {
       sendOTPForgotPassword({
         phone: phoneNumber,
         type: 'FORGOT_PASSWORD',
+        roleType: 'REPAIRER',
       });
     }
   };

@@ -63,7 +63,7 @@ const CommentScreen = ({route, navigation}) => {
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopHeaderComponent
         navigation={navigation}
-        title="Đánh giá thợ"
+        title="Đánh giá khách hàng"
         isBackButton={true}
         statusBarColor="white"
       />
