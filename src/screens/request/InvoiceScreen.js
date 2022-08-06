@@ -594,7 +594,9 @@ const InvoiceScreen = ({route, navigation}) => {
               </View>
             </View>
           </ScrollView>
-          {isShowConfirm && data.paymentMethod === 'CASH' ? (
+          {isShowConfirm &&
+          data.paymentMethod === 'CASH' &&
+          data.status !== 'DONE' ? (
             <Button
               style={{
                 marginVertical: 8,

@@ -237,6 +237,7 @@ const NotificationScreen = ({navigation}) => {
           screen: 'InvoiceScreen',
           params: {
             service: {requestCode, isNavigateFromNotiScreen: true},
+            isShowConfirm: true,
           },
         });
       }
