@@ -1,7 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import ApiConstants from '../../constants/Api';
 import getErrorMessage from '../../utils/getErrorMessage';
-import {RequestStatus} from '../../utils/util';
+import {numberWithCommas, RequestStatus} from '../../utils/util';
 
 const initialState = {
   requests: {
@@ -143,6 +143,22 @@ export const approveRequest = createAsyncThunk(
         },
       );
     } catch (err) {
+      if (
+        err.response.data.message &&
+        err.response.data.message.startsWith(
+          'BALANCE_MUST_GREATER_THAN_OR_EQUAL_',
+        )
+      ) {
+        let number = +err.response.data.message.replace(
+          'BALANCE_MUST_GREATER_THAN_OR_EQUAL_',
+          '',
+        );
+        return rejectWithValue(
+          `Số dư phải lớn hơn hoặc bằng ${numberWithCommas(
+            number,
+          )} vnđ\nVui lòng nạp thêm tiền vào tài khoản`,
+        );
+      }
       return rejectWithValue(getErrorMessage(err));
     }
   },
@@ -181,6 +197,22 @@ export const createInvoice = createAsyncThunk(
         },
       );
     } catch (err) {
+      if (
+        err.response.data.message &&
+        err.response.data.message.startsWith(
+          'BALANCE_MUST_GREATER_THAN_OR_EQUAL_',
+        )
+      ) {
+        let number = +err.response.data.message.replace(
+          'BALANCE_MUST_GREATER_THAN_OR_EQUAL_',
+          '',
+        );
+        return rejectWithValue(
+          `Số dư phải lớn hơn hoặc bằng ${numberWithCommas(
+            number,
+          )} vnđ\nVui lòng nạp thêm tiền vào tài khoản`,
+        );
+      }
       return rejectWithValue(getErrorMessage(err));
     }
   },
