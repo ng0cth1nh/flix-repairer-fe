@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   Text,
   View,
@@ -42,18 +42,19 @@ const FeedbackScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
+  const scrollRef = useRef();
 
-  const selectFile = () => {
-    ImagePicker.openPicker({
-      cropping: false,
-      multiple: true,
-    })
-      .then(image => {
-        setImages([...images, ...image]);
-      })
-      .catch(err => {
-        console.log(err);
+  const selectFile = async () => {
+    try {
+      const file = await ImagePicker.openPicker({
+        cropping: false,
+        multiple: true,
       });
+      let temp = [...file, ...images];
+      setImages(temp.slice(0, 5));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const checkRequestCodeValid = async () => {
@@ -78,7 +79,7 @@ const FeedbackScreen = ({navigation}) => {
   };
   const checkDescriptionValid = async () => {
     if (!description || description.trim() === '') {
-      setDescriptionInputError('Vui lòng nhập mô tả chi tiết');
+      setDescriptionInputError('Vui lòng nhập nội dung');
       return false;
     }
     return true;
@@ -86,7 +87,7 @@ const FeedbackScreen = ({navigation}) => {
 
   const checkFeedbackTypeValid = async () => {
     if (!feedbackType || feedbackType.trim() === '') {
-      setFeedbackTypeError('Vui lòng chọn loại yêu cầu');
+      setFeedbackTypeError('Vui lòng nhập loại phản hồi');
       return false;
     }
     return true;
@@ -108,6 +109,11 @@ const FeedbackScreen = ({navigation}) => {
       let isFeedbackValid = await checkFeedbackTypeValid();
       let isRequestCodeValid = await checkRequestCodeValid();
       let isTitleValid = await checkTitleValid();
+
+      if (!isFeedbackValid) {
+        scrollRef.current?.scrollTo({x: 0, y: 0, animated: true});
+      }
+
       if (
         isDescriptionValid &&
         isFeedbackValid &&
@@ -129,9 +135,8 @@ const FeedbackScreen = ({navigation}) => {
         ).unwrap();
         Toast.show({
           type: 'customToast',
-          text1: 'Gửi yêu cầu hỗ trợ thành công',
+          text1: 'Tạo phản hồi thành công',
         });
-        console.log('SUCCESS');
         navigation.goBack();
       }
     } catch (err) {
@@ -151,8 +156,8 @@ const FeedbackScreen = ({navigation}) => {
         statusBarColor="white"
       />
       <SafeAreaView style={{flex: 1, marginHorizontal: '4%'}}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.inputField}>
+        <ScrollView showsVerticalScrollIndicator={false} ref={scrollRef}>
+          <View style={[styles.inputField, {marginTop: 10}]}>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.inputLabel}>Loại yêu cầu *</Text>
             </View>
@@ -271,7 +276,7 @@ const FeedbackScreen = ({navigation}) => {
                 width: '100%',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                marginBottom: 20,
+                marginBottom: 10,
               }}>
               {images.length !== 0
                 ? images.map((item, index) => {
@@ -296,17 +301,19 @@ const FeedbackScreen = ({navigation}) => {
                     );
                   })
                 : null}
-              <TouchableOpacity onPress={selectFile}>
-                <Image
-                  style={{
-                    width: width * 0.18,
-                    height: width * 0.18,
-                    marginRight: 20,
-                    marginVertical: 20,
-                  }}
-                  source={require('../../../assets/images/type/add-image.png')}
-                />
-              </TouchableOpacity>
+              {images.length < 5 && (
+                <TouchableOpacity onPress={selectFile}>
+                  <Image
+                    style={{
+                      width: width * 0.18,
+                      height: width * 0.18,
+                      marginRight: 20,
+                      marginVertical: 20,
+                    }}
+                    source={require('../../../assets/images/type/add-image.png')}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -320,7 +327,7 @@ const FeedbackScreen = ({navigation}) => {
         <SubmitButton
           style={{
             marginVertical: 10,
-            width: '92%',
+            width: '100%',
             alignSelf: 'center',
           }}
           onPress={handleSubmitButton}
@@ -407,7 +414,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#FF6442',
   },
-  inputField: {marginVertical: 6},
+  inputField: {marginBottom: 16},
   inputLabel: {
     fontWeight: 'bold',
     color: 'black',

@@ -18,7 +18,11 @@ import {
   fetchProfile,
   selectErrorMessage,
   selectUser,
+  resetState as resetUserState,
 } from '../../features/user/userSlice';
+import {resetState as resetRequestState} from '../../features/request/requestSlice';
+import {resetState as resetHomeState} from '../../features/home/homeSlice';
+
 import Toast from 'react-native-toast-message';
 import {numberWithCommas} from '../../utils/util';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -332,7 +336,12 @@ const ProfileScreen = ({navigation}) => {
           }}>
           <TouchableOpacity
             style={[styles.button, styles.buttonOpen]}
-            onPress={logout}>
+            onPress={() => {
+              dispatch(resetRequestState());
+              dispatch(resetHomeState());
+              dispatch(resetUserState());
+              logout();
+            }}>
             <Text style={styles.textStyle}>ĐĂNG XUẤT</Text>
           </TouchableOpacity>
           <TouchableOpacity

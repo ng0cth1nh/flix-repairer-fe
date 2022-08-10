@@ -40,7 +40,13 @@ const authReducer = (state, action) => {
     case 'clear_temp_access_token':
       return {...state, tempAccessToken: null};
     case 'logout':
-      return {token: null, userId: null, errorMessage: '', loading: false};
+      return {
+        token: null,
+        userId: null,
+        errorMessage: '',
+        errorCode: '',
+        loading: false,
+      };
     default:
       return state;
   }
@@ -129,6 +135,9 @@ const confirmOTPForgotPassword = dispatch => async params => {
     });
     RootNavigation.push('ForgotPassScreen');
   } catch (err) {
+    if (err.response.data.message !== 'INVALID_OTP') {
+      RootNavigation.goBack();
+    }
     dispatch({
       type: 'add_error',
       payload: {
@@ -353,9 +362,7 @@ const login = dispatch => async params => {
   }
 };
 const logout = dispatch => async () => {
-  await AsyncStorage.removeItem('token');
-  await AsyncStorage.removeItem('refreshToken');
-  await AsyncStorage.removeItem('filter');
+  await AsyncStorage.multiRemove(['token', 'refreshToken', 'filter']);
   dispatch({type: 'logout'});
 };
 export const {Provider, Context} = createDataContext(

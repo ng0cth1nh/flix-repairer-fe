@@ -62,6 +62,10 @@ const WithdrawScreen = ({navigation}) => {
     );
   }, []);
 
+  useEffect(() => {
+    setMoneyInputError(null);
+  }, [money]);
+
   const handleSubmitClick = async () => {
     try {
       setModalVisible(false);
@@ -73,7 +77,6 @@ const WithdrawScreen = ({navigation}) => {
         bankAccountNumber,
         bankAccountName,
       };
-      console.log('Withdraw body: ', body);
       let response = await dispatch(
         withdrawMoney({
           repairerAPI,
@@ -99,7 +102,7 @@ const WithdrawScreen = ({navigation}) => {
       return true;
     }
     if (!bankAccountNumber || bankAccountNumber.trim() === '') {
-      setBankAccountNumberError('Vui lòng nhập số tài khoản');
+      setBankAccountNumberError('Không được bỏ trống');
       return false;
     }
     setBankAccountNumberError(null);
@@ -111,7 +114,7 @@ const WithdrawScreen = ({navigation}) => {
       return true;
     }
     if (!bankAccountName || bankAccountName.trim() === '') {
-      setBankAccountNameError('Vui lòng nhập tên tài khoản');
+      setBankAccountNameError('Không được bỏ trống');
       return false;
     }
     setBankAccountNameError(null);
@@ -123,7 +126,7 @@ const WithdrawScreen = ({navigation}) => {
       return true;
     }
     if (!bankCode || bankCode.trim() === '') {
-      setBankCodeError('Vui lòng chọn ngân hàng');
+      setBankCodeError('Không được bỏ trống');
       return false;
     }
     setBankCodeError(null);
@@ -210,7 +213,10 @@ const WithdrawScreen = ({navigation}) => {
                 value={money}
                 onFocus={() => setMoneyInputError(null)}
                 placeholder="0"
-                onChangeText={newPrice => setMoney(formatCurrency(newPrice))}
+                onChangeText={newPrice => {
+                  setMoney(formatCurrency(newPrice));
+                  setMoneyInputError(null);
+                }}
                 style={styles.textInput}
               />
               <Text style={styles.textBold}>vnđ</Text>
@@ -279,6 +285,9 @@ const WithdrawScreen = ({navigation}) => {
               value="CASH"
               status={checked === 'CASH' ? 'checked' : 'unchecked'}
               color="#FFBC00"
+              onPress={() => {
+                setChecked('CASH');
+              }}
             />
             <Image
               source={require('../../../assets/images/payment_method/cash.png')}
@@ -295,6 +304,9 @@ const WithdrawScreen = ({navigation}) => {
               value="BANKING"
               status={checked === 'BANKING' ? 'checked' : 'unchecked'}
               color="#FFBC00"
+              onPress={() => {
+                setChecked('BANKING');
+              }}
             />
             <Image
               source={require('../../../assets/images/payment_method/bank.png')}
@@ -413,23 +425,27 @@ const WithdrawScreen = ({navigation}) => {
         <CustomModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          modalRatio={0.38}>
+          modalRatio={
+            user.balance - +removeCommas(money + '') === 0 ? 0.46 : 0.38
+          }>
           <Text style={[styles.modalText, {marginBottom: 20}]}>
             Bạn có chắc chắn muốn rút {money} vnđ{' '}
             {checked === 'CASH' ? 'lấy tiền mặt' : 'về tài khoản ngân hàng'}{' '}
             không?
           </Text>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 14,
-              alignSelf: 'flex-start',
-              marginHorizontal: 10,
-              marginVertical: 6,
-              fontWeight: 'bold',
-            }}>
-            * Bạn đang rút tất cả tiền đồng nghĩa với việc đóng tài khoản
-          </Text>
+          {user.balance - +removeCommas(money + '') === 0 && (
+            <Text
+              style={{
+                color: 'black',
+                fontSize: 14,
+                alignSelf: 'flex-start',
+                marginHorizontal: 10,
+                marginVertical: 6,
+                fontWeight: 'bold',
+              }}>
+              * Bạn đang rút tất cả tiền đồng nghĩa với việc đóng tài khoản
+            </Text>
+          )}
           <Text
             style={{
               color: 'black',

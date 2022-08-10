@@ -88,6 +88,9 @@ export default function RegisterScreen({navigation}) {
   let slider = null;
   const infoScrollRef = useRef();
   const exScrollRef = useRef();
+  const [cityIdError, setCityIdError] = useState(null);
+  const [communeIdError, setCommuneIdError] = useState(null);
+  const [districtIdError, setDistrictIdError] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -136,9 +139,7 @@ export default function RegisterScreen({navigation}) {
         let response = await repairerAPI.get(constants.SEARCH_SERVICE_API, {
           params: {keyword: text},
         });
-        console.log('search: ' + text);
         setSearchedService(response.data.services);
-        console.log('res: ' + response.data.services);
         setLoading(false);
       }, 200);
     } catch (error) {
@@ -166,11 +167,9 @@ export default function RegisterScreen({navigation}) {
         presentationStyle: 'fullScreen',
         allowMultiSelection: true,
       });
-      console.log(response);
-      setCerti([...certi].concat(response));
-    } catch (err) {
-      console.log('error:', err);
-    }
+      let temp = [...certi].concat(response);
+      setCerti(temp.slice(0, 5));
+    } catch (err) {}
   }, []);
 
   const handleDateConfirm = selectedDate => {
@@ -197,13 +196,10 @@ export default function RegisterScreen({navigation}) {
 
   const checkPhoneNumberValid = () => {
     if (!phoneNumber || phoneNumber.trim() === '') {
-      setPhoneInputError('Vui lòng nhập số điện thoại');
+      setPhoneInputError('Không được bỏ trống');
       return false;
-    } else if (
-      !/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber) ||
-      phoneNumber.length !== 10
-    ) {
-      setPhoneInputError('Số điện thoại không đúng');
+    } else if (!/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber)) {
+      setPhoneInputError('Số điện thoại không hợp lệ');
       return false;
     }
     setPhoneInputError(null);
@@ -212,15 +208,13 @@ export default function RegisterScreen({navigation}) {
 
   const checkPasswordValid = () => {
     if (!password || password.trim() === '') {
-      setPasswordInputError('Vui lòng nhập mật khẩu');
+      setPasswordInputError('Không được bỏ trống');
       return false;
-    } else if (!/((?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,10})\b/.test(password)) {
-      setPasswordInputError(
-        'Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự',
-      );
+    } else if (!/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(password.slice()))) {
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     } else if (password.indexOf(' ') >= 0) {
-      setPasswordInputError('Mật khẩu không bao gồm khoảng trắng');
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     }
     setPasswordInputError(null);
@@ -228,10 +222,9 @@ export default function RegisterScreen({navigation}) {
   };
   const checkIDNumberValid = () => {
     if (!IDCard || IDCard.trim() === '') {
-      setIDCardError('Vui lòng nhập cmnd/cccd');
+      setIDCardError('Không được bỏ trống');
       return false;
     } else if (IDCard.length !== 9 && IDCard.length !== 12) {
-      console.log('IDCard.length: ', IDCard.length);
       setIDCardError('CCCD/CMND phải 9 hoặc 12 số');
       return false;
     } else if (IDCard.indexOf(' ') >= 0) {
@@ -244,7 +237,7 @@ export default function RegisterScreen({navigation}) {
 
   const checkExperienceValid = () => {
     if (!experience || experience.trim() === '') {
-      setExperienceInputError('Vui lòng nhập số năm kinh nghiệm');
+      setExperienceInputError('Không được bỏ trống');
       return false;
     } else if (isNaN(experience)) {
       setExperienceInputError('Năm kinh nghiệm phải là số');
@@ -256,7 +249,7 @@ export default function RegisterScreen({navigation}) {
 
   const checkExperienceDesValid = () => {
     if (!experienceDes || experienceDes.trim() === '') {
-      setExperienceDesInputError('Vui lòng nhập mô tả kinh nghiệm');
+      setExperienceDesInputError('Không được bỏ trống');
       return false;
     }
     setExperienceDesInputError(null);
@@ -272,34 +265,39 @@ export default function RegisterScreen({navigation}) {
     return true;
   };
   const checkAddressValid = () => {
-    if (
-      cityId &&
-      districtId &&
-      communeId &&
-      homeAddress &&
-      homeAddress !== ''
-    ) {
-      setAddressError(null);
-      return true;
+    if (!homeAddress || homeAddress === '') {
+      setAddressError('Không được bỏ trống');
+      return false;
+    } else if (homeAddress.length > 150) {
+      setAddressError('Không nhập quá dài');
+      return false;
     }
-    setAddressError('Vui lòng chọn và điền đầy đủ thông tin địa chỉ của bạn');
-    return false;
+    setAddressError(null);
+    return true;
   };
   const checkRePasswordValid = () => {
-    if (!rePassword || (rePassword !== password && password.trim() !== '')) {
-      setRePasswordInputError('Mật khẩu nhập lại không khớp');
+    if (!rePassword || rePassword === '') {
+      setRePasswordInputError('Không được bỏ trống');
+      return false;
+    }
+    if (!checkPasswordValid()) {
+      return true;
+    }
+    if (rePassword !== password && password.trim() !== '') {
+      setRePasswordInputError('Mật khẩu không khớp');
       return false;
     }
     setRePasswordInputError(null);
     return true;
   };
+
   const checkUsernameValid = () => {
     if (!username || username.trim() === '') {
-      setUsernameInputError('Vui lòng nhập tên của bạn');
+      setUsernameInputError('Không được bỏ trống');
       return false;
     } else if (!/^[a-zA-Z\s]{3,150}$/.test(removeAscent(username.slice()))) {
       setUsernameInputError(
-        'Họ và Tên từ 3 ký tự đến 150 kí tự không bao gồm số và kí tự đặc biệt',
+        'Họ và tên từ 3-150 ký tự, không bao gồm số hoặc kí tự đặc biệt',
       );
       return false;
     }
@@ -308,7 +306,7 @@ export default function RegisterScreen({navigation}) {
   };
 
   const onchangeCity = async value => {
-    setAddressError(null);
+    setCityIdError(null);
     setCityId(value);
     setDistrictId(null);
     setCommuneId(null);
@@ -360,7 +358,7 @@ export default function RegisterScreen({navigation}) {
   const onchangeDistrict = async value => {
     setDistrictId(value);
     setCommuneId(null);
-    setAddressError(null);
+    setDistrictIdError(null);
     if (!value) {
       setListCommune([]);
       return;
@@ -475,7 +473,11 @@ export default function RegisterScreen({navigation}) {
               justifyContent: 'space-around',
               marginTop: 10,
             }}>
-            <View style={styles.checkBoxView}>
+            <TouchableOpacity
+              style={styles.checkBoxView}
+              onPress={() => {
+                setChecked('male');
+              }}>
               <RadioButton
                 value="male"
                 status={checked === 'male' ? 'checked' : 'unchecked'}
@@ -485,8 +487,12 @@ export default function RegisterScreen({navigation}) {
                 }}
               />
               <Text>Nam</Text>
-            </View>
-            <View style={styles.checkBoxView}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.checkBoxView}
+              onPress={() => {
+                setChecked('female');
+              }}>
               <RadioButton
                 value="female"
                 status={checked === 'female' ? 'checked' : 'unchecked'}
@@ -496,18 +502,7 @@ export default function RegisterScreen({navigation}) {
                 }}
               />
               <Text>Nữ</Text>
-            </View>
-            <View style={styles.checkBoxView}>
-              <RadioButton
-                value="other"
-                status={checked === 'other' ? 'checked' : 'unchecked'}
-                color="#FFBC00"
-                onPress={() => {
-                  setChecked('other');
-                }}
-              />
-              <Text>Khác</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <Text style={styles.inputTittle}>Ngày sinh *</Text>
           <View>
@@ -539,7 +534,11 @@ export default function RegisterScreen({navigation}) {
           </View>
           <Text style={styles.inputTittle}>Địa chỉ *</Text>
           <View style={styles.addressPicker}>
-            <View style={styles.addressSelectItem}>
+            <View
+              style={[
+                styles.addressSelectItem,
+                {borderColor: cityIdError ? '#FF6442' : '#CACACA'},
+              ]}>
               <RNPickerSelect
                 value={cityId}
                 fixAndroidTouchableBug={true}
@@ -559,10 +558,20 @@ export default function RegisterScreen({navigation}) {
                   />
                 )}
               />
+              {cityIdError && (
+                <Text style={styles.errorMessage}>{cityIdError}</Text>
+              )}
             </View>
           </View>
           <View style={styles.addressPicker}>
-            <View style={[styles.addressSelectItem, {width: '49%'}]}>
+            <View
+              style={[
+                styles.addressSelectItem,
+                {
+                  width: '49%',
+                  borderColor: districtIdError ? '#FF6442' : '#CACACA',
+                },
+              ]}>
               <RNPickerSelect
                 value={districtId}
                 textInputProps={{multiline: true}}
@@ -584,8 +593,18 @@ export default function RegisterScreen({navigation}) {
                 )}
                 style={styles.pickerStyle}
               />
+              {districtIdError && (
+                <Text style={styles.errorMessage}>{districtIdError}</Text>
+              )}
             </View>
-            <View style={[styles.addressSelectItem, {width: '49%'}]}>
+            <View
+              style={[
+                styles.addressSelectItem,
+                {
+                  width: '49%',
+                  borderColor: communeIdError ? '#FF6442' : '#CACACA',
+                },
+              ]}>
               <RNPickerSelect
                 value={communeId}
                 fixAndroidTouchableBug={true}
@@ -593,7 +612,7 @@ export default function RegisterScreen({navigation}) {
                 pickerProps={{numberOfLines: 10}}
                 useNativeAndroidPickerStyle={false}
                 onValueChange={async value => {
-                  setAddressError(null);
+                  setCommuneIdError(null);
                   setCommuneId(value);
                 }}
                 items={listCommune}
@@ -610,6 +629,9 @@ export default function RegisterScreen({navigation}) {
                 )}
                 style={styles.pickerStyle}
               />
+              {communeIdError && (
+                <Text style={styles.errorMessage}>{communeIdError}</Text>
+              )}
             </View>
           </View>
           <View
@@ -711,9 +733,31 @@ export default function RegisterScreen({navigation}) {
               let isAddressValid = checkAddressValid();
               let isIDNumber = checkIDNumberValid();
               let isFile = checkFileValid();
+
+              if (!cityId) {
+                setCityIdError('Không được bỏ trống');
+              }
+              if (!districtId) {
+                setDistrictIdError('Không được bỏ trống');
+              }
+              if (!communeId) {
+                setCommuneIdError('Không được bỏ trống');
+              }
+
+              if (!avatar) {
+                setAvatarError(
+                  'Vui lòng chọn ảnh đại diện có khuôn mặt của bạn',
+                );
+              }
+
               if (!isUsernameValid || !isPhoneValid) {
                 infoScrollRef.current?.scrollTo({x: 0, y: 0, animated: true});
-              } else if (!isAddressValid) {
+              } else if (
+                !cityId ||
+                !districtId ||
+                !communeId ||
+                !isAddressValid
+              ) {
                 infoScrollRef.current?.scrollTo({x: 0, y: 400, animated: true});
               }
               if (
@@ -721,16 +765,11 @@ export default function RegisterScreen({navigation}) {
                 isPhoneValid &&
                 isAddressValid &&
                 isIDNumber &&
-                isFile
+                isFile &&
+                avatar
               ) {
-                if (!avatar) {
-                  setAvatarError(
-                    'Vui lòng chọn ảnh đại diện có khuôn mặt của bạn',
-                  );
-                } else {
-                  await slider.goToSlide(1);
-                  setCurrentTitle('Kinh nghiệm làm việc');
-                }
+                await slider.goToSlide(1);
+                setCurrentTitle('Kinh nghiệm làm việc');
               }
             }}
           />
@@ -823,17 +862,19 @@ export default function RegisterScreen({navigation}) {
             )}
             keyExtractor={item => item.id}
           />
-          <TouchableOpacity onPress={handleCertiSelection}>
-            <Image
-              style={{
-                width: 40,
-                height: 40,
-                marginTop: 10,
-                resizeMode: 'contain',
-              }}
-              source={require('../../../assets/images/type/file.png')}
-            />
-          </TouchableOpacity>
+          {certi.length < 5 && (
+            <TouchableOpacity onPress={handleCertiSelection}>
+              <Image
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginTop: 10,
+                  resizeMode: 'contain',
+                }}
+                source={require('../../../assets/images/type/file.png')}
+              />
+            </TouchableOpacity>
+          )}
           <View
             style={{
               flexDirection: 'row',
@@ -927,13 +968,18 @@ export default function RegisterScreen({navigation}) {
                       item.split('[SPACE]');
                     return (
                       <View
-                        style={styles.selectedService}
+                        style={[styles.selectedService, {alignItems: 'center'}]}
                         key={index.toString()}>
                         <Image
                           source={{uri: icon}}
                           style={{width: 24, height: 24}}
                         />
-                        <Text style={{marginLeft: 5, color: 'black'}}>
+                        <Text
+                          style={{
+                            marginLeft: 10,
+                            color: 'black',
+                            flexWrap: 'wrap',
+                          }}>
                           {serviceName}
                         </Text>
                         <TouchableOpacity
@@ -971,7 +1017,7 @@ export default function RegisterScreen({navigation}) {
                         accessibilityLabel="choose numbers">
                         {searchedService.map((item, index) => (
                           <View
-                            style={styles.serviceRow}
+                            style={[styles.serviceRow]}
                             key={index.toString()}>
                             <Image
                               source={{uri: item.icon}}
@@ -981,11 +1027,15 @@ export default function RegisterScreen({navigation}) {
                               style={{
                                 color: 'black',
                                 fontSize: 16,
-                                marginLeft: 20,
+                                marginRight: 46,
+                                marginLeft: 16,
                               }}>
                               {item.serviceName}
                             </Text>
-                            <View style={{marginLeft: 'auto'}}>
+                            <View
+                              style={{
+                                marginLeft: 'auto',
+                              }}>
                               <Checkbox
                                 accessibilityLabel={item.serviceName}
                                 value={`${item.serviceId}[SPACE]${item.serviceName}[SPACE]${item.icon}`}
@@ -1140,7 +1190,6 @@ export default function RegisterScreen({navigation}) {
             style={{
               flexDirection: 'row',
               flex: 1,
-
               height: 'auto',
               bottom: 0.018 * height,
               left: 0,
@@ -1214,7 +1263,7 @@ export default function RegisterScreen({navigation}) {
               <Text
                 style={{
                   alignSelf: 'center',
-                  bottom: 30,
+                  bottom: 40,
                   width: '60%',
                   position: 'absolute',
                   fontSize: 10,

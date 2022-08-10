@@ -2,7 +2,7 @@ import './src/utils/ignoreWarnings';
 import 'react-native-gesture-handler';
 import React, {useEffect, useState, useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {Image, View, Text} from 'react-native';
+import {Image, View, Text, Dimensions} from 'react-native';
 import {fetchProfile, selectErrorMessage} from './src/features/user/userSlice';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -17,6 +17,7 @@ import {
   Provider as AuthProvider,
   Context as AuthContext,
 } from './src/context/AuthContext';
+const {width} = Dimensions.get('window');
 import SplashScreen from './src/screens/SplashScreen';
 import CommentScreen from './src/screens/feedback/CommentScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
@@ -56,6 +57,15 @@ import {Provider} from 'react-redux';
 import useAxios from './src/hooks/useAxios';
 import linking from './global/Linking';
 import ApiConstants from './src/constants/Api';
+import {
+  fetchNotifications,
+  setNotifications as setNotis,
+  setPageNumbers,
+  setTotalPageNotifications,
+  setNumberOfUnread,
+  selectNumberOfUnread,
+} from './src/features/user/userSlice';
+import {NUMBER_RECORD_PER_PAGE} from './src/constants/Api';
 
 const toastConfig = {
   customToast: ({text1}) => (
@@ -66,12 +76,13 @@ const toastConfig = {
         borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '90%',
+        paddingHorizontal: 16,
+        width: '92%',
       }}>
       <Text
         style={{
           fontWeight: 'bold',
-          fontSize: 18,
+          fontSize: 16,
           color: 'white',
           textAlign: 'center',
         }}>
@@ -87,12 +98,13 @@ const toastConfig = {
         borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        width: '90%',
+        paddingHorizontal: 16,
+        width: '92%',
       }}>
       <Text
         style={{
           fontWeight: 'bold',
-          fontSize: 18,
+          fontSize: 16,
           color: 'white',
           textAlign: 'center',
         }}>
@@ -107,22 +119,26 @@ function App() {
   const Tab = createBottomTabNavigator();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isNotiReceived, setIsNotiReceived] = useState(false);
+  const numberOfUnread = useSelector(selectNumberOfUnread);
   const errorMessage = useSelector(selectErrorMessage);
   const dispatch = useDispatch();
-  const customerAPI = useAxios();
+  const repairerAPI = useAxios();
   let {state, TryLocalLogin, clearErrorMessage} = useContext(AuthContext);
+
   useEffect(() => {
     TryLocalLogin();
     requestUserPermission();
-    notificationListener();
+    notificationListener(setIsNotiReceived);
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
   }, [TryLocalLogin]);
+
   useEffect(() => {
     if (state.token) {
       const getUserProfile = async () => {
-        await dispatch(fetchProfile(customerAPI));
+        await dispatch(fetchProfile(repairerAPI));
         if (errorMessage) {
           Toast.show({
             type: 'customErrorToast',
@@ -133,7 +149,7 @@ function App() {
       const saveFCMToken = async () => {
         let fcmToken = await AsyncStorage.getItem('fcmtoken');
         try {
-          await customerAPI.post(ApiConstants.SAVE_FCM_TOKEN, {
+          await repairerAPI.post(ApiConstants.SAVE_FCM_TOKEN, {
             token: fcmToken,
           });
           console.log('save token success');
@@ -143,8 +159,10 @@ function App() {
       };
       saveFCMToken();
       getUserProfile();
+      setIsNotiReceived(true);
     }
   }, [state.token]);
+
   useEffect(() => {
     const userId = state.userId;
     if (userId) {
@@ -169,6 +187,37 @@ function App() {
         .then(() => console.log('On disconnect function configured.'));
     }
   }, [state.userId]);
+
+  useEffect(() => {
+    (async () => {
+      if (isNotiReceived) {
+        try {
+          let temp = 0;
+          let res = await dispatch(
+            fetchNotifications({
+              repairerAPI,
+              pageNumber: temp,
+              pageSize: NUMBER_RECORD_PER_PAGE,
+            }),
+          ).unwrap();
+          dispatch(
+            setNumberOfUnread(res.numberOfUnread ? res.numberOfUnread : 0),
+          );
+          console.log('numberofunread: ', res.numberOfUnread);
+          dispatch(setNotis(res.notifications));
+          dispatch(setPageNumbers(0));
+          dispatch(
+            setTotalPageNotifications(
+              Math.ceil(+res.totalRecord / NUMBER_RECORD_PER_PAGE),
+            ),
+          );
+        } catch (err) {
+        } finally {
+          setIsNotiReceived(false);
+        }
+      }
+    })();
+  }, [isNotiReceived]);
 
   if (isLoading) {
     return <SplashScreen />;
@@ -339,7 +388,33 @@ function App() {
                     ? require('./assets/images/type/messenger-active.png')
                     : require('./assets/images/type/messenger.png');
                 }
-                return <Image style={{height: 24, width: 24}} source={icon} />;
+                return (
+                  <View>
+                    <Image style={{height: 24, width: 24}} source={icon} />
+                    {route.name === 'Notification' && numberOfUnread !== 0 && (
+                      <View
+                        style={{
+                          backgroundColor: 'red',
+                          position: 'absolute',
+                          top: -6,
+                          right: -4,
+                          alignItems: 'center',
+                          width: 14,
+                          height: 14,
+                          borderRadius: width * 0.5,
+                        }}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 10,
+                            fontWeight: '600',
+                          }}>
+                          {numberOfUnread}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                );
               },
             })}>
             <Tab.Screen name="HomeStackScreen" component={HomeStackScreen} />

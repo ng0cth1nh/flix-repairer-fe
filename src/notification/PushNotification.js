@@ -29,7 +29,7 @@ async function getFcmToken() {
     }
   }
 }
-export const notificationListener = () => {
+export const notificationListener = setIsNotiReceived => {
   PushNotification.createChannel(
     {
       channelId: 'flix-cb844-repairer',
@@ -57,7 +57,7 @@ export const notificationListener = () => {
     });
   messaging().onMessage(async remoteMessage => {
     console.log('notification on foreround', remoteMessage);
-
+    setIsNotiReceived(true);
     PushNotification.localNotification({
       channelId: 'flix-cb844-repairer',
       message: remoteMessage.notification.body,

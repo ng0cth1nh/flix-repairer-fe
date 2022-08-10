@@ -17,6 +17,7 @@ import ApiConstants from '../../constants/Api';
 import useAxios from '../../hooks/useAxios';
 import getErrorMessage from '../../utils/getErrorMessage';
 import ProgressLoader from 'rn-progress-loader';
+import {removeAscent} from '../../utils/util';
 
 const ChangePasswordScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
@@ -31,37 +32,48 @@ const ChangePasswordScreen = ({navigation}) => {
   const repairerAPI = useAxios();
   const [loading, setLoading] = useState(false);
 
-  const checkPasswordValid = () => {
+  const checkPasswordValid = async () => {
     if (password.trim() === '') {
-      setPasswordInputError('Vui lòng nhập mật khẩu hiện tại');
+      setPasswordInputError('Không được bỏ trống');
+      return false;
+    } else if (!/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(password.slice()))) {
+      setPasswordInputError('Mật khẩu hiện tại không đúng');
+      return false;
+    } else if (password.indexOf(' ') >= 0) {
+      setPasswordInputError('Mật khẩu hiện tại không đúng');
       return false;
     }
     setPasswordInputError(null);
     return true;
   };
 
-  const checkNewPasswordValid = () => {
+  const checkNewPasswordValid = async () => {
     if (newPassword.trim() === '') {
-      setNewPasswordInputError('Vui lòng nhập mật khẩu mới');
+      setNewPasswordInputError('Không được bỏ trống');
       return false;
     } else if (
-      !/((?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,10})\b/.test(newPassword)
+      !/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(newPassword.slice()))
     ) {
-      setNewPasswordInputError(
-        'Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự',
-      );
+      setNewPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     } else if (newPassword.indexOf(' ') >= 0) {
-      setNewPasswordInputError('Mật khẩu không bao gồm khoảng trắng');
+      setNewPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     }
     setNewPasswordInputError(null);
     return true;
   };
 
-  const checkReNewPasswordValid = () => {
+  const checkReNewPasswordValid = async () => {
+    if (!reNewPassword || reNewPassword === '') {
+      setReNewPasswordInputError('Không được bỏ trống');
+      return false;
+    }
+    if (!checkNewPasswordValid()) {
+      return true;
+    }
     if (reNewPassword !== newPassword && newPassword.trim() !== '') {
-      setReNewPasswordInputError('Mật khẩu nhập lại không khớp');
+      setReNewPasswordInputError('Mật khẩu không khớp');
       return false;
     }
     setReNewPasswordInputError(null);
@@ -69,11 +81,11 @@ const ChangePasswordScreen = ({navigation}) => {
   };
 
   const handleChangePassword = async () => {
-    if (
-      checkPasswordValid() &&
-      checkNewPasswordValid() &&
-      checkReNewPasswordValid()
-    ) {
+    let isPasswordValid = await checkPasswordValid();
+    let isNewPasswordValid = await checkNewPasswordValid();
+    let isReNewPasswordValid = await checkReNewPasswordValid();
+
+    if (isPasswordValid && isNewPasswordValid && isReNewPasswordValid) {
       try {
         await setLoading(true);
         const body = {
@@ -115,7 +127,10 @@ const ChangePasswordScreen = ({navigation}) => {
       <SafeAreaView style={{flex: 1, marginHorizontal: '4%'}}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{paddingTop: 10}}>
+          style={{
+            paddingTop: 10,
+            height: 'auto',
+          }}>
           <View style={styles.inputField}>
             <Text style={styles.inputLabel}>Nhập mật khẩu hiện tại *</Text>
             <View
@@ -136,7 +151,11 @@ const ChangePasswordScreen = ({navigation}) => {
                   },
                 ]}
                 secureTextEntry={coverPassword}
-                onChangeText={text => setPassword(text)}
+                onChangeText={text => {
+                  setPassword(text);
+                  setPasswordInputError(null);
+                }}
+                onFocus={() => setPasswordInputError(null)}
                 defaultValue={password}
               />
               <TouchableOpacity
@@ -173,8 +192,12 @@ const ChangePasswordScreen = ({navigation}) => {
                   },
                 ]}
                 secureTextEntry={coverNewPassword}
-                onChangeText={text => setNewPassword(text)}
+                onChangeText={text => {
+                  setNewPassword(text);
+                  setNewPasswordInputError(null);
+                }}
                 defaultValue={newPassword}
+                onFocus={() => setNewPasswordInputError(null)}
               />
               <TouchableOpacity
                 style={styles.iconView}
@@ -210,8 +233,12 @@ const ChangePasswordScreen = ({navigation}) => {
                   },
                 ]}
                 secureTextEntry={coverReNewPassword}
-                onChangeText={text => setReNewPassword(text)}
+                onChangeText={text => {
+                  setReNewPassword(text);
+                  setReNewPasswordInputError(null);
+                }}
                 defaultValue={reNewPassword}
+                onFocus={() => setReNewPasswordInputError(null)}
               />
               <TouchableOpacity
                 style={styles.iconView}
@@ -277,7 +304,7 @@ const styles = StyleSheet.create({
     color: 'black',
     marginLeft: 15,
   },
-  inputField: {marginVertical: 6},
+  inputField: {marginBottom: 16},
   inputLabel: {
     fontWeight: 'bold',
     color: 'black',
@@ -319,6 +346,7 @@ const styles = StyleSheet.create({
     left: 5,
     fontSize: 10,
     color: '#FF6442',
+    zIndex: 2,
   },
 });
 

@@ -15,6 +15,7 @@ import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
 import ProgressLoader from 'rn-progress-loader';
 import Toast from 'react-native-toast-message';
+import {removeAscent} from '../../utils/util';
 
 export default function LoginScreen({navigation}) {
   const {
@@ -44,38 +45,42 @@ export default function LoginScreen({navigation}) {
     })();
   }, []);
 
-  const checkPhoneNumberValid = () => {
+  const checkPhoneNumberValid = type => {
     if (phoneNumber.trim() === '') {
-      setPhoneInputError('Vui lòng nhập số điện thoại');
+      if (type === 'LOGIN') {
+        setPhoneInputError('Không được bỏ trống');
+      } else {
+        setPhoneInputError('Nhập số điện thoại trước khi bấm quên mật khẩu');
+      }
       return false;
     } else if (!/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber)) {
-      setPhoneInputError('Số điện thoại không đúng');
+      setPhoneInputError('Số điện thoại không hợp lệ');
       return false;
     }
     setPhoneInputError(null);
     return true;
   };
+
   const checkPasswordValid = () => {
     if (password.trim() === '') {
-      setPasswordInputError('Vui lòng nhập mật khẩu');
+      setPasswordInputError('Không được bỏ trống');
       return false;
-    } else if (!/((?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,10})\b/.test(password)) {
-      setPasswordInputError(
-        'Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự',
-      );
+    } else if (!/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(password.slice()))) {
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     } else if (password.indexOf(' ') >= 0) {
-      setPasswordInputError('Mật khẩu không bao gồm khoảng trắng');
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     }
     setPasswordInputError(null);
     return true;
   };
+
   const handleLoginClick = () => {
     if (state.errorMessage !== '') {
       clearErrorMessage();
     }
-    let phoneValid = checkPhoneNumberValid();
+    let phoneValid = checkPhoneNumberValid('LOGIN');
     let passwordValid = checkPasswordValid();
     const isValidForm = phoneValid && passwordValid;
     if (isValidForm) {
@@ -85,7 +90,7 @@ export default function LoginScreen({navigation}) {
   };
 
   const handleForgotPasswordClick = () => {
-    let phoneValid = checkPhoneNumberValid();
+    let phoneValid = checkPhoneNumberValid('FORGOT');
     if (phoneValid) {
       showLoader();
       setIsForgotPass(true);

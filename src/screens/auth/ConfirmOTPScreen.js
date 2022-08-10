@@ -86,6 +86,9 @@ export default function ConfirmOTPScreen({route, navigation}) {
   }, []);
 
   const handleResendOTP = () => {
+    if (state.errorMessage !== '') {
+      clearErrorMessage();
+    }
     clearTimer(getDeadTime());
     showLoader();
     if (type === 'REGISTER') {

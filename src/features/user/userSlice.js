@@ -22,6 +22,10 @@ const initialState = {
   },
   errorMessage: null,
   isLoading: false,
+  notifications: [],
+  totalPageNotifications: null,
+  pageNumbers: 0,
+  numberOfUnread: 0,
 };
 
 export const fetchProfile = createAsyncThunk(
@@ -199,6 +203,19 @@ export const userSlice = createSlice({
     setIsLoading(state) {
       state.isLoading = true;
     },
+    setNotifications(state, action) {
+      state.notifications = action.payload;
+    },
+    setPageNumbers(state, action) {
+      state.pageNumbers = action.payload;
+    },
+    setTotalPageNotifications(state, action) {
+      state.totalPageNotifications = action.payload;
+    },
+    setNumberOfUnread(state, action) {
+      state.numberOfUnread = action.payload;
+    },
+    resetState: () => initialState,
   },
   extraReducers: builder => {
     builder.addCase(fetchProfile.pending, state => {
@@ -294,8 +311,21 @@ export const userSlice = createSlice({
   },
 });
 
-export const {setIsLoading} = userSlice.actions;
+export const {
+  setIsLoading,
+  setNotifications,
+  setPageNumbers,
+  setTotalPageNotifications,
+  setNumberOfUnread,
+  resetState,
+} = userSlice.actions;
 export const selectUser = state => state.user.user;
+export const selectAddresses = state => state.user.addresses;
+export const selectNotifications = state => state.user.notifications;
+export const selectNumberOfUnread = state => state.user.numberOfUnread;
+export const selectTotalPageNotifications = state =>
+  state.user.totalPageNotifications;
+export const selectPageNumbers = state => state.user.pageNumbers;
 export const selectErrorMessage = state => state.user.errorMessage;
 export const selectIsLoading = state => state.user.isLoading;
 export default userSlice.reducer;

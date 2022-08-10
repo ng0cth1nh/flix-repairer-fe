@@ -172,7 +172,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       });
       Toast.show({
         type: 'customToast',
-        text1: 'Xác nhận đang sửa thành công',
+        text1: 'Cập nhật trạng thái thành công',
       });
       dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),

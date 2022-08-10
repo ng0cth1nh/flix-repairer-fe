@@ -35,11 +35,9 @@ const EditProfileInfoScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const errorMessage = useSelector(selectErrorMessage);
   const user = useSelector(selectUser);
-
   const [experienceDescription, setExperienceDescription] = useState(
     user.experienceDescription,
   );
-
   const [email, setEmail] = useState(user.email);
   const [dateOfBirths, setDateOfBirths] = useState(user.dateOfBirth);
   const [cityId, setCityId] = useState(user.cityId);
@@ -55,19 +53,20 @@ const EditProfileInfoScreen = ({navigation}) => {
     user.address.split(',')[0],
   );
   const [emailInputError, setEmailInputError] = useState(null);
-
   const [loading, setLoading] = useState(false);
   const [addressError, setAddressError] = useState(null);
   const [registerServices, setRegisterServices] = useState(
     user.registerServices,
   );
   const [addedService, setAddedService] = useState(null);
+  const [cityIdError, setCityIdError] = useState(null);
+  const [communeIdError, setCommuneIdError] = useState(null);
+  const [districtIdError, setDistrictIdError] = useState(null);
+  const [serviceError, setServiceError] = useState(null);
 
-  const checkEmailValid = () => {
-    if (email === null || email.trim() === '') {
-      setEmailInputError('Vui lòng nhập email của bạn');
-      return false;
-    } else if (
+  const checkEmailValid = async () => {
+    if (
+      email &&
       !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.trim())
     ) {
       setEmailInputError('Email không đúng định dạng');
@@ -79,7 +78,7 @@ const EditProfileInfoScreen = ({navigation}) => {
 
   const checkExperienceValid = () => {
     if (experienceDescription === null || experienceDescription.trim() === '') {
-      setExperienceDescriptionInputError('Vui lòng nhập mô tả kinh nghiệm');
+      setExperienceDescriptionInputError('Không được bỏ trống');
       return false;
     }
     setExperienceDescriptionInputError(null);
@@ -97,15 +96,40 @@ const EditProfileInfoScreen = ({navigation}) => {
       setAddressInputError(null);
       return true;
     }
-    setAddressInputError(
-      'Vui lòng chọn và điền đầy đủ thông tin địa chỉ của bạn',
-    );
+    setAddressInputError('Địa chỉ chi tiết không được bỏ trống');
     return false;
   };
 
   const handleUpdateProfile = async () => {
-    if (checkEmailValid() && checkExperienceValid() && checkAddressValid()) {
-      try {
+    try {
+      let isEmailValid = await checkEmailValid();
+      let isExpValid = await checkExperienceValid();
+      let isAddressValid = await checkAddressValid();
+
+      if (!cityId) {
+        setCityIdError('Thành phố không được bỏ trống');
+      }
+      if (!districtId) {
+        setDistrictIdError('Quận huyện không được bỏ trống');
+      }
+      if (!communeId) {
+        setCommuneIdError('Phường xã không được bỏ trống');
+      }
+
+      if (addedService && addedService.length < 1) {
+        setServiceError('Vui lòng chọn ít nhất 1 dịch vụ');
+      }
+
+      if (
+        isEmailValid &&
+        isExpValid &&
+        isAddressValid &&
+        cityId &&
+        communeId &&
+        districtId &&
+        addedService &&
+        addedService.length >= 1
+      ) {
         let registerServices = addedService.map((item, index) => {
           let [serviceId, serviceName, serviceIcon] = item.split('[SPACE]');
           return +serviceId;
@@ -121,18 +145,14 @@ const EditProfileInfoScreen = ({navigation}) => {
         await dispatch(fetchProfile(repairerAPI));
         Toast.show({
           type: 'customToast',
-          text1: 'Cập nhật thông tin thành công',
-        });
-      } catch (error) {
-        Toast.show({
-          type: 'customErrorToast',
-          text1: errorMessage,
+          text1: 'Cập nhật thông tin cá nhân thành công',
         });
       }
-    } else {
-      checkEmailValid();
-      checkExperienceValid();
-      checkAddressValid();
+    } catch (error) {
+      Toast.show({
+        type: 'customErrorToast',
+        text1: errorMessage,
+      });
     }
   };
 
@@ -146,6 +166,7 @@ const EditProfileInfoScreen = ({navigation}) => {
     setAddedService(temp);
   };
   const handleAddDetailServiceButtonClick = async () => {
+    setServiceError(null);
     navigation.push('SearchServiceFilterScreen', {
       addedService,
       setAddedService,
@@ -153,7 +174,7 @@ const EditProfileInfoScreen = ({navigation}) => {
   };
 
   const onchangeCity = async value => {
-    setAddressInputError(null);
+    setCityIdError(null);
     setCityId(value);
     setDistrictId(null);
     setCommuneId(null);
@@ -174,7 +195,7 @@ const EditProfileInfoScreen = ({navigation}) => {
 
   const onchangeDistrict = async value => {
     setDistrictId(value);
-    setAddressInputError(null);
+    setDistrictIdError(null);
     setCommuneId(null);
     if (!value) {
       setListCommune([]);
@@ -334,7 +355,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 <View
                   style={[
                     styles.valueSpace,
-                    {borderColor: addressInputError ? '#FF6442' : '#CACACA'},
+                    {borderColor: cityIdError ? '#FF6442' : '#CACACA'},
                   ]}>
                   <RNPickerSelect
                     value={cityId}
@@ -356,13 +377,16 @@ const EditProfileInfoScreen = ({navigation}) => {
                     )}
                   />
                 </View>
+                {cityIdError && (
+                  <Text style={styles.errorMessage}>{cityIdError}</Text>
+                )}
               </View>
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Quận/Huyện</Text>
                 <View
                   style={[
                     styles.valueSpace,
-                    {borderColor: addressInputError ? '#FF6442' : '#CACACA'},
+                    {borderColor: districtIdError ? '#FF6442' : '#CACACA'},
                   ]}>
                   <RNPickerSelect
                     value={districtId}
@@ -384,6 +408,9 @@ const EditProfileInfoScreen = ({navigation}) => {
                     )}
                   />
                 </View>
+                {districtIdError && (
+                  <Text style={styles.errorMessage}>{districtIdError}</Text>
+                )}
               </View>
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Phường/Xã</Text>
@@ -397,7 +424,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                     fixAndroidTouchableBug={true}
                     onValueChange={value => {
                       setCommuneId(value);
-                      setAddressInputError(null);
+                      setCommuneIdError(null);
                     }}
                     placeholder={{
                       label: 'Phường/Xã',
@@ -415,6 +442,9 @@ const EditProfileInfoScreen = ({navigation}) => {
                     )}
                   />
                 </View>
+                {communeIdError && (
+                  <Text style={styles.errorMessage}>{communeIdError}</Text>
+                )}
               </View>
               <View style={styles.inputField}>
                 <Text style={styles.inputLabel}>Địa chỉ chi tiết</Text>
@@ -447,7 +477,12 @@ const EditProfileInfoScreen = ({navigation}) => {
                 <View
                   style={[
                     styles.valueSpace,
-                    {height: 'auto', paddingBottom: 10},
+                    {
+                      height: 'auto',
+                      paddingBottom: 10,
+                      borderWidth: 1,
+                      borderColor: serviceError ? '#FF6442' : 'white',
+                    },
                   ]}>
                   {addedService ? (
                     <View
@@ -480,6 +515,9 @@ const EditProfileInfoScreen = ({navigation}) => {
                       })}
                     </View>
                   ) : null}
+                  {serviceError && (
+                    <Text style={styles.errorMessage}>{serviceError}</Text>
+                  )}
                 </View>
               </View>
             </View>

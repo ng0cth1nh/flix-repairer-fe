@@ -27,12 +27,29 @@ const CommentScreen = ({route, navigation}) => {
 
   const isLoading = useSelector(selectIsLoading);
   const [comment, setComment] = useState('');
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(1);
+  const [commentInputError, setCommentInputError] = useState(null);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
 
+  const checkValid = async () => {
+    if (comment.trim() === '') {
+      setCommentInputError('Bạn cần đánh giá trước khi gửi');
+      return false;
+    } else if (rating === 0) {
+      setCommentInputError('Bạn cần đánh giá trước khi gửi');
+      return false;
+    }
+    setCommentInputError(null);
+    return true;
+  };
+
   const handleRatingCustomer = async () => {
     try {
+      let valid = await checkValid();
+      if (!valid) {
+        return;
+      }
       await dispatch(setIsLoading());
       await dispatch(
         rateCustomer({
@@ -153,7 +170,11 @@ const CommentScreen = ({route, navigation}) => {
                 <TextInput
                   multiline
                   numberOfLines={5}
-                  onChangeText={text => setComment(text)}
+                  onChangeText={text => {
+                    setComment(text);
+                    setCommentInputError(null);
+                  }}
+                  onFocus={() => setCommentInputError(null)}
                   value={comment}
                   style={{
                     padding: 8,
@@ -161,9 +182,14 @@ const CommentScreen = ({route, navigation}) => {
                     borderRadius: 10,
                     height: '80%',
                     color: 'black',
+                    borderWidth: 1,
+                    borderColor: commentInputError ? '#FF6442' : '#F0F0F0',
                   }}
                   placeholder="Nhập lời nhận xét"
                 />
+                {commentInputError && (
+                  <Text style={styles.errorMessage}>{commentInputError}</Text>
+                )}
               </View>
             </View>
           </View>
@@ -268,6 +294,13 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     color: 'black',
     fontWeight: '600',
+  },
+  errorMessage: {
+    position: 'absolute',
+    bottom: 4,
+    left: 5,
+    fontSize: 10,
+    color: '#FF6442',
   },
 });
 

@@ -1,13 +1,15 @@
 export default {
-  LOGIN_FAILED: 'Đăng nhập thất bại.Tài khoản hoặc mật khẩu không đúng',
-  ACCOUNT_EXISTED: 'Tài khoản đăng kí đã tồn tại',
-  INVALID_OTP: 'Mã OTP không hợp lệ',
+  LOGIN_FAILED: 'Tài khoản hoặc mật khẩu không đúng',
+  ACCOUNT_NOT_FOUND: 'Tài khoản không tồn tại',
+  ACCOUNT_EXISTED: 'Số điện thoại đã được sử dụng trong hệ thống',
+  INVALID_OTP: 'Mã chưa đúng, vui lòng thử lại',
   INVALID_PHONE_NUMBER: 'Số điện thoại đăng kí không hợp lệ',
   INVALID_PASSWORD: 'Mật khẩu đăng kí không hợp lệ',
   INVALID_CITY: 'Địa chỉ thành phố không tồn tại',
   INVALID_DISTRICT: 'Địa chỉ Quận/Huyện không tồn tại',
   INVALID_COMMUNE: 'Địa chỉ Phường/Xã không tồn tại',
-  IDENTITY_CARD_NUMBER_EXISTED: 'Số cmnd/cccd đã tồn tại',
+  WRONG_PASSWORD: 'Mật khẩu hiện tại không đúng',
+  MAXIMUM_UPLOAD_SIZE_EXCEEDED: 'Vui lòng chọn ảnh không vượt quá 20MB',
   CAN_NOT_CONFIRM_FIXING_WHEN_ON_ANOTHER_FIXING:
     'Không thể xác nhận khi yêu cầu khác đang trong quá trình sửa',
   CAN_NOT_ACCEPT_REQUEST_WHEN_ON_ANOTHER_FIXING:
@@ -17,7 +19,7 @@ export default {
 };
 
 const temp = new Map();
-temp.set('00', 'Nạp tiền thành công');
+temp.set('00', 'Nạp tiền vào tài khoản FLIX thành công');
 temp.set(
   '07',
   'Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).',

@@ -24,19 +24,32 @@ import {
   fetchNotifications,
   deleteNotification,
   markReadNotification,
+  selectNotifications,
+  selectPageNumbers,
+  selectTotalPageNotifications,
+  setNotifications as setNotis,
+  setPageNumbers,
+  setTotalPageNotifications,
+  setNumberOfUnread,
+  selectNumberOfUnread,
 } from '../../features/user/userSlice';
 
 const NotificationScreen = ({navigation}) => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState(
+    useSelector(selectNotifications),
+  );
   const [idDelete, setIdDelete] = useState(-1);
   const [refreshControl, setRefreshControl] = useState(null);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [totalPage, setTotalPage] = useState(null);
+  const [pageNumber, setPageNumber] = useState(useSelector(selectPageNumbers));
+  const [totalPage, setTotalPage] = useState(
+    useSelector(selectTotalPageNotifications),
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
   const [stopFetchMore, setStopFetchMore] = useState(false);
+  const numberOfUnread = useSelector(selectNumberOfUnread);
 
   const showModal = () => {
     setModalVisible(true);
@@ -44,7 +57,7 @@ const NotificationScreen = ({navigation}) => {
 
   useEffect(() => {
     (async () => {
-      if (refreshControl === null || refreshControl === true) {
+      if (refreshControl) {
         await loadNotifications();
       }
     })();
@@ -58,6 +71,7 @@ const NotificationScreen = ({navigation}) => {
           (item.type === null ||
             item.type.startsWith('DEPOSIT') ||
             item.type.startsWith('REGISTER_') ||
+            item.type.startsWith('REMIND') ||
             item.type.startsWith('RESPONSE_FEEDBACK')) &&
           !item.read
         ) {
@@ -78,6 +92,7 @@ const NotificationScreen = ({navigation}) => {
           temp.push(item);
         }
       });
+      dispatch(setNotis([...notifications]));
     })();
   }, [notifications]);
 
@@ -92,13 +107,19 @@ const NotificationScreen = ({navigation}) => {
           pageSize: NUMBER_RECORD_PER_PAGE,
         }),
       ).unwrap();
+      dispatch(setNumberOfUnread(res.numberOfUnread ? res.numberOfUnread : 0));
       setNotifications(res.notifications);
-      if (refreshControl) {
-        setRefreshControl(false);
-        setStopFetchMore(false);
-        setPageNumber(0);
-      }
+      dispatch(setNotis(res.notifications));
+      setRefreshControl(false);
+      setStopFetchMore(false);
+      setPageNumber(0);
+      dispatch(setPageNumbers(0));
       setTotalPage(Math.ceil(+res.totalRecord / NUMBER_RECORD_PER_PAGE));
+      dispatch(
+        setTotalPageNotifications(
+          Math.ceil(+res.totalRecord / NUMBER_RECORD_PER_PAGE),
+        ),
+      );
       console.log('+res.totalRecord:', +res.totalRecord);
     } catch (err) {
       Toast.show({
@@ -151,6 +172,7 @@ const NotificationScreen = ({navigation}) => {
         return item.id !== idDelete;
       });
       setNotifications(temp);
+      dispatch(setNotis(temp));
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -183,6 +205,8 @@ const NotificationScreen = ({navigation}) => {
           }
         });
         setNotifications(temp);
+        dispatch(setNotis(temp));
+        dispatch(setNumberOfUnread(numberOfUnread - 1));
       }
       let params = null;
       if (type.startsWith('REQUEST')) {
@@ -248,6 +272,7 @@ const NotificationScreen = ({navigation}) => {
     return item.type === null ||
       item.type.startsWith('DEPOSIT') ||
       item.type.startsWith('REGISTER_') ||
+      item.type.startsWith('REMIND') ||
       item.type.startsWith('RESPONSE_FEEDBACK') ? (
       <View
         style={{
@@ -280,7 +305,9 @@ const NotificationScreen = ({navigation}) => {
         <View style={{flexDirection: 'row'}}>
           <Image
             source={
-              !item.type
+              !item.type ||
+              (item.type && item.type.startsWith('REQUEST')) ||
+              item.type.startsWith('REMIND')
                 ? require('../../../assets/images/type/archive.png')
                 : item.type.startsWith('RESPONSE_FEEDBACK')
                 ? require('../../../assets/images/type/help-desk.png')
