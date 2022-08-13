@@ -23,7 +23,7 @@ import {getDiffTimeBetweenTwoDate} from '../../utils/util';
 const ChatListScreen = ({navigation}) => {
   const {state} = useContext(AuthContext);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [listMemberOne, setListMemberOne] = useState([]);
+  const [listMemberOne, setListMemberOne] = useState(null);
   const [listMemberTwo, setListMemberTwo] = useState([]);
   const [listOnline, setListOnline] = useState(null);
   const [firebaseLoading, setFireBaseLoading] = useState(true);
@@ -195,10 +195,11 @@ const ChatListScreen = ({navigation}) => {
         statusBarColor="white"
       />
       <SafeAreaView style={{flex: 1}}>
-        {errorMessage ? <NotFound /> : null}
         {firebaseLoading ? (
           <Loading />
-        ) : errorMessage ? null : listMemberOne.length === 0 &&
+        ) : errorMessage ? (
+          <NotFound />
+        ) : !listMemberOne ? null : listMemberOne.length === 0 &&
           listMemberTwo.length === 0 ? (
           <NotFound />
         ) : (
@@ -217,5 +218,3 @@ const ChatListScreen = ({navigation}) => {
 };
 
 export default ChatListScreen;
-
-const styles = StyleSheet.create({});
