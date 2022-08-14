@@ -1279,7 +1279,7 @@ export default function RegisterScreen({navigation}) {
             data={slides}
             renderItem={renderItems}
             onDone={handleRegisterClick}
-            scrollEnabled={true}
+            scrollEnabled={false}
             bottomButton
             renderPagination={() => null}
             ref={ref => (slider = ref)}
