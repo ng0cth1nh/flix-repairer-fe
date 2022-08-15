@@ -58,13 +58,7 @@ const FeedbackScreen = ({navigation}) => {
   };
 
   const checkRequestCodeValid = async () => {
-    if (feedbackType === 'ACCOUNT') {
-      return true;
-    }
-    if (!requestCode || requestCode.trim() === '') {
-      setRequestCodeInputError('Vui lòng nhập mã yêu cầu');
-      return false;
-    } else if (requestCode.length !== 12) {
+    if (requestCode && requestCode.length !== 12) {
       setRequestCodeInputError('Mã yêu cầu không hợp lệ');
       return false;
     }
@@ -194,32 +188,28 @@ const FeedbackScreen = ({navigation}) => {
               )}
             </View>
           </View>
-          {feedbackType !== 'ACCOUNT' ? (
-            <View style={styles.inputField}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.inputLabel}>Mã yêu cầu sửa chữa *</Text>
-              </View>
-              <View
-                style={[
-                  styles.valueSpace,
-                  {borderColor: requestCodeInputError ? '#FF6442' : '#CACACA'},
-                ]}>
-                <TextInput
-                  style={styles.valueText}
-                  value={requestCode}
-                  onChangeText={text => setRequestCode(text)}
-                  onFocus={() => setRequestCodeInputError(null)}
-                  placeholder="Nhập mã yêu cầu"
-                  placeholderTextColor="#DFDFDF"
-                />
-                {requestCodeInputError && (
-                  <Text style={styles.errorMessage}>
-                    {requestCodeInputError}
-                  </Text>
-                )}
-              </View>
+          <View style={styles.inputField}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.inputLabel}>Mã yêu cầu sửa chữa</Text>
             </View>
-          ) : null}
+            <View
+              style={[
+                styles.valueSpace,
+                {borderColor: requestCodeInputError ? '#FF6442' : '#CACACA'},
+              ]}>
+              <TextInput
+                style={styles.valueText}
+                value={requestCode}
+                onChangeText={text => setRequestCode(text)}
+                onFocus={() => setRequestCodeInputError(null)}
+                placeholder="Nhập mã yêu cầu"
+                placeholderTextColor="#DFDFDF"
+              />
+              {requestCodeInputError && (
+                <Text style={styles.errorMessage}>{requestCodeInputError}</Text>
+              )}
+            </View>
+          </View>
           <View style={styles.inputField}>
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.inputLabel}>Tiêu đề *</Text>

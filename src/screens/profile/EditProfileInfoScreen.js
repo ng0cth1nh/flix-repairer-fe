@@ -4,7 +4,6 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
   TextInput,
   StyleSheet,
@@ -12,7 +11,6 @@ import {
 import React, {useState, useEffect} from 'react';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 const {height, width} = Dimensions.get('window');
-import BackButton from '../../components/BackButton';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from '../../components/SubmitButton';
 import RNPickerSelect from 'react-native-picker-select';
@@ -39,7 +37,6 @@ const EditProfileInfoScreen = ({navigation}) => {
     user.experienceDescription,
   );
   const [email, setEmail] = useState(user.email);
-  const [dateOfBirths, setDateOfBirths] = useState(user.dateOfBirth);
   const [cityId, setCityId] = useState(user.cityId);
   const [districtId, setDistrictId] = useState(user.districtId);
   const [communeId, setCommuneId] = useState(user.communeId);
@@ -138,7 +135,7 @@ const EditProfileInfoScreen = ({navigation}) => {
           experienceDescription,
           communeId,
           streetAddress,
-          email,
+          email: email === '' ? null : email,
           registerServices,
         };
         await dispatch(updateProfile({repairerAPI, body}));
@@ -147,6 +144,7 @@ const EditProfileInfoScreen = ({navigation}) => {
           type: 'customToast',
           text1: 'Cập nhật thông tin cá nhân thành công',
         });
+        navigation.goBack();
       }
     } catch (error) {
       Toast.show({
@@ -322,7 +320,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 )}
               </View>
               <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Mô tả kinh nghiệm</Text>
+                <Text style={styles.inputLabel}>Mô tả kinh nghiệm *</Text>
                 <View
                   style={[
                     styles.valueSpace,
@@ -351,7 +349,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 )}
               </View>
               <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Tỉnh/Thành Phố</Text>
+                <Text style={styles.inputLabel}>Tỉnh/Thành Phố *</Text>
                 <View
                   style={[
                     styles.valueSpace,
@@ -382,7 +380,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 )}
               </View>
               <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Quận/Huyện</Text>
+                <Text style={styles.inputLabel}>Quận/Huyện *</Text>
                 <View
                   style={[
                     styles.valueSpace,
@@ -413,7 +411,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 )}
               </View>
               <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Phường/Xã</Text>
+                <Text style={styles.inputLabel}>Phường/Xã *</Text>
                 <View
                   style={[
                     styles.valueSpace,
@@ -447,7 +445,7 @@ const EditProfileInfoScreen = ({navigation}) => {
                 )}
               </View>
               <View style={styles.inputField}>
-                <Text style={styles.inputLabel}>Địa chỉ chi tiết</Text>
+                <Text style={styles.inputLabel}>Địa chỉ chi tiết *</Text>
                 <View
                   style={[
                     styles.valueSpace,
@@ -467,7 +465,7 @@ const EditProfileInfoScreen = ({navigation}) => {
               </View>
               <View style={styles.inputField}>
                 <View style={{flexDirection: 'row'}}>
-                  <Text style={styles.inputLabel}>Dịch vụ sửa chữa</Text>
+                  <Text style={styles.inputLabel}>Dịch vụ sửa chữa *</Text>
                   <TouchableOpacity
                     style={styles.editTouch}
                     onPress={handleAddDetailServiceButtonClick}>

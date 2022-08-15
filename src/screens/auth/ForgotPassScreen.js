@@ -14,15 +14,10 @@ import HeaderComponent from '../../components/HeaderComponent';
 import BackButton from '../../components/BackButton';
 import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
+import {removeAscent} from '../../utils/util';
 
 export default function ForgotPassScreen({navigation}) {
-  const {
-    showLoader,
-    state,
-    clearErrorMessage,
-    resetPassword,
-    clearIsChangePassSuccess,
-  } = useContext(AuthContext);
+  const {showLoader, state, resetPassword} = useContext(AuthContext);
   const [password, setPassword] = useState('');
   const [coverPassword, setCoverPassword] = useState(true);
   const [repassword, setRepassword] = useState('');
@@ -32,26 +27,39 @@ export default function ForgotPassScreen({navigation}) {
 
   const checkPasswordValid = () => {
     if (password.trim() === '') {
-      setPasswordInputError('Vui lòng nhập mật khẩu');
+      setPasswordInputError('Không được bỏ trống');
       return false;
-    } else if (password.length < 6 || password.length > 10) {
-      setPasswordInputError('Mật khẩu phải từ 6 đến 10 kí tự');
+    } else if (
+      !/^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9\s]{6,10}$/.test(
+        removeAscent(password.slice()),
+      )
+    ) {
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     } else if (password.indexOf(' ') >= 0) {
-      setPasswordInputError('Mật khẩu không bao gồm khoảng trắng');
+      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     }
     setPasswordInputError(null);
     return true;
   };
+
   const checkRepasswordValid = () => {
+    if (!repassword || repassword === '') {
+      setRePasswordInputError('Không được bỏ trống');
+      return false;
+    }
+    if (!checkPasswordValid()) {
+      return true;
+    }
     if (repassword !== password && password.trim() !== '') {
-      setRePasswordInputError('Mật khẩu nhập lại không khớp');
+      setRePasswordInputError('Mật khẩu không khớp');
       return false;
     }
     setRePasswordInputError(null);
     return true;
   };
+
   const handleChangePassClick = () => {
     let isPasswordValid = checkPasswordValid();
     let isRepasswordValid = checkRepasswordValid();
