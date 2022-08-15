@@ -112,7 +112,11 @@ const ProfileInfoScreen = ({navigation}) => {
               <Text style={styles.inputLabel}>Giới tính</Text>
               <View style={styles.valueSpace}>
                 <TextInput
-                  style={user.gender ? styles.valueText : styles.valueTextBlur}
+                  style={
+                    user.gender !== null
+                      ? styles.valueText
+                      : styles.valueTextBlur
+                  }
                   editable={false}
                   value={
                     user.gender !== null

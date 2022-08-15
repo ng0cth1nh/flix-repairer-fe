@@ -9,6 +9,7 @@ export default {
   INVALID_DISTRICT: 'Địa chỉ Quận/Huyện không tồn tại',
   INVALID_COMMUNE: 'Địa chỉ Phường/Xã không tồn tại',
   WRONG_PASSWORD: 'Mật khẩu hiện tại không đúng',
+  USER_IS_INACTIVE: 'Số điện thoại này đã bị vô hiệu hóa',
   MAXIMUM_UPLOAD_SIZE_EXCEEDED: 'Vui lòng chọn ảnh không vượt quá 20MB',
   CAN_NOT_CONFIRM_FIXING_WHEN_ON_ANOTHER_FIXING:
     'Không thể xác nhận khi yêu cầu khác đang trong quá trình sửa',

@@ -210,7 +210,11 @@ export default function RegisterScreen({navigation}) {
     if (!password || password.trim() === '') {
       setPasswordInputError('Không được bỏ trống');
       return false;
-    } else if (!/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(password.slice()))) {
+    } else if (
+      !/^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9\s]{6,10}$/.test(
+        removeAscent(password.slice()),
+      )
+    ) {
       setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     } else if (password.indexOf(' ') >= 0) {

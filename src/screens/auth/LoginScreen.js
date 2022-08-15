@@ -15,7 +15,6 @@ import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
 import ProgressLoader from 'rn-progress-loader';
 import Toast from 'react-native-toast-message';
-import {removeAscent} from '../../utils/util';
 
 export default function LoginScreen({navigation}) {
   const {
@@ -53,9 +52,6 @@ export default function LoginScreen({navigation}) {
         setPhoneInputError('Nhập số điện thoại trước khi bấm quên mật khẩu');
       }
       return false;
-    } else if (!/(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/.test(phoneNumber)) {
-      setPhoneInputError('Số điện thoại không hợp lệ');
-      return false;
     }
     setPhoneInputError(null);
     return true;
@@ -64,12 +60,6 @@ export default function LoginScreen({navigation}) {
   const checkPasswordValid = () => {
     if (password.trim() === '') {
       setPasswordInputError('Không được bỏ trống');
-      return false;
-    } else if (!/^[a-zA-Z0-9\s]{6,10}$/.test(removeAscent(password.slice()))) {
-      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
-      return false;
-    } else if (password.indexOf(' ') >= 0) {
-      setPasswordInputError('Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số');
       return false;
     }
     setPasswordInputError(null);
