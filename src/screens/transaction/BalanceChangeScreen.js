@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
@@ -20,6 +19,8 @@ import Toast from 'react-native-toast-message';
 import {numberWithCommas} from '../../utils/util';
 import moment from 'moment';
 import {NUMBER_RECORD_PER_PAGE} from '../../constants/Api';
+import EmptyTransaction from '../../components/EmptyTransaction';
+import Loading from '../../components/Loading';
 
 const BalanceChangeScreen = ({navigation}) => {
   const [transactions, setTransactions] = useState([]);
@@ -27,6 +28,7 @@ const BalanceChangeScreen = ({navigation}) => {
   const [pageNumber, setPageNumber] = useState(0);
   const [totalPage, setTotalPage] = useState(null);
   const [stopFetchMore, setStopFetchMore] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
@@ -62,6 +64,8 @@ const BalanceChangeScreen = ({navigation}) => {
         type: 'customErrorToast',
         text1: err,
       });
+    } finally {
+      setIsFirstLoad(false);
     }
   };
 
@@ -249,39 +253,42 @@ const BalanceChangeScreen = ({navigation}) => {
         statusBarColor="white"
       />
       <SafeAreaView style={{flex: 1}}>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={transactions}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshControl}
-              onRefresh={() => setRefreshControl(true)}
-              colors={['#FEC54B']}
-            />
-          }
-          ListFooterComponent={() =>
-            isLoading && (
-              <ActivityIndicator
-                size="small"
-                color="#FEC54B"
-                style={{
-                  marginTop: 10,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  padding: 10,
-                }}
+        {isFirstLoad ? (
+          <Loading />
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={transactions}
+            renderItem={renderItem}
+            ListEmptyComponent={EmptyTransaction}
+            keyExtractor={(item, index) => index.toString()}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshControl}
+                onRefresh={() => setRefreshControl(true)}
+                colors={['#FEC54B']}
               />
-            )
-          }
-          onEndReached={handleOnEndReached}
-          onScrollBeginDrag={() => {
-            setStopFetchMore(false);
-          }}
-          onEndReachedThreshold={0.5}
-        />
+            }
+            ListFooterComponent={() =>
+              isLoading && (
+                <Loading
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    padding: 10,
+                  }}
+                />
+              )
+            }
+            onEndReached={handleOnEndReached}
+            onScrollBeginDrag={() => {
+              setStopFetchMore(false);
+            }}
+            onEndReachedThreshold={0.5}
+          />
+        )}
       </SafeAreaView>
     </View>
   );

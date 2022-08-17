@@ -16,19 +16,16 @@ import {useSelector, useDispatch} from 'react-redux';
 import useAxios from '../../hooks/useAxios';
 import {
   fetchProfile,
-  selectErrorMessage,
   selectUser,
   resetState as resetUserState,
 } from '../../features/user/userSlice';
 import {resetState as resetRequestState} from '../../features/request/requestSlice';
 import {resetState as resetHomeState} from '../../features/home/homeSlice';
-
-import Toast from 'react-native-toast-message';
 import {numberWithCommas} from '../../utils/util';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ProfileScreen = ({navigation}) => {
-  const {logout} = useContext(AuthContext);
+  const {logout, state} = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [showExtra, setShowExtra] = useState(false);
   const [coverBalance, setCoverBalance] = useState(false);
@@ -39,20 +36,11 @@ const ProfileScreen = ({navigation}) => {
     setModalVisible(true);
   };
 
-  const errorMessage = useSelector(selectErrorMessage);
   const user = useSelector(selectUser);
 
   useEffect(() => {
-    if (!user.role) {
-      (async () => {
-        await dispatch(fetchProfile(repairerAPI));
-        if (errorMessage) {
-          Toast.show({
-            type: 'customErrorToast',
-            text1: errorMessage,
-          });
-        }
-      })();
+    if (!user.role && state.token) {
+      dispatch(fetchProfile(repairerAPI));
     }
   }, []);
 
@@ -202,26 +190,28 @@ const ProfileScreen = ({navigation}) => {
               />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setShowExtra(!showExtra)}
-            style={styles.wrapper}>
-            <View style={styles.container}>
-              <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
+          {user.role && user.role === 'ROLE_REPAIRER' && (
+            <TouchableOpacity
+              onPress={() => setShowExtra(!showExtra)}
+              style={styles.wrapper}>
+              <View style={styles.container}>
+                <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
+                  <Image
+                    style={styles.icon}
+                    source={require('../../../assets/images/type/transaction.png')}
+                  />
+                  <Text style={styles.title}>Quản lý giao dịch</Text>
+                </View>
                 <Image
-                  style={styles.icon}
-                  source={require('../../../assets/images/type/transaction.png')}
+                  style={[
+                    styles.iconNext,
+                    {transform: [{rotate: showExtra ? '90deg' : '0deg'}]},
+                  ]}
+                  source={require('../../../assets/images/type/right-arrow.png')}
                 />
-                <Text style={styles.title}>Quản lý giao dịch</Text>
               </View>
-              <Image
-                style={[
-                  styles.iconNext,
-                  {transform: [{rotate: showExtra ? '90deg' : '0deg'}]},
-                ]}
-                source={require('../../../assets/images/type/right-arrow.png')}
-              />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
           {showExtra ? (
             <>
               <TouchableOpacity
@@ -337,10 +327,10 @@ const ProfileScreen = ({navigation}) => {
           <TouchableOpacity
             style={[styles.button, styles.buttonOpen]}
             onPress={() => {
+              logout();
               dispatch(resetRequestState());
               dispatch(resetHomeState());
               dispatch(resetUserState());
-              logout();
             }}>
             <Text style={styles.textStyle}>ĐĂNG XUẤT</Text>
           </TouchableOpacity>

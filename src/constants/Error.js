@@ -1,5 +1,6 @@
 export default {
   LOGIN_FAILED: 'Tài khoản hoặc mật khẩu không đúng',
+  ACCESS_DENIED: 'Yêu cầu không hợp lệ! Vui lòng thử lại sau',
   ACCOUNT_NOT_FOUND: 'Tài khoản không tồn tại',
   ACCOUNT_EXISTED: 'Số điện thoại đã được sử dụng trong hệ thống',
   INVALID_OTP: 'Mã chưa đúng, vui lòng thử lại',

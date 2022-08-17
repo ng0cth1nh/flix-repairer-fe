@@ -313,15 +313,12 @@ export const requestSlice = createSlice({
     });
     builder.addCase(updateRequest.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(fetchRequestDetail.fulfilled, (state, action) => {
       state.errorMessage = null;
     });
-    builder.addCase(fetchRequestDetail.rejected, (state, action) => {
-      state.errorMessage = action.payload;
-    });
+    builder.addCase(fetchRequestDetail.rejected, (state, action) => {});
 
     builder.addCase(confirmFixingRequest.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -329,7 +326,6 @@ export const requestSlice = createSlice({
     });
     builder.addCase(confirmFixingRequest.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(approveRequest.fulfilled, (state, action) => {
@@ -338,22 +334,17 @@ export const requestSlice = createSlice({
     });
     builder.addCase(approveRequest.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(fetchInvoice.fulfilled, (state, action) => {
       state.errorMessage = null;
     });
-    builder.addCase(fetchInvoice.rejected, (state, action) => {
-      state.errorMessage = action.payload;
-    });
+    builder.addCase(fetchInvoice.rejected, (state, action) => {});
 
     builder.addCase(fetchFixedService.fulfilled, (state, action) => {
       state.errorMessage = null;
     });
-    builder.addCase(fetchFixedService.rejected, (state, action) => {
-      state.errorMessage = action.payload;
-    });
+    builder.addCase(fetchFixedService.rejected, (state, action) => {});
 
     builder.addCase(createInvoice.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -361,7 +352,6 @@ export const requestSlice = createSlice({
     });
     builder.addCase(createInvoice.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(confirmPayment.fulfilled, (state, action) => {
@@ -370,7 +360,6 @@ export const requestSlice = createSlice({
     });
     builder.addCase(confirmPayment.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(rateCustomer.fulfilled, (state, action) => {
@@ -379,7 +368,6 @@ export const requestSlice = createSlice({
     });
     builder.addCase(rateCustomer.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
 
     builder.addCase(cancelRequest.fulfilled, (state, action) => {
@@ -388,7 +376,6 @@ export const requestSlice = createSlice({
     });
     builder.addCase(cancelRequest.rejected, (state, action) => {
       state.isLoading = false;
-      state.errorMessage = action.payload;
     });
   },
 });

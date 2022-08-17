@@ -3,10 +3,8 @@ import {
   Text,
   View,
   SafeAreaView,
-  StatusBar,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, {useState, useRef} from 'react';
@@ -23,13 +21,8 @@ import Loading from '../../components/Loading';
 
 export default function AddSubServiceScreen({route, navigation}) {
   const [search, setSearch] = useState('');
-  const {
-    requestCode,
-    serviceId,
-    subServiceIds,
-    setSubServiceId,
-    setSubServiceIds,
-  } = route.params;
+  const {serviceId, subServiceIds, setSubServiceId, setSubServiceIds} =
+    route.params;
   const [loading, setLoading] = useState(false);
   const repairerAPI = useAxios();
   const typingTimeoutRef = useRef(null);
@@ -141,7 +134,7 @@ export default function AddSubServiceScreen({route, navigation}) {
             ) : null}
 
             {loading ? (
-              <Loading />
+              <Loading style={{marginTop: 20}} />
             ) : (
               <View>
                 {searchedSubServiceId !== null ? (

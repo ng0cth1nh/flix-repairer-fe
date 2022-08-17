@@ -19,6 +19,7 @@ import firestore from '@react-native-firebase/firestore';
 import getErrorMessage from '../../utils/getErrorMessage';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import {getDiffTimeBetweenTwoDate} from '../../utils/util';
+import EmptyMessage from '../../components/EmptyMessage';
 
 const ChatListScreen = ({navigation}) => {
   const {state} = useContext(AuthContext);
@@ -104,7 +105,6 @@ const ChatListScreen = ({navigation}) => {
 
   function onError(error) {
     setFireBaseLoading(false);
-    console.error('Loading conversations fail:', error);
   }
 
   const renderItem = ({item}) => {
@@ -210,6 +210,7 @@ const ChatListScreen = ({navigation}) => {
               .sort((a, b) => b.latestTimestamp - a.latestTimestamp)}
             scrollEnabled={true}
             renderItem={renderItem}
+            ListEmptyComponent={EmptyMessage}
           />
         )}
       </SafeAreaView>

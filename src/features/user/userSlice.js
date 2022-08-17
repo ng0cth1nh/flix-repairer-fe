@@ -26,6 +26,7 @@ const initialState = {
   totalPageNotifications: null,
   pageNumbers: 0,
   numberOfUnread: 0,
+  isShowToast: false,
 };
 
 export const fetchProfile = createAsyncThunk(
@@ -203,6 +204,9 @@ export const userSlice = createSlice({
     setIsLoading(state) {
       state.isLoading = true;
     },
+    setIsShowToast(state, action) {
+      state.isShowToast = action.payload;
+    },
     setNotifications(state, action) {
       state.notifications = action.payload;
     },
@@ -318,6 +322,7 @@ export const {
   setTotalPageNotifications,
   setNumberOfUnread,
   resetState,
+  setIsShowToast,
 } = userSlice.actions;
 export const selectUser = state => state.user.user;
 export const selectAddresses = state => state.user.addresses;
@@ -328,4 +333,5 @@ export const selectTotalPageNotifications = state =>
 export const selectPageNumbers = state => state.user.pageNumbers;
 export const selectErrorMessage = state => state.user.errorMessage;
 export const selectIsLoading = state => state.user.isLoading;
+export const selectIsShowToast = state => state.user.isShowToast;
 export default userSlice.reducer;

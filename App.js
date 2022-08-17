@@ -125,7 +125,6 @@ function App() {
   const [countOne, setCountOne] = useState(0);
   const [countTwo, setCountTwo] = useState(0);
   const [numberOfUnreadMessage, setNumberOfUnreadMessage] = useState(0);
-  const errorMessage = useSelector(selectErrorMessage);
   const dispatch = useDispatch();
   const repairerAPI = useAxios();
   let {state, TryLocalLogin, clearErrorMessage} = useContext(AuthContext);
@@ -143,12 +142,6 @@ function App() {
     if (state.token) {
       const getUserProfile = async () => {
         await dispatch(fetchProfile(repairerAPI));
-        if (errorMessage) {
-          Toast.show({
-            type: 'customErrorToast',
-            text1: errorMessage,
-          });
-        }
       };
       const saveFCMToken = async () => {
         let fcmToken = await AsyncStorage.getItem('fcmtoken');
@@ -357,6 +350,7 @@ function App() {
   function ProfileStackScreen() {
     return (
       <Stack.Navigator
+        initialRouteName="ProfileScreen"
         screenOptions={{
           headerShown: false,
           gestureEnabled: true,
@@ -403,6 +397,7 @@ function App() {
             }}
             screenOptions={({route}) => ({
               tabBarShowLabel: false,
+              unmountOnBlur: true,
               headerShown: false,
               tabBarStyle: {
                 height: 50,
