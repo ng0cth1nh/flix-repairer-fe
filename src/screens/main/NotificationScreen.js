@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import React, {useState, useEffect} from 'react';
@@ -33,6 +32,8 @@ import {
   setNumberOfUnread,
   selectNumberOfUnread,
 } from '../../features/user/userSlice';
+import Loading from '../../components/Loading';
+import EmptyNoti from '../../components/EmptyNoti';
 
 const NotificationScreen = ({navigation}) => {
   const [notifications, setNotifications] = useState(
@@ -450,6 +451,7 @@ const NotificationScreen = ({navigation}) => {
           showsVerticalScrollIndicator={false}
           data={notifications}
           renderItem={renderItem}
+          ListEmptyComponent={EmptyNoti}
           keyExtractor={(item, index) => index.toString()}
           refreshControl={
             <RefreshControl
@@ -460,9 +462,7 @@ const NotificationScreen = ({navigation}) => {
           }
           ListFooterComponent={() =>
             isLoading && (
-              <ActivityIndicator
-                size="small"
-                color="#FEC54B"
+              <Loading
                 style={{
                   marginTop: 10,
                   alignItems: 'center',

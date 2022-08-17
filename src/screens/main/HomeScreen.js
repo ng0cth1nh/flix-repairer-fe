@@ -24,17 +24,13 @@ import {
   setIsLoading,
   selectIsLoading,
 } from '../../features/home/homeSlice';
-import {
-  fetchProfile,
-  selectErrorMessage,
-  selectUser,
-} from '../../features/user/userSlice';
-import Toast from 'react-native-toast-message';
+import {selectUser} from '../../features/user/userSlice';
 import {fetchRequests} from '../../features/request/requestSlice';
 import {RequestStatus} from '../../utils/util';
 import useAxios from '../../hooks/useAxios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomModal from '../../components/CustomModal';
+import SubmitButton from '../../components/SubmitButton';
 
 const HomeScreen = ({navigation}) => {
   const [buttonIndex, setButtonIndex] = useState(0);
@@ -49,21 +45,17 @@ const HomeScreen = ({navigation}) => {
   const [cityIds, setCityIds] = useState(null);
   const [districtIds, setDistrictIds] = useState(null);
   const [communeIds, setCommuneIds] = useState(null);
-  const errorMessage = useSelector(selectErrorMessage);
   const user = useSelector(selectUser);
   const [modalVisible, setModalVisible] = useState(false);
-
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
 
   const handleSuggestButton = () => {
     setButtonIndex(0);
-    console.log('handleSuggestButton: buttonIndex = ' + buttonIndex);
     setRenderList(requests.suggested);
   };
   const handleInterestButton = () => {
     setButtonIndex(1);
-    console.log('handleInterestButton: buttonIndex = ' + buttonIndex);
     setRenderList(requests.interested);
   };
 
@@ -76,9 +68,6 @@ const HomeScreen = ({navigation}) => {
         isShowSubmitButton: true,
         isAddableDetailService: false,
         typeSubmitButtonClick: 'APPROVE_REQUEST',
-        filter,
-        buttonIndex,
-        setRenderList,
       });
     } else {
       setModalVisible(true);
@@ -103,18 +92,6 @@ const HomeScreen = ({navigation}) => {
       setCommuneIds,
     });
   };
-
-  useEffect(() => {
-    (async () => {
-      await dispatch(fetchProfile(repairerAPI));
-      if (errorMessage) {
-        Toast.show({
-          type: 'customErrorToast',
-          text1: errorMessage,
-        });
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -150,13 +127,15 @@ const HomeScreen = ({navigation}) => {
   }, [filter]);
 
   useEffect(() => {
-    dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
-    dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
-    dispatch(
-      fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
-    );
-    dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
-    dispatch(fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}));
+    if (user.role && user.role === 'ROLE_REPAIRER') {
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
+      dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+      );
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}));
+    }
   }, []);
 
   useEffect(() => {
@@ -402,7 +381,7 @@ const HomeScreen = ({navigation}) => {
         setModalVisible={setModalVisible}
         modalRatio={0.28}>
         <Text style={styles.modalText}>Lưu ý</Text>
-        <View style={{marginTop: 20, marginBottom: 20}}>
+        <View style={{marginVertical: 10}}>
           <Text>Tài khoản của bạn chưa được xác thực</Text>
         </View>
         <View
@@ -411,13 +390,15 @@ const HomeScreen = ({navigation}) => {
             flexDirection: 'row',
             justifyContent: 'space-around',
           }}>
-          <TouchableOpacity
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => {
-              setModalVisible(false);
-            }}>
-            <Text style={styles.textStyle}>Đồng ý</Text>
-          </TouchableOpacity>
+          <SubmitButton
+            style={{
+              marginVertical: 8,
+              width: '100%',
+              alignSelf: 'center',
+            }}
+            onPress={() => setModalVisible(false)}
+            buttonText="ĐỒNG Ý"
+          />
         </View>
       </CustomModal>
     </>

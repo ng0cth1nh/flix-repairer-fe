@@ -17,6 +17,8 @@ import {
   selectIsLoading,
   setIsLoading,
   fetchProfile,
+  setIsShowToast,
+  selectIsShowToast,
 } from '../../features/user/userSlice';
 import CustomModal from '../../components/CustomModal';
 import {RadioButton} from 'react-native-paper';
@@ -31,7 +33,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import ProgressLoader from 'rn-progress-loader';
 import {VnPayCode} from '../../constants/Error';
 
-const WithdrawScreen = ({route, navigation}) => {
+const DepositScreen = ({route, navigation}) => {
   const {vnp_ResponseCode, vnp_TxnRef} = route.params;
   const user = useSelector(selectUser);
   const [money, setMoney] = useState(0);
@@ -39,6 +41,7 @@ const WithdrawScreen = ({route, navigation}) => {
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
+  const isShowToast = useSelector(selectIsShowToast);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleSubmitClick = async () => {
@@ -64,6 +67,8 @@ const WithdrawScreen = ({route, navigation}) => {
         type: 'customErrorToast',
         text1: err,
       });
+    } finally {
+      await dispatch(setIsShowToast(false));
     }
   };
   const checkMoney = async () => {
@@ -80,22 +85,28 @@ const WithdrawScreen = ({route, navigation}) => {
       (async () => {
         if (vnp_ResponseCode && vnp_TxnRef) {
           console.log(
-            'FOCUS - vnp_ResponseCode - vnp_TxnRef: ',
+            'FOCUS - vnp_ResponseCode - vnp_TxnRef - isSHowTOAST: ',
             vnp_ResponseCode,
             vnp_TxnRef,
+            isShowToast,
           );
-          if (vnp_ResponseCode && vnp_ResponseCode === '00') {
+          if (vnp_ResponseCode && vnp_ResponseCode === '00' && !isShowToast) {
             await dispatch(fetchProfile(repairerAPI));
             Toast.show({
               type: 'customToast',
               text1: VnPayCode.get(vnp_ResponseCode),
             });
-          } else if (vnp_ResponseCode && vnp_ResponseCode !== '00') {
+          } else if (
+            vnp_ResponseCode &&
+            vnp_ResponseCode !== '00' &&
+            !isShowToast
+          ) {
             Toast.show({
               type: 'customErrorToast',
               text1: VnPayCode.get(vnp_ResponseCode),
             });
           }
+          await dispatch(setIsShowToast(true));
         }
       })();
     }, [vnp_ResponseCode, vnp_TxnRef]),
@@ -108,6 +119,7 @@ const WithdrawScreen = ({route, navigation}) => {
         title="Nạp tiền vào tài khoản"
         isBackButton={true}
         statusBarColor="white"
+        screen="DepositScreen"
       />
       <SafeAreaView style={{flex: 1, paddingHorizontal: '4%'}}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -258,7 +270,7 @@ const WithdrawScreen = ({route, navigation}) => {
           buttonText="NẠP TIỀN"
         />
         <ProgressLoader
-          visible={isLoading}
+          visible={isLoading && !isShowToast ? true : false}
           isModal={true}
           isHUD={true}
           hudColor={'#FEC54B'}
@@ -355,4 +367,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WithdrawScreen;
+export default DepositScreen;

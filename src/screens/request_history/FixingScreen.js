@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, RefreshControl, ActivityIndicator, View} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, RefreshControl, View} from 'react-native';
 import RequestItem from '../../components/RequestItem';
 import Empty from '../../components/Empty';
 import {RequestStatus} from '../../utils/util';
@@ -9,8 +9,11 @@ import {
   selectRequests,
   selectIsLoading,
   setIsLoading,
+  selectErrorMessage,
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
+import NotFound from '../../components/NotFound';
+import Loading from '../../components/Loading';
 
 const FixingScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -18,6 +21,7 @@ const FixingScreen = ({navigation}) => {
   const isLoading = useSelector(selectIsLoading);
   const requests = useSelector(selectRequests);
   const [refreshControl, setRefreshControl] = useState(false);
+  const errorMessage = useSelector(selectErrorMessage);
 
   const handleNavigationToListPrice = async service => {
     navigation.push('ServicePriceScreen', {
@@ -42,83 +46,80 @@ const FixingScreen = ({navigation}) => {
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       {isLoading ? (
-        <ActivityIndicator
-          size="small"
-          color="#FEC54B"
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-      ) : null}
-      {/* {isError ? <NotFound /> : null} */}
-      {requests.fixing ? (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={requests.fixing}
-          style={{marginHorizontal: 20}}
-          keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={Empty}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshControl}
-              onRefresh={async () => {
-                try {
-                  setRefreshControl(true);
-                  await dispatch(
-                    fetchRequests({
-                      repairerAPI,
-                      status: RequestStatus.FIXING,
-                    }),
-                  );
-                  await setIsLoading(true);
-                  dispatch(
-                    fetchRequests({
-                      repairerAPI,
-                      status: RequestStatus.PAYMENT_WAITING,
-                    }),
-                  );
-                  dispatch(
-                    fetchRequests({
-                      repairerAPI,
-                      status: RequestStatus.APPROVED,
-                    }),
-                  );
-                  dispatch(
-                    fetchRequests({repairerAPI, status: RequestStatus.DONE}),
-                  );
-                  dispatch(
-                    fetchRequests({
-                      repairerAPI,
-                      status: RequestStatus.CANCELLED,
-                    }),
-                  );
-                } catch (err) {
-                  console.log(err);
-                } finally {
-                  setRefreshControl(false);
-                }
-              }}
-              colors={['#FEC54B']}
-            />
-          }
-          renderItem={({item, index}) => (
-            <RequestItem
-              handleButtonPress={handleNavigationToListPrice}
-              handleNavigationToDetailRequest={handleNavigationToDetailRequest}
-              item={item}
-              index={index}
-              textButton="Xem giá dịch vụ"
-              text="Tổng thanh toán (dự kiến)"
+        <Loading />
+      ) : (
+        <>
+          {errorMessage ? (
+            <NotFound />
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={requests.fixing}
+              style={{marginHorizontal: 20}}
+              keyExtractor={(item, index) => index.toString()}
+              ListEmptyComponent={Empty}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshControl}
+                  onRefresh={async () => {
+                    try {
+                      setRefreshControl(true);
+                      await dispatch(
+                        fetchRequests({
+                          repairerAPI,
+                          status: RequestStatus.FIXING,
+                        }),
+                      );
+                      await setIsLoading(true);
+                      dispatch(
+                        fetchRequests({
+                          repairerAPI,
+                          status: RequestStatus.PAYMENT_WAITING,
+                        }),
+                      );
+                      dispatch(
+                        fetchRequests({
+                          repairerAPI,
+                          status: RequestStatus.APPROVED,
+                        }),
+                      );
+                      dispatch(
+                        fetchRequests({
+                          repairerAPI,
+                          status: RequestStatus.DONE,
+                        }),
+                      );
+                      dispatch(
+                        fetchRequests({
+                          repairerAPI,
+                          status: RequestStatus.CANCELLED,
+                        }),
+                      );
+                    } catch (err) {
+                      console.log(err);
+                    } finally {
+                      setRefreshControl(false);
+                    }
+                  }}
+                  colors={['#FEC54B']}
+                />
+              }
+              renderItem={({item, index}) => (
+                <RequestItem
+                  handleButtonPress={handleNavigationToListPrice}
+                  handleNavigationToDetailRequest={
+                    handleNavigationToDetailRequest
+                  }
+                  item={item}
+                  index={index}
+                  textButton="Xem giá dịch vụ"
+                  text="Tổng thanh toán (dự kiến)"
+                />
+              )}
             />
           )}
-        />
-      ) : null}
+        </>
+      )}
     </View>
   );
 };

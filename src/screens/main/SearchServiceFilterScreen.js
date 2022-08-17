@@ -106,7 +106,7 @@ export default function SearchServiceFilterScreen({route, navigation}) {
                           source={{uri: icon}}
                           style={{width: 24, height: 24}}
                         />
-                        <Text style={{marginLeft: 5, color: 'black'}}>
+                        <Text style={{marginLeft: 10, color: 'black'}}>
                           {serviceName}
                         </Text>
                         <TouchableOpacity
@@ -124,8 +124,6 @@ export default function SearchServiceFilterScreen({route, navigation}) {
               <Loading
                 style={{
                   marginTop: 20,
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }}
               />
             ) : (
@@ -155,6 +153,7 @@ export default function SearchServiceFilterScreen({route, navigation}) {
                                 color: 'black',
                                 fontSize: 16,
                                 marginLeft: 20,
+                                marginRight: 50,
                               }}>
                               {item.serviceName}
                             </Text>

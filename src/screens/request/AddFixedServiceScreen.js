@@ -1,15 +1,12 @@
 import {View, Text, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Checkbox, NativeBaseProvider} from 'native-base';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Button from '../../components/SubmitButton';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
-import useFetchData from '../../hooks/useFetchData';
-import ApiConstants from '../../constants/Api';
 import ProgressLoader from 'rn-progress-loader';
 import {
-  fetchRequests,
   updateRequest,
   setIsLoading,
   selectIsLoading,

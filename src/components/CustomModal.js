@@ -47,7 +47,7 @@ export default function CustomModal(props) {
       transparent={true}
       isVisible={modalVisible}
       onBackdropPress={() => setModalVisible(false)}
-      style={{margin: 0}}>
+      style={{justifyContent: 'flex-end', margin: 0}}>
       <View style={styles.centeredView}>
         <View style={[styles.modalView, modalStyle]}>{children}</View>
       </View>

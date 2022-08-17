@@ -13,16 +13,31 @@ const TopHeaderComponent = ({
   onPressEdit = null,
   style = null,
   isNavigateFromNotiScreen = false,
+  screen = null,
 }) => {
   const handleGoBack = () => {
     if (navigation.canGoBack()) {
-      if (isNavigateFromNotiScreen) {
+      console.log('Can navigate');
+      console.log('screen:', screen);
+      if (screen === 'DepositScreen') {
+        navigation.navigate('ProfileStackScreen', {
+          screen: 'ProfileScreen',
+        });
+      } else if (isNavigateFromNotiScreen) {
         navigation.navigate('RequestHistoryScreen');
       } else {
+        console.log('go back');
         navigation.goBack();
       }
     } else {
-      navigation.navigate('HomeScreen');
+      if (screen === 'DepositScreen') {
+        console.log('Cant navigate,: ', screen);
+        navigation.navigate('ProfileStackScreen', {
+          screen: 'ProfileScreen',
+        });
+      } else {
+        navigation.navigate('HomeScreen');
+      }
     }
   };
 

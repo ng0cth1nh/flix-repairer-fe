@@ -27,12 +27,8 @@ import {
   fetchFixedService,
   createInvoice,
   fetchRequestDetail,
+  confirmPayment,
 } from '../../features/request/requestSlice';
-import {
-  fetchSuggestRequests,
-  fetchFilteredRequests,
-  setIsLoading as setIsLoadingHome,
-} from '../../features/home/homeSlice';
 import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
@@ -45,9 +41,6 @@ const RequestDetailScreen = ({route, navigation}) => {
     isAddableDetailService,
     submitButtonText,
     typeSubmitButtonClick,
-    filter,
-    buttonIndex,
-    setRenderList,
     isCancelFromApprovedStatus,
     isFetchFixedService,
     isShowSubmitButton,
@@ -66,6 +59,7 @@ const RequestDetailScreen = ({route, navigation}) => {
   const [data, setData] = useState(null);
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
+  const [showComment, setShowComment] = useState(false);
 
   const showModal = () => {
     setWarningModalVisible(true);
@@ -185,6 +179,14 @@ const RequestDetailScreen = ({route, navigation}) => {
     }
   };
 
+  const handleChatCLick = async () => {
+    navigation.push('ChatScreen', {
+      targetUserId: data.customerId,
+      targetUserAvatar: data.avatar,
+      targetUsername: data.customerName,
+    });
+  };
+
   const handleApproveRequestButtonClick = async () => {
     try {
       await dispatch(setIsLoading());
@@ -198,28 +200,12 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Xác nhận yêu cầu thành công',
       });
-      await dispatch(setIsLoadingHome());
-      let data = null;
-      if (buttonIndex === 0) {
-        data = (
-          await dispatch(
-            fetchSuggestRequests({repairerAPI, type: 'SUGGESTED'}),
-          ).unwrap()
-        ).requests;
-      } else if (buttonIndex === 1) {
-        data = (
-          await dispatch(
-            fetchSuggestRequests({repairerAPI, type: 'INTERESTED'}),
-          ).unwrap()
-        ).requests;
-      } else {
-        data = await dispatch(
-          fetchFilteredRequests({repairerAPI, param: filter}),
-        ).unwrap();
-      }
-      setRenderList(data);
-      navigation.goBack();
-      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+      await dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
+      );
+      navigation.navigate('RequestHistoryStackScreen', {
+        screen: 'ApprovedScreen',
+      });
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -250,7 +236,41 @@ const RequestDetailScreen = ({route, navigation}) => {
       dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
       ).unwrap();
+    } catch (err) {
+      Toast.show({
+        type: 'customErrorToast',
+        text1: err,
+      });
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    try {
+      await dispatch(setIsLoading());
+      await dispatch(
+        confirmPayment({
+          repairerAPI,
+          body: {requestCode},
+        }),
+      ).unwrap();
       navigation.goBack();
+      await dispatch(
+        fetchRequests({repairerAPI, status: RequestStatus.DONE}),
+      ).unwrap();
+      navigation.navigate('RequestHistoryScreen', {
+        screen: 'DoneScreen',
+      });
+      Toast.show({
+        type: 'customToast',
+        text1: 'Xác nhận thanh toán thành công',
+      });
+      setShowComment(true);
+      dispatch(
+        fetchRequests({
+          repairerAPI,
+          status: RequestStatus.PAYMENT_WAITING,
+        }),
+      ).unwrap();
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -348,15 +368,11 @@ const RequestDetailScreen = ({route, navigation}) => {
                 ? handleApproveRequestButtonClick
                 : typeSubmitButtonClick === 'CREATE_INVOICE'
                 ? showInvoiceModal
+                : typeSubmitButtonClick === 'CONFIRM_INVOICE'
+                ? handleConfirmPayment
                 : null
             }
-            chatHandler={() =>
-              navigation.push('ChatScreen', {
-                targetUserId: data.customerId,
-                targetUserAvatar: data.avatar,
-                targetUsername: data.customerName,
-              })
-            }
+            chatHandler={handleChatCLick}
             isShowCancelButton={isShowCancelButton}
             isAddableDetailService={isAddableDetailService}
             handleAddDetailServiceButtonClick={

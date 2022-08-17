@@ -3,10 +3,8 @@ import {
   Text,
   View,
   SafeAreaView,
-  StatusBar,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, {useState, useRef} from 'react';
@@ -136,7 +134,7 @@ export default function AddFixedAccessoriesScreen({route, navigation}) {
             ) : null}
 
             {loading ? (
-              <Loading />
+              <Loading style={{marginTop: 20}} />
             ) : (
               <View>
                 {searchedAccessoryId !== null ? (
