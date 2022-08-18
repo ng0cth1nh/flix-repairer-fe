@@ -11,12 +11,11 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import CustomModal from '../../components/CustomModal';
-
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 const {height} = Dimensions.get('window');
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import Button from '../../components/SubmitButton';
-import {formatCurrency, removeCommas} from '../../utils/FormattingCurrency';
+import {formatCurrency} from '../../utils/FormattingCurrency';
 
 export default function AddExtraServiceScreen({route, navigation}) {
   const {item, index, extraService, setExtraServices, setExtraService} =
@@ -148,7 +147,7 @@ export default function AddExtraServiceScreen({route, navigation}) {
                   {
                     flexDirection: 'row',
                     alignItems: 'center',
-                    width: '46%',
+                    width: '54%',
                   },
                 ]}>
                 <TextInput
@@ -183,7 +182,7 @@ export default function AddExtraServiceScreen({route, navigation}) {
                   {
                     flexDirection: 'row',
                     alignItems: 'center',
-                    width: '30%',
+                    width: '36%',
                   },
                 ]}>
                 <TextInput
@@ -209,9 +208,9 @@ export default function AddExtraServiceScreen({route, navigation}) {
         <CustomModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          modalRatio={0.3}>
+          modalRatio={0.28}>
           <Text style={styles.modalText}>Lưu ý</Text>
-          <View style={{marginTop: 20, marginBottom: 20}}>
+          <View style={{marginVertical: 10}}>
             <Text>Vui lòng điền đầy đủ tên và giá</Text>
           </View>
           <View
@@ -220,13 +219,15 @@ export default function AddExtraServiceScreen({route, navigation}) {
               flexDirection: 'row',
               justifyContent: 'space-around',
             }}>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonOpen]}
-              onPress={() => {
-                setModalVisible(false);
-              }}>
-              <Text style={styles.textStyle}>Đồng ý</Text>
-            </TouchableOpacity>
+            <Button
+              style={{
+                marginVertical: 8,
+                width: '100%',
+                alignSelf: 'center',
+              }}
+              onPress={() => setModalVisible(false)}
+              buttonText="ĐỒNG Ý"
+            />
           </View>
         </CustomModal>
       </SafeAreaView>

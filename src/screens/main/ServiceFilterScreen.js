@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ApiConstants from '../../constants/Api';
 import useAxios from '../../hooks/useAxios';
 import CustomModal from '../../components/CustomModal';
+import SubmitButton from '../../components/SubmitButton';
 
 export default function ServiceFilterScreen({route, navigation}) {
   const {
@@ -426,9 +427,9 @@ export default function ServiceFilterScreen({route, navigation}) {
         <CustomModal
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
-          modalRatio={0.4}>
+          modalRatio={0.34}>
           <Text style={styles.modalText}>Lưu ý</Text>
-          <View style={{marginTop: 20, marginBottom: 40}}>
+          <View style={{marginVertical: 10}}>
             <Text>Vui lòng chọn ít nhất 1 dịch vụ.</Text>
             <Text>
               Chọn khu vực muốn sửa mức chi tiết ít nhất là thành phố.
@@ -440,13 +441,15 @@ export default function ServiceFilterScreen({route, navigation}) {
               flexDirection: 'row',
               justifyContent: 'space-around',
             }}>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonOpen]}
-              onPress={() => {
-                setModalVisible(false);
-              }}>
-              <Text style={styles.textStyle}>Đồng ý</Text>
-            </TouchableOpacity>
+            <SubmitButton
+              style={{
+                marginVertical: 8,
+                width: '100%',
+                alignSelf: 'center',
+              }}
+              onPress={() => setModalVisible(false)}
+              buttonText="ĐỒNG Ý"
+            />
           </View>
         </CustomModal>
       </SafeAreaView>
