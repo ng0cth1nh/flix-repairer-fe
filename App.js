@@ -3,7 +3,8 @@ import 'react-native-gesture-handler';
 import React, {useEffect, useState, useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {Image, View, Text, Dimensions} from 'react-native';
-import {fetchProfile, selectErrorMessage} from './src/features/user/userSlice';
+import {fetchProfile} from './src/features/user/userSlice';
+import {fetchRequests} from './src/features/request/requestSlice';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   createStackNavigator,
@@ -67,6 +68,7 @@ import {
 } from './src/features/user/userSlice';
 import {NUMBER_RECORD_PER_PAGE} from './src/constants/Api';
 import firestore from '@react-native-firebase/firestore';
+import {RequestStatus} from './src/utils/util';
 
 const toastConfig = {
   customToast: ({text1}) => (
@@ -121,6 +123,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isNotiReceived, setIsNotiReceived] = useState(false);
+  const [notificationType, setNotificationType] = useState('');
   const numberOfUnread = useSelector(selectNumberOfUnread);
   const [countOne, setCountOne] = useState(0);
   const [countTwo, setCountTwo] = useState(0);
@@ -132,17 +135,36 @@ function App() {
   useEffect(() => {
     TryLocalLogin();
     requestUserPermission();
-    notificationListener(setIsNotiReceived);
+    notificationListener(setIsNotiReceived, setNotificationType);
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
   }, [TryLocalLogin]);
 
   useEffect(() => {
+    if (
+      notificationType === '' ||
+      notificationType === 'REGISTER_SUCCESS' ||
+      notificationType === 'REGISTER_SUCCESS' ||
+      notificationType === 'ACCEPTED_WITHDRAW' ||
+      notificationType === 'REQUEST_DONE'
+    ) {
+      dispatch(fetchProfile(repairerAPI));
+      if (notificationType === 'REQUEST_DONE') {
+        dispatch(
+          fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
+        );
+        dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
+      }
+    } else if (notificationType === 'REQUEST_CANCELED') {
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}));
+    }
+  }, [notificationType]);
+
+  useEffect(() => {
     if (state.token) {
-      const getUserProfile = async () => {
-        await dispatch(fetchProfile(repairerAPI));
-      };
       const saveFCMToken = async () => {
         let fcmToken = await AsyncStorage.getItem('fcmtoken');
         try {
@@ -155,7 +177,6 @@ function App() {
         }
       };
       saveFCMToken();
-      getUserProfile();
       setIsNotiReceived(true);
     }
   }, [state.token]);

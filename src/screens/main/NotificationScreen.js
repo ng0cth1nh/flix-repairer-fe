@@ -73,6 +73,8 @@ const NotificationScreen = ({navigation}) => {
             item.type.startsWith('DEPOSIT') ||
             item.type.startsWith('REGISTER_') ||
             item.type.startsWith('REMIND') ||
+            item.type.startsWith('REJECTED_WITHDRAW') ||
+            item.type.startsWith('ACCEPTED_WITHDRAW') ||
             item.type.startsWith('RESPONSE_FEEDBACK')) &&
           !item.read
         ) {
@@ -274,6 +276,8 @@ const NotificationScreen = ({navigation}) => {
       item.type.startsWith('DEPOSIT') ||
       item.type.startsWith('REGISTER_') ||
       item.type.startsWith('REMIND') ||
+      item.type.startsWith('REJECTED_WITHDRAW') ||
+      item.type.startsWith('ACCEPTED_WITHDRAW') ||
       item.type.startsWith('RESPONSE_FEEDBACK') ? (
       <View
         style={{
@@ -289,8 +293,8 @@ const NotificationScreen = ({navigation}) => {
             showModal();
           }}
           style={{
-            height: 14,
-            width: 14,
+            height: 15,
+            width: 15,
             alignSelf: 'flex-end',
             marginRight: 10,
             marginTop: 10,
@@ -298,8 +302,8 @@ const NotificationScreen = ({navigation}) => {
           <Image
             source={require('../../../assets/images/type/close.png')}
             style={{
-              height: 12,
-              width: 12,
+              height: 15,
+              width: 15,
             }}
           />
         </TouchableOpacity>
@@ -314,6 +318,10 @@ const NotificationScreen = ({navigation}) => {
                 ? require('../../../assets/images/type/help-desk.png')
                 : item.type.startsWith('DEPOSIT')
                 ? require('../../../assets/images/type/deposit.png')
+                : item.type.startsWith('ACCEPTED_WITHDRAW')
+                ? require('../../../assets/images/type/withdraw.png')
+                : item.type.startsWith('REJECTED_WITHDRAW')
+                ? require('../../../assets/images/type/withdraw.png')
                 : item.type.startsWith('REGISTER_FAIL')
                 ? require('../../../assets/images/type/unCheck.png')
                 : require('../../../assets/images/type/check.png')
@@ -373,8 +381,8 @@ const NotificationScreen = ({navigation}) => {
             showModal();
           }}
           style={{
-            height: 14,
-            width: 14,
+            height: 15,
+            width: 15,
             alignSelf: 'flex-end',
             marginRight: 10,
             marginTop: 10,
@@ -382,8 +390,8 @@ const NotificationScreen = ({navigation}) => {
           <Image
             source={require('../../../assets/images/type/close.png')}
             style={{
-              height: 12,
-              width: 12,
+              height: 15,
+              width: 15,
             }}
           />
         </TouchableOpacity>
@@ -461,7 +469,8 @@ const NotificationScreen = ({navigation}) => {
             />
           }
           ListFooterComponent={() =>
-            isLoading && (
+            isLoading &&
+            !refreshControl && (
               <Loading
                 style={{
                   marginTop: 10,
@@ -483,7 +492,7 @@ const NotificationScreen = ({navigation}) => {
       <CustomModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
-        modalRatio={0.3}>
+        modalRatio={0.28}>
         <Text style={styles.modalText}>
           Bạn có chắc chắn muốn xóa thông báo này không?
         </Text>

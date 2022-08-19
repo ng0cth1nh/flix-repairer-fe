@@ -7,8 +7,10 @@ import {
   StatusBar,
   StyleSheet,
   ScrollView,
+  SafeAreaView,
+  RefreshControl,
 } from 'react-native';
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useCallback} from 'react';
 const {width} = Dimensions.get('window');
 import {Context as AuthContext} from '../../context/AuthContext';
 import CustomModal from '../../components/CustomModal';
@@ -23,18 +25,17 @@ import {resetState as resetRequestState} from '../../features/request/requestSli
 import {resetState as resetHomeState} from '../../features/home/homeSlice';
 import {numberWithCommas} from '../../utils/util';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SubmitButton from '../../components/SubmitButton';
 
 const ProfileScreen = ({navigation}) => {
   const {logout, state} = useContext(AuthContext);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [showExtra, setShowExtra] = useState(false);
   const [coverBalance, setCoverBalance] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const repairerAPI = useAxios();
-
-  const showModal = () => {
-    setModalVisible(true);
-  };
 
   const user = useSelector(selectUser);
 
@@ -44,86 +45,104 @@ const ProfileScreen = ({navigation}) => {
     }
   }, []);
 
+  const onRefresh = useCallback(() => {
+    try {
+      setRefreshing(true);
+      dispatch(fetchProfile(repairerAPI));
+    } catch (error) {
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
   return (
-    <View
+    <SafeAreaView
       style={[
         {backgroundColor: '#FEC54B', flex: 1},
         modalVisible ? {opacity: 0.9} : {},
       ]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FEC54B" />
-      <Image
-        style={{
-          width: 110,
-          height: 110,
-          borderRadius: width * 0.5,
-          borderColor: '#F0F0F0',
-          borderWidth: 1,
-          alignSelf: 'center',
-          marginTop: 50,
-          marginBottom: 10,
-        }}
-        source={{uri: user.avatar}}
-      />
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: 'bold',
-          alignSelf: 'center',
-          color: 'black',
-          marginBottom: 6,
-        }}>
-        {user.fullName}
-      </Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignSelf: 'center',
-          alignItems: 'center',
-          marginBottom: 40,
-        }}>
-        {user.role === 'ROLE_REPAIRER' ? (
-          <>
-            <Image
-              style={{width: 20, height: 20}}
-              source={require('../../../assets/images/type/check.png')}
-            />
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: 'black',
-                marginLeft: 6,
-              }}>
-              Đã xác thực
-            </Text>
-          </>
-        ) : user.role === 'ROLE_PENDING_REPAIRER' ? (
-          <>
-            <Image
-              style={{width: 20, height: 20}}
-              source={require('../../../assets/images/type/unCheck.png')}
-            />
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: 'black',
-                marginLeft: 6,
-              }}>
-              Chờ xác thực
-            </Text>
-          </>
-        ) : null}
-      </View>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: 'white',
-          borderTopLeftRadius: 18,
-          borderTopRightRadius: 18,
-          paddingTop: 20,
-        }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#FEC54B']}
+          />
+        }>
+        <Image
+          style={{
+            width: 110,
+            height: 110,
+            borderRadius: width * 0.5,
+            borderColor: '#F0F0F0',
+            borderWidth: 1,
+            alignSelf: 'center',
+            marginTop: 50,
+            marginBottom: 10,
+          }}
+          source={{uri: user.avatar}}
+        />
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            alignSelf: 'center',
+            color: 'black',
+            marginBottom: 6,
+          }}>
+          {user.fullName}
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignSelf: 'center',
+            alignItems: 'center',
+            marginBottom: 40,
+          }}>
+          {user.role === 'ROLE_REPAIRER' ? (
+            <>
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/images/type/check.png')}
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: 'black',
+                  marginLeft: 6,
+                }}>
+                Đã xác thực
+              </Text>
+            </>
+          ) : user.role === 'ROLE_PENDING_REPAIRER' ? (
+            <>
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/images/type/unCheck.png')}
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  color: 'black',
+                  marginLeft: 6,
+                }}>
+                Chờ xác thực
+              </Text>
+            </>
+          ) : null}
+        </View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'white',
+            borderTopLeftRadius: 18,
+            borderTopRightRadius: 18,
+            paddingTop: 20,
+          }}>
           <View style={styles.wrapper}>
             <View style={[styles.container, {height: 60}]}>
               <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
@@ -190,28 +209,32 @@ const ProfileScreen = ({navigation}) => {
               />
             </View>
           </TouchableOpacity>
-          {user.role && user.role === 'ROLE_REPAIRER' && (
-            <TouchableOpacity
-              onPress={() => setShowExtra(!showExtra)}
-              style={styles.wrapper}>
-              <View style={styles.container}>
-                <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
-                  <Image
-                    style={styles.icon}
-                    source={require('../../../assets/images/type/transaction.png')}
-                  />
-                  <Text style={styles.title}>Quản lý giao dịch</Text>
-                </View>
+          <TouchableOpacity
+            onPress={() => {
+              if (user.role && user.role === 'ROLE_REPAIRER') {
+                setShowExtra(!showExtra);
+              } else {
+                setModalVisible(true);
+              }
+            }}
+            style={styles.wrapper}>
+            <View style={styles.container}>
+              <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
                 <Image
-                  style={[
-                    styles.iconNext,
-                    {transform: [{rotate: showExtra ? '90deg' : '0deg'}]},
-                  ]}
-                  source={require('../../../assets/images/type/right-arrow.png')}
+                  style={styles.icon}
+                  source={require('../../../assets/images/type/transaction.png')}
                 />
+                <Text style={styles.title}>Quản lý giao dịch</Text>
               </View>
-            </TouchableOpacity>
-          )}
+              <Image
+                style={[
+                  styles.iconNext,
+                  {transform: [{rotate: showExtra ? '90deg' : '0deg'}]},
+                ]}
+                source={require('../../../assets/images/type/right-arrow.png')}
+              />
+            </View>
+          </TouchableOpacity>
           {showExtra ? (
             <>
               <TouchableOpacity
@@ -293,7 +316,7 @@ const ProfileScreen = ({navigation}) => {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={showModal}
+            onPress={() => setLogoutModalVisible(true)}
             style={[styles.wrapper, {marginBottom: 10}]}>
             <View style={styles.container}>
               <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
@@ -309,12 +332,12 @@ const ProfileScreen = ({navigation}) => {
               />
             </View>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
       <CustomModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        modalRatio={0.3}>
+        modalVisible={logoutModalVisible}
+        setModalVisible={setLogoutModalVisible}
+        modalRatio={0.28}>
         <Text style={styles.modalText}>
           Bạn có chắc chắn muốn đăng xuất tài khoản này không?
         </Text>
@@ -326,8 +349,8 @@ const ProfileScreen = ({navigation}) => {
           }}>
           <TouchableOpacity
             style={[styles.button, styles.buttonOpen]}
-            onPress={() => {
-              logout();
+            onPress={async () => {
+              await logout();
               dispatch(resetRequestState());
               dispatch(resetHomeState());
               dispatch(resetUserState());
@@ -336,12 +359,46 @@ const ProfileScreen = ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
-            onPress={() => setModalVisible(!modalVisible)}>
+            onPress={() => setLogoutModalVisible(false)}>
             <Text style={styles.textStyle}>ĐÓNG</Text>
           </TouchableOpacity>
         </View>
       </CustomModal>
-    </View>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalRatio={0.28}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'black',
+            textAlign: 'center',
+            marginBottom: 5,
+          }}>
+          Lưu ý
+        </Text>
+        <View style={{marginVertical: 10}}>
+          <Text>Tài khoản của bạn chưa được xác thực</Text>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <SubmitButton
+            style={{
+              marginVertical: 8,
+              width: '100%',
+              alignSelf: 'center',
+            }}
+            onPress={() => setModalVisible(false)}
+            buttonText="ĐỒNG Ý"
+          />
+        </View>
+      </CustomModal>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
