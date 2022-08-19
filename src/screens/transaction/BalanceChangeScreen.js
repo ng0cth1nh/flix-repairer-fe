@@ -270,7 +270,8 @@ const BalanceChangeScreen = ({navigation}) => {
               />
             }
             ListFooterComponent={() =>
-              isLoading && (
+              isLoading &&
+              !refreshControl && (
                 <Loading
                   style={{
                     marginTop: 10,

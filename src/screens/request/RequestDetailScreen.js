@@ -33,6 +33,7 @@ import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
 import Loading from '../../components/Loading';
+import {fetchProfile} from '../../features/user/userSlice';
 
 const RequestDetailScreen = ({route, navigation}) => {
   const {
@@ -236,6 +237,7 @@ const RequestDetailScreen = ({route, navigation}) => {
       dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
       ).unwrap();
+      dispatch(fetchProfile(repairerAPI));
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -357,7 +359,12 @@ const RequestDetailScreen = ({route, navigation}) => {
         {data !== null ? (
           <RequestForm
             submitButtonText={submitButtonText}
-            isShowSubmitButton={isShowSubmitButton}
+            isShowSubmitButton={
+              typeSubmitButtonClick === 'CONFIRM_INVOICE' &&
+              data.paymentMethod !== 'CASH'
+                ? false
+                : isShowSubmitButton
+            }
             handleClickGetSubServices={handleClickGetSubServices}
             data={data}
             fixedService={fixedService}
@@ -368,7 +375,8 @@ const RequestDetailScreen = ({route, navigation}) => {
                 ? handleApproveRequestButtonClick
                 : typeSubmitButtonClick === 'CREATE_INVOICE'
                 ? showInvoiceModal
-                : typeSubmitButtonClick === 'CONFIRM_INVOICE'
+                : typeSubmitButtonClick === 'CONFIRM_INVOICE' &&
+                  data.paymentMethod === 'CASH'
                 ? handleConfirmPayment
                 : null
             }
@@ -500,7 +508,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         <CustomModal
           modalVisible={invoiceModalVisible}
           setModalVisible={setInvoiceModalVisible}
-          modalRatio={0.3}>
+          modalRatio={0.28}>
           <Text style={styles.modalText}>
             Bạn có chắc chắn muốn tạo hóa đơn không?
           </Text>
