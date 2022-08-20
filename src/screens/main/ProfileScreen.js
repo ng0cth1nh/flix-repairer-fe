@@ -79,7 +79,7 @@ const ProfileScreen = ({navigation}) => {
             borderColor: '#F0F0F0',
             borderWidth: 1,
             alignSelf: 'center',
-            marginTop: 50,
+            marginTop: 100,
             marginBottom: 10,
           }}
           source={{uri: user.avatar}}

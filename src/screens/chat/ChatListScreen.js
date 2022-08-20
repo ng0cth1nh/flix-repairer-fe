@@ -24,7 +24,7 @@ import EmptyMessage from '../../components/EmptyMessage';
 const ChatListScreen = ({navigation}) => {
   const {state} = useContext(AuthContext);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [listMemberOne, setListMemberOne] = useState(null);
+  const [listMemberOne, setListMemberOne] = useState([]);
   const [listMemberTwo, setListMemberTwo] = useState([]);
   const [listOnline, setListOnline] = useState(null);
   const [firebaseLoading, setFireBaseLoading] = useState(true);
@@ -34,11 +34,11 @@ const ChatListScreen = ({navigation}) => {
     const firstOneSubscriber = firestore()
       .collection('conversations')
       .where('memberOne', '==', state.userId)
-      .onSnapshot(onResult, onError);
+      .onSnapshot(onResult(1), onError);
     const secondOneSubscriber = firestore()
       .collection('conversations')
       .where('memberTwo', '==', state.userId)
-      .onSnapshot(onResult, onError);
+      .onSnapshot(onResult(2), onError);
     const onlineRef = firebase
       .app()
       .database(
@@ -68,12 +68,10 @@ const ChatListScreen = ({navigation}) => {
   const onGetStatus = snapshot => {
     setListOnline(snapshot.val());
   };
-  const onResult = async querySnapshot => {
+  const onResult = index => async querySnapshot => {
     if (querySnapshot.size > 0) {
       const conversationsMap = await Promise.all(
         querySnapshot.docs.map(async doc => {
-          // get active , get profile here
-          //fullName,phone,avatar,id
           try {
             const renderId =
               doc.data().memberOne === state.userId
@@ -94,13 +92,15 @@ const ChatListScreen = ({navigation}) => {
           }
         }),
       );
-      if (querySnapshot.docs[0].data().memberOne === state.userId) {
+      if (index === 1) {
         setListMemberOne(conversationsMap);
       } else {
         setListMemberTwo(conversationsMap);
       }
     }
-    setFireBaseLoading(false);
+    if (index === 2) {
+      setFireBaseLoading(false);
+    }
   };
 
   function onError(error) {
@@ -199,9 +199,8 @@ const ChatListScreen = ({navigation}) => {
           <Loading />
         ) : errorMessage ? (
           <NotFound />
-        ) : !listMemberOne ? null : listMemberOne.length === 0 &&
-          listMemberTwo.length === 0 ? (
-          <NotFound />
+        ) : listMemberOne.length === 0 && listMemberTwo.length === 0 ? (
+          <EmptyMessage />
         ) : (
           <FlatList
             keyExtractor={item => item.conversationId}
@@ -210,7 +209,6 @@ const ChatListScreen = ({navigation}) => {
               .sort((a, b) => b.latestTimestamp - a.latestTimestamp)}
             scrollEnabled={true}
             renderItem={renderItem}
-            ListEmptyComponent={EmptyMessage}
           />
         )}
       </SafeAreaView>
