@@ -106,6 +106,9 @@ const DepositScreen = ({route, navigation}) => {
               text1: VnPayCode.get(vnp_ResponseCode),
             });
           }
+          navigation.navigate('ProfileStackScreen', {
+            screen: 'ProfileScreen',
+          });
           await dispatch(setIsShowToast(true));
         }
       })();

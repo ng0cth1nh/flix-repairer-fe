@@ -443,7 +443,7 @@ const WithdrawScreen = ({navigation}) => {
                 marginVertical: 6,
                 fontWeight: 'bold',
               }}>
-              * Bạn đang rút tất cả tiền đồng nghĩa với việc đóng tài khoản
+              * Bạn đang rút tất cả tiền nên sẽ không xác nhận được lịch mới
             </Text>
           )}
           <Text
