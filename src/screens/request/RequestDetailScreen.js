@@ -39,11 +39,11 @@ const RequestDetailScreen = ({route, navigation}) => {
   const {
     requestCode,
     isShowCancelButton,
-    isAddableDetailService,
+    isAddableDetailService = false,
     submitButtonText,
     typeSubmitButtonClick,
     isCancelFromApprovedStatus,
-    isFetchFixedService,
+    isFetchFixedService = false,
     isShowSubmitButton,
     isNavigateFromNotiScreen = false,
   } = route.params;

@@ -35,7 +35,6 @@ const ApprovedScreen = ({navigation}) => {
       requestCode,
       isShowCancelButton: true,
       submitButtonText: 'Xác nhận đang sửa',
-      isAddableDetailService: false,
       typeSubmitButtonClick: 'CONFIRM_FIXING',
       isCancelFromApprovedStatus: true,
       isFetchFixedService: false,
