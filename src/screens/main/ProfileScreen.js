@@ -317,7 +317,7 @@ const ProfileScreen = ({navigation}) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setLogoutModalVisible(true)}
-            style={[styles.wrapper, {marginBottom: 10}]}>
+            style={[styles.wrapper, {marginBottom: 30}]}>
             <View style={styles.container}>
               <View style={{flexDirection: 'row', flex: 11, marginLeft: 16}}>
                 <Image

@@ -12,6 +12,8 @@ export default {
   WRONG_PASSWORD: 'Mật khẩu hiện tại không đúng',
   USER_IS_INACTIVE: 'Số điện thoại này đã bị vô hiệu hóa',
   MAXIMUM_UPLOAD_SIZE_EXCEEDED: 'Vui lòng chọn ảnh không vượt quá 20MB',
+  CAN_NOT_HAVE_MORE_THAN_5_REQUEST:
+    'Bạn chỉ có thể chấp nhận nhiều nhất 5 yêu cầu cùng lúc',
   CAN_NOT_CONFIRM_FIXING_WHEN_ON_ANOTHER_FIXING:
     'Không thể xác nhận khi yêu cầu khác đang trong quá trình sửa',
   CAN_NOT_ACCEPT_REQUEST_WHEN_ON_ANOTHER_FIXING:
