@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Text,
   View,
@@ -28,12 +28,15 @@ import {
   createInvoice,
   fetchRequestDetail,
   confirmPayment,
+  selectRequests,
 } from '../../features/request/requestSlice';
 import ProgressLoader from 'rn-progress-loader';
 import {useSelector, useDispatch} from 'react-redux';
 import {RequestStatus} from '../../utils/util';
 import Loading from '../../components/Loading';
 import {fetchProfile} from '../../features/user/userSlice';
+import {Context as AuthContext} from '../../context/AuthContext';
+import disableFirebaseChat from '../../utils/DisableFirebaseChat';
 
 const RequestDetailScreen = ({route, navigation}) => {
   const {
@@ -47,7 +50,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     isShowSubmitButton,
     isNavigateFromNotiScreen = false,
   } = route.params;
-
+  let {state} = useContext(AuthContext);
   const isLoading = useSelector(selectIsLoading);
   const [reason, setReason] = useState({index: 0, reason: CancelReasons[0]});
   const [modalVisible, setModalVisible] = useState(false);
@@ -61,12 +64,50 @@ const RequestDetailScreen = ({route, navigation}) => {
   const repairerAPI = useAxios();
   const dispatch = useDispatch();
   const [showComment, setShowComment] = useState(false);
+  const requests = useSelector(selectRequests);
 
   const showModal = () => {
     setWarningModalVisible(true);
   };
   const showInvoiceModal = () => {
     setInvoiceModalVisible(true);
+  };
+
+  const checkValidToDeleteConversation = () => {
+    let temp =
+      requests.approved &&
+      requests.approved.findIndex(request => {
+        return (
+          request.customerId === data.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    temp =
+      requests.fixing &&
+      requests.fixing.findIndex(request => {
+        return (
+          request.customerId === data.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    temp =
+      requests.paymentWaiting &&
+      requests.paymentWaiting.findIndex(request => {
+        return (
+          request.customerId === data.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    return true;
   };
 
   const loadData = async () => {
@@ -130,6 +171,9 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Hủy yêu cầu thành công',
       });
+      if (checkValidToDeleteConversation()) {
+        disableFirebaseChat(state.userId, data.customerId, false);
+      }
       isCancelFromApprovedStatus
         ? await dispatch(
             fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
@@ -201,6 +245,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Xác nhận yêu cầu thành công',
       });
+      disableFirebaseChat(state.userId, data.customerId, true);
       await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
       );
@@ -255,6 +300,10 @@ const RequestDetailScreen = ({route, navigation}) => {
           body: {requestCode},
         }),
       ).unwrap();
+      if (checkValidToDeleteConversation()) {
+        console.log('checkValidToDeleteConversation == true');
+        disableFirebaseChat(state.userId, data.customerId, false);
+      }
       navigation.goBack();
       await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.DONE}),

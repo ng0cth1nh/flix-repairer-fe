@@ -34,10 +34,12 @@ const ChatListScreen = ({navigation}) => {
     const firstOneSubscriber = firestore()
       .collection('conversations')
       .where('memberOne', '==', state.userId)
+      .where('enabled', '==', true)
       .onSnapshot(onResult(1), onError);
     const secondOneSubscriber = firestore()
       .collection('conversations')
       .where('memberTwo', '==', state.userId)
+      .where('enabled', '==', true)
       .onSnapshot(onResult(2), onError);
     const onlineRef = firebase
       .app()

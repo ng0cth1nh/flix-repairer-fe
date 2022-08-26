@@ -2,7 +2,7 @@ import './src/utils/ignoreWarnings';
 import 'react-native-gesture-handler';
 import React, {useEffect, useState, useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {Image, View, Text, Dimensions} from 'react-native';
+import {Image, View, Text, Dimensions, StyleSheet} from 'react-native';
 import {fetchProfile} from './src/features/user/userSlice';
 import {fetchRequests} from './src/features/request/requestSlice';
 import {useSelector, useDispatch} from 'react-redux';
@@ -69,6 +69,9 @@ import {
 import {NUMBER_RECORD_PER_PAGE} from './src/constants/Api';
 import firestore from '@react-native-firebase/firestore';
 import {RequestStatus} from './src/utils/util';
+import {useNetInfo} from '@react-native-community/netinfo';
+import CustomModal from './src/components/CustomModal';
+import SubmitButton from './src/components/SubmitButton';
 
 const toastConfig = {
   customToast: ({text1}) => (
@@ -120,7 +123,7 @@ const toastConfig = {
 function App() {
   const Stack = createStackNavigator();
   const Tab = createBottomTabNavigator();
-
+  const netInfo = useNetInfo();
   const [isLoading, setIsLoading] = useState(true);
   const [isNotiReceived, setIsNotiReceived] = useState(false);
   const [notificationType, setNotificationType] = useState('');
@@ -130,7 +133,13 @@ function App() {
   const [numberOfUnreadMessage, setNumberOfUnreadMessage] = useState(0);
   const dispatch = useDispatch();
   const repairerAPI = useAxios();
+  const [modalVisible, setModalVisible] = useState(false);
   let {state, TryLocalLogin, clearErrorMessage} = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log('netInfo.isConnected: ', netInfo.isConnected);
+    setModalVisible(netInfo.isConnected ? false : true);
+  }, [netInfo.isConnected]);
 
   useEffect(() => {
     TryLocalLogin();
@@ -562,6 +571,31 @@ function App() {
             />
           </Stack.Navigator>
         )}
+        <CustomModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          modalRatio={0.28}>
+          <Text style={styles.modalText}>Lưu ý</Text>
+          <View style={{marginVertical: 10}}>
+            <Text>Không có kết nối internet</Text>
+          </View>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <SubmitButton
+              style={{
+                marginVertical: 8,
+                width: '100%',
+                alignSelf: 'center',
+              }}
+              onPress={() => setModalVisible(false)}
+              buttonText="ĐÓNG"
+            />
+          </View>
+        </CustomModal>
       </NavigationContainer>
       <Toast
         config={toastConfig}
@@ -572,6 +606,80 @@ function App() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  textStyle: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+    borderRadius: 20,
+    paddingVertical: 10,
+  },
+  buttonOpen: {
+    backgroundColor: '#FEC54B',
+  },
+  container: {
+    paddingHorizontal: '4%',
+    paddingTop: 16,
+    backgroundColor: 'white',
+    height: '100%',
+  },
+  box: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 18,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 10,
+    width: '100%',
+  },
+  headerBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileView: {
+    marginLeft: 14,
+  },
+  viewDetail: {
+    marginLeft: 'auto',
+  },
+  viewDetailText: {
+    fontWeight: 'bold',
+    color: '#FEC54B',
+    fontSize: 15,
+  },
+  bodyRow: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    marginLeft: 10,
+    flexWrap: 'wrap',
+  },
+  rowIcon: {width: 0.1 * width},
+  icon: {marginLeft: 'auto', color: 'black'},
+  suggestButton: {
+    width: '40%',
+    height: 35,
+    borderWidth: 2,
+    borderColor: '#FEC54B',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textBold: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+});
+
 export default () => {
   return (
     <AuthProvider>

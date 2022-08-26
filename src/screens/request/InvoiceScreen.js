@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Text,
   View,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
-  ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
 import {RadioButton} from 'react-native-paper';
@@ -24,6 +23,7 @@ import {
   fetchFixedService,
   fetchInvoice,
   confirmPayment,
+  selectRequests,
 } from '../../features/request/requestSlice';
 import useAxios from '../../hooks/useAxios';
 import Toast from 'react-native-toast-message';
@@ -34,8 +34,11 @@ import {RequestStatus} from '../../utils/util';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import {formatCurrency} from '../../utils/FormattingCurrency';
 import Loading from '../../components/Loading';
+import {Context as AuthContext} from '../../context/AuthContext';
+import disableFirebaseChat from '../../utils/DisableFirebaseChat';
 
 const InvoiceScreen = ({route, navigation}) => {
+  let {state} = useContext(AuthContext);
   const {service, isShowConfirm} = route.params;
   const isLoading = useSelector(selectIsLoading);
   const [isLoad, setIsLoad] = useState(false);
@@ -46,6 +49,45 @@ const InvoiceScreen = ({route, navigation}) => {
   const repairerAPI = useAxios();
   const [fixedService, setFixedService] = useState(null);
   const dispatch = useDispatch();
+  const requests = useSelector(selectRequests);
+
+  const checkValidToDeleteConversation = () => {
+    let temp =
+      requests.approved &&
+      requests.approved.findIndex(request => {
+        return (
+          request.customerId === service.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    temp =
+      requests.fixing &&
+      requests.fixing.findIndex(request => {
+        return (
+          request.customerId === service.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    temp =
+      requests.paymentWaiting &&
+      requests.paymentWaiting.findIndex(request => {
+        return (
+          request.customerId === service.customerId &&
+          request.requestCode !== data.requestCode
+        );
+      });
+    if (temp !== -1) {
+      return false;
+    }
+    return true;
+  };
+
   const renderServiceItem = ({item, index}) => {
     return (
       <View
@@ -94,6 +136,10 @@ const InvoiceScreen = ({route, navigation}) => {
         }),
       ).unwrap();
       navigation.goBack();
+      if (checkValidToDeleteConversation()) {
+        console.log('checkValidToDeleteConversation == true');
+        disableFirebaseChat(state.userId, service.customerId, false);
+      }
       await dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.DONE}),
       ).unwrap();

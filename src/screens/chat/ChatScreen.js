@@ -25,7 +25,6 @@ import {useSelector} from 'react-redux';
 import {selectUser} from '../../features/user/userSlice';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import ImagePicker from 'react-native-image-crop-picker';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 const {height, width} = Dimensions.get('window');
@@ -35,8 +34,8 @@ import {firebase} from '@react-native-firebase/database';
 import {default as ImageResize} from 'react-native-scalable-image';
 import ImageView from 'react-native-image-viewing';
 import {Context as AuthContext} from '../../context/AuthContext';
-
 import BackButton from '../../components/BackButton';
+
 const ChatScreen = ({route, navigation}) => {
   let storeDate = null;
   const {state} = useContext(AuthContext);
@@ -240,6 +239,7 @@ const ChatScreen = ({route, navigation}) => {
         messType: null,
         latestTimestamp: null,
         isRead: false,
+        enabled: true,
       })
       .then(() => {
         console.log('create conver success');

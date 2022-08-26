@@ -99,7 +99,7 @@ const BalanceChangeScreen = ({navigation}) => {
   const genTitle = item => {
     if (item.status === 'SUCCESS') {
       return item.type === 'WITHDRAW'
-        ? 'Rút tiền về ví VNPAY thành công'
+        ? 'Yêu cầu rút tiền thành công'
         : item.type === 'DEPOSIT'
         ? 'Nạp tiền vào ví thành công'
         : item.type === 'PAY_COMMISSIONS'
@@ -111,9 +111,23 @@ const BalanceChangeScreen = ({navigation}) => {
         : item.type === 'RECEIVE_INVOICE_MONEY'
         ? 'Nhận tiền thanh toán hóa đơn thành công'
         : 'Khách hàng thanh toán hóa đơn thành công';
+    } else if (item.status === 'PENDING') {
+      return item.type === 'WITHDRAW'
+        ? 'Yêu cầu rút tiền đang được xét duyệt'
+        : item.type === 'DEPOSIT'
+        ? 'Nạp tiền vào ví đang được xét duyệt'
+        : item.type === 'PAY_COMMISSIONS'
+        ? 'Trừ tiền hoa hồng đang được xét duyệt'
+        : item.type === 'REFUNDS'
+        ? 'Hoàn tiền đang được xét duyệt'
+        : item.type === 'FINED'
+        ? 'Trừ tiền phạt'
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? 'Nhận tiền thanh toán hóa đơn đang được xét duyệt'
+        : 'Khách hàng thanh toán hóa đơn đang được xét duyệt';
     } else {
       return item.type === 'WITHDRAW'
-        ? 'Rút tiền về ví VNPAY thất bại'
+        ? 'Yêu cầu rút tiền thất bại'
         : item.type === 'DEPOSIT'
         ? 'Nạp tiền vào ví thất bại'
         : item.type === 'PAY_COMMISSIONS'
@@ -131,7 +145,7 @@ const BalanceChangeScreen = ({navigation}) => {
   const genContent = item => {
     if (item.status === 'SUCCESS') {
       return item.type === 'WITHDRAW'
-        ? `Rút -${numberWithCommas(item.amount)} vnđ về ví VNPAY thành công`
+        ? `Rút -${numberWithCommas(item.amount)} vnđ thành công`
         : item.type === 'DEPOSIT'
         ? `Nạp +${numberWithCommas(item.amount)} vnđ thành công`
         : item.type === 'PAY_COMMISSIONS'
@@ -151,9 +165,37 @@ const BalanceChangeScreen = ({navigation}) => {
         : `Khách hàng thanh toán +${numberWithCommas(
             item.amount,
           )} vnđ thành công qua VNPAY cho yêu cầu: ${item.requestCode}`;
+    } else if (item.status === 'PENDING') {
+      return item.type === 'WITHDRAW'
+        ? `Rút -${numberWithCommas(item.amount)} vnđ đang được xét duyệt`
+        : item.type === 'DEPOSIT'
+        ? `Nạp +${numberWithCommas(item.amount)} vnđ đang được xét duyệt`
+        : item.type === 'PAY_COMMISSIONS'
+        ? `Trừ -${numberWithCommas(
+            item.amount,
+          )} vnđ  tiền hoa hồng cho yêu cầu: ${
+            item.requestCode
+          }  đang được xét duyệt`
+        : item.type === 'REFUNDS'
+        ? `Hoàn +${numberWithCommas(item.amount)} vnđ đang được xét duyệt`
+        : item.type === 'FINED'
+        ? `Trừ -${numberWithCommas(item.amount)} vnđ tiền phạt cho yêu cầu:${
+            item.requestCode
+          }  đang được xét duyệt`
+        : item.type === 'RECEIVE_INVOICE_MONEY'
+        ? `Nhận tiền thanh toán +${numberWithCommas(
+            item.amount,
+          )} vnđ qua VNPAY cho yêu cầu: ${
+            item.requestCode
+          }  đang được xét duyệt`
+        : `Khách hàng thanh toán +${numberWithCommas(
+            item.amount,
+          )} vnđ qua VNPAY cho yêu cầu: ${
+            item.requestCode
+          } đang được xét duyệt`;
     } else {
       return item.type === 'WITHDRAW'
-        ? `Rút -${numberWithCommas(item.amount)} vnđ về ví VNPAY thất bại`
+        ? `Rút -${numberWithCommas(item.amount)} vnđ thất bại`
         : item.type === 'DEPOSIT'
         ? `Nạp +${numberWithCommas(item.amount)} vnđ thất bại`
         : item.type === 'PAY_COMMISSIONS'
