@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {Context as AuthContext} from '../../context/AuthContext';
 import {firebase} from '@react-native-firebase/database';
-
 import ApiConstants from '../../constants/Api';
 import NotFound from '../../components/NotFound';
 import useAxios from '../../hooks/useAxios';
@@ -20,6 +19,7 @@ import getErrorMessage from '../../utils/getErrorMessage';
 import TopHeaderComponent from '../../components/TopHeaderComponent';
 import {getDiffTimeBetweenTwoDate} from '../../utils/util';
 import EmptyMessage from '../../components/EmptyMessage';
+import {useIsFocused} from '@react-navigation/native';
 
 const ChatListScreen = ({navigation}) => {
   const {state} = useContext(AuthContext);
@@ -30,42 +30,56 @@ const ChatListScreen = ({navigation}) => {
   const [firebaseLoading, setFireBaseLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const customerAPI = useAxios();
-  useEffect(() => {
-    const firstOneSubscriber = firestore()
-      .collection('conversations')
-      .where('memberOne', '==', state.userId)
-      .where('enabled', '==', true)
-      .onSnapshot(onResult(1), onError);
-    const secondOneSubscriber = firestore()
-      .collection('conversations')
-      .where('memberTwo', '==', state.userId)
-      .where('enabled', '==', true)
-      .onSnapshot(onResult(2), onError);
-    const onlineRef = firebase
-      .app()
-      .database(
-        'https://flix-cb844-default-rtdb.asia-southeast1.firebasedatabase.app/',
-      )
-      .ref('/online')
-      .on('value', onGetStatus);
-    const watchTime = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
 
-    return () => {
-      setFireBaseLoading(true);
-      firstOneSubscriber();
-      secondOneSubscriber();
-      clearInterval(watchTime);
-      firebase
+  const isFocused = useIsFocused();
+
+  const reset = () => {
+    setListMemberOne([]);
+    setListMemberTwo([]);
+    setListOnline(null);
+    setFireBaseLoading(true);
+    setErrorMessage(null);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      reset();
+      const firstOneSubscriber = firestore()
+        .collection('conversations')
+        .where('memberOne', '==', state.userId)
+        .where('enabled', '==', true)
+        .onSnapshot(onResult(1), onError);
+      const secondOneSubscriber = firestore()
+        .collection('conversations')
+        .where('memberTwo', '==', state.userId)
+        .where('enabled', '==', true)
+        .onSnapshot(onResult(2), onError);
+      const onlineRef = firebase
         .app()
         .database(
           'https://flix-cb844-default-rtdb.asia-southeast1.firebasedatabase.app/',
         )
         .ref('/online')
-        .off('value', onlineRef);
-    };
-  }, []);
+        .on('value', onGetStatus);
+      const watchTime = setInterval(() => {
+        setCurrentDateTime(new Date());
+      }, 1000);
+
+      return () => {
+        setFireBaseLoading(true);
+        firstOneSubscriber();
+        secondOneSubscriber();
+        clearInterval(watchTime);
+        firebase
+          .app()
+          .database(
+            'https://flix-cb844-default-rtdb.asia-southeast1.firebasedatabase.app/',
+          )
+          .ref('/online')
+          .off('value', onlineRef);
+      };
+    }
+  }, [isFocused]);
 
   const onGetStatus = snapshot => {
     setListOnline(snapshot.val());

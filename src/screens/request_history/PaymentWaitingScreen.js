@@ -38,6 +38,7 @@ const PaymentWaitingScreen = ({navigation}) => {
       typeSubmitButtonClick: 'CONFIRM_INVOICE',
       submitButtonText: 'Xác nhận đã thanh toán',
       isShowSubmitButton: true,
+      isEnableChatButton: true,
     });
   };
 

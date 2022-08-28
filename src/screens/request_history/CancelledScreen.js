@@ -36,6 +36,7 @@ const CancelledScreen = ({navigation}) => {
       isFetchFixedService: false,
       isShowSubmitButton: false,
       isShowCancelButton: false,
+      isEnableChatButton: false,
     });
   };
 

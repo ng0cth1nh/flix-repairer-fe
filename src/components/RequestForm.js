@@ -32,6 +32,7 @@ const RequestForm = function ({
   isShowSubmitButton,
   chatHandler,
   handleClickGetSubServices,
+  isEnableChatButton,
 }) {
   const copyToClipboard = () => {
     Clipboard.setString(data.requestCode);
@@ -84,7 +85,7 @@ const RequestForm = function ({
                         data.customerAddress.length,
                       )}
                 </Text>
-                {data.status !== 'PENDING' && (
+                {data.status !== 'PENDING' && isEnableChatButton && (
                   <TouchableOpacity
                     onPress={chatHandler}
                     style={[styles.viewServiceButton, {width: '60%'}]}>

@@ -39,6 +39,7 @@ const ApprovedScreen = ({navigation}) => {
       isCancelFromApprovedStatus: true,
       isFetchFixedService: false,
       isShowSubmitButton: true,
+      isEnableChatButton: true,
     });
   };
 

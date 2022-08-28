@@ -41,6 +41,9 @@ import SearchForm from '../../components/SearchForm';
 import useAxios from '../../hooks/useAxios';
 import Loading from '../../components/Loading';
 import {Checkbox, NativeBaseProvider} from 'native-base';
+import {useNetInfo} from '@react-native-community/netinfo';
+import CustomModal from '../../components/CustomModal';
+import SubmitButton from '../../components/SubmitButton';
 
 export default function RegisterScreen({navigation}) {
   const {register, state, clearErrorMessage, showLoader} =
@@ -91,6 +94,8 @@ export default function RegisterScreen({navigation}) {
   const [cityIdError, setCityIdError] = useState(null);
   const [communeIdError, setCommuneIdError] = useState(null);
   const [districtIdError, setDistrictIdError] = useState(null);
+  const netInfo = useNetInfo();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -380,30 +385,34 @@ export default function RegisterScreen({navigation}) {
     let isPasswordValid = checkPasswordValid();
     let isRePasswordValid = checkRePasswordValid();
     if (isPasswordValid && isRePasswordValid) {
-      showLoader();
-      register({
-        avatar,
-        fullName: username,
-        phone: phoneNumber,
-        password,
-        communeId,
-        streetAddress: homeAddress,
-        identityCardNumber: IDCard,
-        identityCardType: IDCard.length === 9 ? 'CMND' : 'CCCD',
-        frontImage: file[0],
-        backSideImage: file[1],
-        experienceYear: +experience,
-        experienceDescription: experienceDes,
-        certificates: certi,
-        gender: checked === 'male' ? 1 : 0,
-        dateOfBirth: date.format('DD-MM-YYYY'),
-        type: 'REGISTER',
-        registerServices: addService.map((item, index) => {
-          const [serviceId, serviceName, icon] = item.split('[SPACE]');
-          return +serviceId;
-        }),
-      });
-      console.log('VALID');
+      if (netInfo.isConnected) {
+        showLoader();
+        register({
+          avatar,
+          fullName: username,
+          phone: phoneNumber,
+          password,
+          communeId,
+          streetAddress: homeAddress,
+          identityCardNumber: IDCard,
+          identityCardType: IDCard.length === 9 ? 'CMND' : 'CCCD',
+          frontImage: file[0],
+          backSideImage: file[1],
+          experienceYear: +experience,
+          experienceDescription: experienceDes,
+          certificates: certi,
+          gender: checked === 'male' ? 1 : 0,
+          dateOfBirth: date.format('DD-MM-YYYY'),
+          type: 'REGISTER',
+          registerServices: addService.map((item, index) => {
+            const [serviceId, serviceName, icon] = item.split('[SPACE]');
+            return +serviceId;
+          }),
+        });
+        console.log('VALID');
+      } else {
+        setModalVisible(true);
+      }
     }
   };
 
@@ -1286,6 +1295,31 @@ export default function RegisterScreen({navigation}) {
             ref={ref => (slider = ref)}
           />
         </View>
+        <CustomModal
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          modalRatio={0.28}>
+          <Text style={styles.modalText}>Lưu ý</Text>
+          <View style={{marginVertical: 10}}>
+            <Text>Không có kết nối internet</Text>
+          </View>
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <SubmitButton
+              style={{
+                marginVertical: 8,
+                width: '100%',
+                alignSelf: 'center',
+              }}
+              onPress={() => setModalVisible(false)}
+              buttonText="ĐÓNG"
+            />
+          </View>
+        </CustomModal>
         <ProgressLoader
           visible={state.loading ? state.loading : false}
           isModal={true}
@@ -1306,6 +1340,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     backgroundColor: 'white',
+  },
+  modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: 5,
   },
   scrollView: {
     width: '100%',

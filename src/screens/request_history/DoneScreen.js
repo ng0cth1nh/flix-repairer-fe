@@ -36,6 +36,7 @@ const DoneScreen = ({navigation}) => {
       isFetchFixedService: true,
       isShowSubmitButton: false,
       isShowCancelButton: false,
+      isEnableChatButton: false,
     });
   };
 

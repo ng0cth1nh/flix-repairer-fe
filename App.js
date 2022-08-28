@@ -216,10 +216,12 @@ function App() {
       const firstOneSubscriber = firestore()
         .collection('conversations')
         .where('memberOne', '==', userId)
+        .where('enabled', '==', true)
         .onSnapshot(onResult(1), onError);
       const secondOneSubscriber = firestore()
         .collection('conversations')
         .where('memberTwo', '==', userId)
+        .where('enabled', '==', true)
         .onSnapshot(onResult(2), onError);
 
       return () => {
@@ -256,6 +258,7 @@ function App() {
   useEffect(() => {
     (async () => {
       if (isNotiReceived) {
+        console.log('isNotiReceived: ', isNotiReceived);
         try {
           let temp = 0;
           let res = await dispatch(
@@ -427,7 +430,6 @@ function App() {
             }}
             screenOptions={({route}) => ({
               tabBarShowLabel: false,
-              unmountOnBlur: true,
               headerShown: false,
               tabBarStyle: {
                 height: 50,
@@ -464,11 +466,12 @@ function App() {
                           backgroundColor: 'red',
                           position: 'absolute',
                           top: -6,
-                          right: -4,
+                          right: numberOfUnread < 100 ? -4 : -6,
                           alignItems: 'center',
-                          width: 14,
-                          height: 14,
+                          width: numberOfUnread < 100 ? 14 : 'auto',
+                          height: numberOfUnread < 100 ? 14 : 16,
                           borderRadius: width * 0.5,
+                          padding: numberOfUnread < 100 ? 0 : 2,
                         }}>
                         <Text
                           style={{
@@ -487,11 +490,12 @@ function App() {
                             backgroundColor: 'red',
                             position: 'absolute',
                             top: -6,
-                            right: -4,
+                            right: numberOfUnreadMessage < 100 ? -4 : -6,
                             alignItems: 'center',
-                            width: 14,
-                            height: 14,
+                            width: numberOfUnreadMessage < 100 ? 14 : 'auto',
+                            height: numberOfUnreadMessage < 100 ? 14 : 16,
                             borderRadius: width * 0.5,
+                            padding: numberOfUnreadMessage < 100 ? 0 : 2,
                           }}>
                           <Text
                             style={{

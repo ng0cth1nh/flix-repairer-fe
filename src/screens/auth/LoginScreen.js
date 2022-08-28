@@ -15,6 +15,9 @@ import Button from '../../components/SubmitButton';
 import {Context as AuthContext} from '../../context/AuthContext';
 import ProgressLoader from 'rn-progress-loader';
 import Toast from 'react-native-toast-message';
+import {useNetInfo} from '@react-native-community/netinfo';
+import CustomModal from '../../components/CustomModal';
+import SubmitButton from '../../components/SubmitButton';
 
 export default function LoginScreen({navigation}) {
   const {
@@ -31,6 +34,8 @@ export default function LoginScreen({navigation}) {
   const [passwordInputError, setPasswordInputError] = useState(null);
   const [coverPassword, setCoverPassword] = useState(true);
   const [isForgotPass, setIsForgotPass] = useState(false);
+  const netInfo = useNetInfo();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -74,22 +79,30 @@ export default function LoginScreen({navigation}) {
     let passwordValid = checkPasswordValid();
     const isValidForm = phoneValid && passwordValid;
     if (isValidForm) {
-      showLoader();
-      login({username: phoneNumber, password, roleType: 'REPAIRER'});
+      if (netInfo.isConnected) {
+        showLoader();
+        login({username: phoneNumber, password, roleType: 'REPAIRER'});
+      } else {
+        setModalVisible(true);
+      }
     }
   };
 
   const handleForgotPasswordClick = () => {
     let phoneValid = checkPhoneNumberValid('FORGOT');
     if (phoneValid) {
-      showLoader();
-      setIsForgotPass(true);
-      clearErrorMessage();
-      sendOTPForgotPassword({
-        phone: phoneNumber,
-        type: 'FORGOT_PASSWORD',
-        roleType: 'REPAIRER',
-      });
+      if (netInfo.isConnected) {
+        showLoader();
+        setIsForgotPass(true);
+        clearErrorMessage();
+        sendOTPForgotPassword({
+          phone: phoneNumber,
+          type: 'FORGOT_PASSWORD',
+          roleType: 'REPAIRER',
+        });
+      } else {
+        setModalVisible(true);
+      }
     }
   };
 
@@ -188,7 +201,14 @@ export default function LoginScreen({navigation}) {
             <Text style={[styles.registerText, {color: 'black'}]}>
               Bạn chưa có tài khoản?{' '}
             </Text>
-            <TouchableOpacity onPress={() => navigation.push('RegisterScreen')}>
+            <TouchableOpacity
+              onPress={() => {
+                if (netInfo.isConnected) {
+                  navigation.push('RegisterScreen');
+                } else {
+                  setModalVisible(true);
+                }
+              }}>
               <Text
                 style={[
                   styles.registerText,
@@ -200,6 +220,31 @@ export default function LoginScreen({navigation}) {
           </View>
         </View>
       </SafeAreaView>
+      <CustomModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        modalRatio={0.28}>
+        <Text style={styles.modalText}>Lưu ý</Text>
+        <View style={{marginVertical: 10}}>
+          <Text>Không có kết nối internet</Text>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+          }}>
+          <SubmitButton
+            style={{
+              marginVertical: 8,
+              width: '100%',
+              alignSelf: 'center',
+            }}
+            onPress={() => setModalVisible(false)}
+            buttonText="ĐÓNG"
+          />
+        </View>
+      </CustomModal>
       <ProgressLoader
         visible={state.loading ? state.loading : false}
         isModal={true}
@@ -221,6 +266,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     backgroundColor: 'white',
+  },
+  modalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlign: 'center',
+    marginBottom: 5,
   },
   headerText: {
     fontSize: 22,

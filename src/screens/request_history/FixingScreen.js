@@ -40,6 +40,7 @@ const FixingScreen = ({navigation}) => {
       isCancelFromApprovedStatus: false,
       isFetchFixedService: true,
       isShowSubmitButton: true,
+      isEnableChatButton: true,
     });
   };
 

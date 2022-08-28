@@ -10,6 +10,9 @@ export default {
   INVALID_DISTRICT: 'Địa chỉ Quận/Huyện không tồn tại',
   INVALID_COMMUNE: 'Địa chỉ Phường/Xã không tồn tại',
   WRONG_PASSWORD: 'Mật khẩu hiện tại không đúng',
+  AMOUNT_IS_REQUIRED: 'Số tiền nạp không được bỏ trống',
+  AMOUNT_MUST_BE_LOWER_OR_EQUAL_100000000:
+    'Số tiền nạp không quá 100,000,000 vnđ',
   USER_IS_INACTIVE: 'Số điện thoại này đã bị vô hiệu hóa',
   MAXIMUM_UPLOAD_SIZE_EXCEEDED: 'Vui lòng chọn ảnh không vượt quá 20MB',
   CAN_NOT_HAVE_MORE_THAN_5_REQUEST:

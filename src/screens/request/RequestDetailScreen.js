@@ -49,6 +49,7 @@ const RequestDetailScreen = ({route, navigation}) => {
     isFetchFixedService = false,
     isShowSubmitButton,
     isNavigateFromNotiScreen = false,
+    isEnableChatButton = false,
   } = route.params;
   let {state} = useContext(AuthContext);
   const isLoading = useSelector(selectIsLoading);
@@ -175,16 +176,10 @@ const RequestDetailScreen = ({route, navigation}) => {
         disableFirebaseChat(state.userId, data.customerId, false);
       }
       isCancelFromApprovedStatus
-        ? await dispatch(
-            fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
-          ).unwrap()
-        : await dispatch(
-            fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-          ).unwrap();
+        ? dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}))
+        : dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
       navigation.goBack();
-      dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}),
-      ).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.CANCELLED}));
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -203,9 +198,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         }),
       ).unwrap();
 
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-      ).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
       navigation.navigate('RequestHistoryScreen', {
         screen: 'FixingScreen',
       });
@@ -213,9 +206,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Cập nhật trạng thái thành công',
       });
-      dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
-      ).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -246,10 +237,8 @@ const RequestDetailScreen = ({route, navigation}) => {
         text1: 'Xác nhận yêu cầu thành công',
       });
       disableFirebaseChat(state.userId, data.customerId, true);
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.APPROVED}),
-      );
-      navigation.navigate('RequestHistoryStackScreen', {
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.APPROVED}));
+      navigation.navigate('RequestHistoryScreen', {
         screen: 'ApprovedScreen',
       });
     } catch (err) {
@@ -269,9 +258,9 @@ const RequestDetailScreen = ({route, navigation}) => {
           body: {requestCode},
         }),
       ).unwrap();
-      await dispatch(
+      dispatch(
         fetchRequests({repairerAPI, status: RequestStatus.PAYMENT_WAITING}),
-      ).unwrap();
+      );
       navigation.navigate('RequestHistoryScreen', {
         screen: 'PaymentWaitingScreen',
       });
@@ -279,9 +268,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         type: 'customToast',
         text1: 'Tạo hóa đơn thành công',
       });
-      dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.FIXING}),
-      ).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.FIXING}));
       dispatch(fetchProfile(repairerAPI));
     } catch (err) {
       Toast.show({
@@ -304,10 +291,7 @@ const RequestDetailScreen = ({route, navigation}) => {
         console.log('checkValidToDeleteConversation == true');
         disableFirebaseChat(state.userId, data.customerId, false);
       }
-      navigation.goBack();
-      await dispatch(
-        fetchRequests({repairerAPI, status: RequestStatus.DONE}),
-      ).unwrap();
+      dispatch(fetchRequests({repairerAPI, status: RequestStatus.DONE}));
       navigation.navigate('RequestHistoryScreen', {
         screen: 'DoneScreen',
       });
@@ -321,7 +305,7 @@ const RequestDetailScreen = ({route, navigation}) => {
           repairerAPI,
           status: RequestStatus.PAYMENT_WAITING,
         }),
-      ).unwrap();
+      );
     } catch (err) {
       Toast.show({
         type: 'customErrorToast',
@@ -429,6 +413,7 @@ const RequestDetailScreen = ({route, navigation}) => {
                 ? handleConfirmPayment
                 : null
             }
+            isEnableChatButton={isEnableChatButton}
             chatHandler={handleChatCLick}
             isShowCancelButton={isShowCancelButton}
             isAddableDetailService={isAddableDetailService}

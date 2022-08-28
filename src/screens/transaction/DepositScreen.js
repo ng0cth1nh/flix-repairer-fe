@@ -74,6 +74,8 @@ const DepositScreen = ({route, navigation}) => {
   const checkMoney = async () => {
     if (money === 0 || +removeCommas(money) < 5000) {
       setMoneyInputError('Vui lòng nhập số tiền thối thiểu 5,000 vnđ');
+    } else if (+removeCommas(money) > 100000000) {
+      setMoneyInputError('Vui lòng nhập số tiền tối đa 100,000,000 vnđ');
     } else {
       setMoneyInputError(null);
       setModalVisible(true);
